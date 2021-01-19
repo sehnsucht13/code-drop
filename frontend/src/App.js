@@ -1,23 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
+import BlockCodeView from "./components/BlockCode";
+const testLang = `print("hello world")
+class help:
+  def __init__(self, hello):
+    g = 4 + 4
+    return 14
+    `;
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BlockCodeView codeString={testLang} language="python" />
     </div>
   );
 }
