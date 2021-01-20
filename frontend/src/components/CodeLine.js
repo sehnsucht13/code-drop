@@ -1,17 +1,23 @@
 import React from "react";
 import AnnotationPopup from "./AnnotationPopup";
 
-export default function CodeLine({ line, lineNum, lineProps, tokenProps }) {
-  let bg;
-  if (lineNum % 2 == 0) {
-    bg = "red";
-  } else {
-    bg = "blue";
+export default function CodeLine({
+  line,
+  lineNum,
+  lineProps,
+  tokenProps,
+  lineNumPadLen,
+}) {
+  let numLen = lineNum.toString().length;
+  let padLen = lineNumPadLen - numLen;
+  let pad = "";
+  for (let index = 0; index < padLen; index++) {
+    pad += " ";
   }
   return (
     <div {...lineProps({ line, key: lineNum })}>
       <AnnotationPopup index={lineNum} />
-      <span style={{ padding: "2%" }}>{lineNum + 1}</span>
+      <span style={{ padding: "2%" }}>{lineNum.toString().concat(pad)}</span>
       {line.map((token, key) => (
         <span {...tokenProps({ token, key })} />
       ))}
