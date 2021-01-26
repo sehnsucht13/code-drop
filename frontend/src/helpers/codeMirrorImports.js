@@ -1,19 +1,8 @@
-import React, { useState } from "react";
-import { Controlled as CodeMirror } from "react-codemirror2";
-import { Form, Row, Col, Button } from "react-bootstrap";
-import CodeMirrorLanguages from "../helpers/CodeMirrorLanguages";
-console.log(CodeMirrorLanguages);
-
-require("codemirror");
-require("codemirror/lib/codemirror.css");
-
-// TODO: How to split these into new file? Can they be loaded on demand?
-
 import("codemirror/mode/apl/apl.js");
 import("codemirror/mode/asciiarmor/asciiarmor.js");
-import("codemirror/mode/markdown/markdown.js");
 import("codemirror/mode/asn.1/asn.1.js");
 import("codemirror/mode/brainfuck/brainfuck.js");
+import("codemirror/mode/clike/clike.js");
 import("codemirror/mode/clojure/clojure.js");
 import("codemirror/mode/cmake/cmake.js");
 import("codemirror/mode/cobol/cobol.js");
@@ -100,73 +89,3 @@ import("codemirror/mode/webidl/webidl.js");
 import("codemirror/mode/xml/xml.js");
 import("codemirror/mode/xquery/xquery.js");
 import("codemirror/mode/yaml/yaml.js");
-
-//require("codemirror/mode/javascript/javascript");
-
-function CodeDropEditor() {
-  const [editorContent, setEditorContent] = useState("");
-  const [editorMode, setEditorMode] = useState(null);
-  const handleEditorInput = (editor, data, value) => {
-    console.log(data, value);
-    setEditorContent(value);
-  };
-
-  const handleLanguageSelect = (ev) => {
-    setEditorMode(CodeMirrorLanguages[ev.target.value]);
-  };
-
-  return (
-    <div>
-      <Form>
-        <Form.Row>
-          <Form.Group as={Col}>
-            <Form.Label>Drop Name</Form.Label>
-            <Form.Control placeholder="Code Drop Name"></Form.Control>
-          </Form.Group>
-          <Form.Group as={Col}>
-            <Form.Label>Language</Form.Label>
-            <Form.Control
-              as="select"
-              defaultValue="Choose..."
-              onChange={handleLanguageSelect}
-            >
-              {Object.keys(CodeMirrorLanguages).map((key) => {
-                return <option value={key}>{key}</option>;
-              })}
-            </Form.Control>
-          </Form.Group>
-          <Form.Group as={Col}>
-            <Form.Label>Visibility</Form.Label>
-            <Form.Control as="select" defaultValue="Public">
-              <option value="true">Public</option>
-              <option value="false">Private</option>
-            </Form.Control>
-          </Form.Group>
-        </Form.Row>
-
-        <Form.Group>
-          <Form.Label>Editor</Form.Label>
-          <CodeMirror
-            value={editorContent}
-            onBeforeChange={(editor, data, value) => {
-              setEditorContent(value);
-            }}
-            onChange={(editor, data, value) => {
-              console.log(value);
-            }}
-            options={{
-              mode: editorMode,
-              electricChars: true,
-              lineNumbers: true,
-            }}
-          />
-        </Form.Group>
-      </Form>
-      <Row className="justify-content-end">
-        <Button>Save</Button>
-      </Row>
-    </div>
-  );
-}
-
-export default CodeDropEditor;
