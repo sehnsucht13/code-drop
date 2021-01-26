@@ -12,7 +12,10 @@ const sequelize = new Sequelize(
   }
 );
 
+const Drops = require("./drops")(sequelize, Sequelize);
+
 module.exports = {
   sequelize: sequelize,
   Sequelize: Sequelize,
+  Drops: Drops,
 };
