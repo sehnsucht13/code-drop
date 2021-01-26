@@ -13,9 +13,13 @@ const sequelize = new Sequelize(
 );
 
 const Drops = require("./drops")(sequelize, Sequelize);
+const DropAnnotations = require("./dropannotations")(sequelize, Sequelize);
+
+Drops.hasMany(DropAnnotations);
 
 module.exports = {
   sequelize: sequelize,
   Sequelize: Sequelize,
   Drops: Drops,
+  DropAnnotations: DropAnnotations,
 };
