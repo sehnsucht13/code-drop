@@ -25,6 +25,45 @@ const miniReducer = (state = {}, { type, payload }) => {
           },
         ],
       };
+    case "SET_EDIT_STATUS":
+      console.log("Got an edit status message");
+      const newAnnotationArr = state.annotations.map((item, index) => {
+        if (index === payload.index) {
+          return { ...item, isEdited: payload.status };
+        }
+        return item;
+      });
+      return {
+        ...state,
+        annotations: newAnnotationArr,
+      };
+    case "DELETE_ANNOTATION":
+      console.log("Got a delete");
+      const newAnnotationStatus = state.annotations.filter((item, index) => {
+        if (index === payload.index) {
+          return false;
+        }
+        return true;
+      });
+      return {
+        ...state,
+        annotations: newAnnotationStatus,
+      };
+
+    case "SAVE_ANNOTATION_STATE":
+      const newAnnotationState = state.annotations.map((item, index) => {
+        if (index === payload.index) {
+          return {
+            ...item,
+            start: payload.startLine,
+            end: payload.endLine,
+            text: payload.text,
+            isEdited: false,
+          };
+        }
+        return item;
+      });
+      return { ...state, annotations: newAnnotationState };
     default:
       console.log("default case");
   }

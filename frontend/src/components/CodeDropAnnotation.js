@@ -3,20 +3,54 @@ import { Form, Row, Col, Button, ButtonGroup } from "react-bootstrap";
 import CommentEditor from "./CommentEditor";
 import { connect } from "react-redux";
 
-function CodeDropAnnotation({ index, id, text, startIdx, endIdx, isEdited }) {
+function CodeDropAnnotation({
+  index,
+  id,
+  text,
+  startIdx,
+  endIdx,
+  isEdited,
+  deleteAnnotation,
+  setEditStatus,
+  saveAnnotationState,
+}) {
   const [startLineNum, setStartLineNum] = useState(startIdx);
   const [endLineNum, setendLineNum] = useState(endIdx);
   const [commentText, setCommentText] = useState(text);
 
   const handleStartLineNumChange = (ev) => {
+    if (!isEdited) {
+      setEditStatus(true, index);
+    }
     setStartLineNum(ev.target.value);
   };
   const handleEndLineNumChange = (ev) => {
+    if (!isEdited) {
+      setEditStatus(true, index);
+    }
     setendLineNum(ev.target.value);
   };
 
   const handleTextChange = (newText) => {
+    if (!isEdited) {
+      setEditStatus(true, index);
+    }
     setCommentText(newText);
+  };
+
+  const handleDelete = () => {
+    deleteAnnotation(index);
+  };
+
+  const handleSave = () => {
+    saveAnnotationState(startLineNum, endLineNum, commentText, index);
+  };
+
+  const handleDiscard = () => {
+    setCommentText(text);
+    setendLineNum(endIdx);
+    setStartLineNum(startIdx);
+    setEditStatus(false, index);
   };
 
   return (
@@ -41,9 +75,9 @@ function CodeDropAnnotation({ index, id, text, startIdx, endIdx, isEdited }) {
       </Form>
       <CommentEditor text={commentText} setText={handleTextChange} />
       <ButtonGroup>
-        <Button>Save</Button>
-        <Button>Delete</Button>
-        {isEdited && <Button>Discard Changes</Button>}
+        <Button onClick={handleSave}>Save</Button>
+        <Button onClick={handleDelete}>Delete</Button>
+        {isEdited && <Button onClick={handleDiscard}>Discard Changes</Button>}
       </ButtonGroup>
     </div>
   );
@@ -64,14 +98,17 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setEditStatus: (status) =>
-      dispatch({ type: "SET_EDIT_STATUS", payload: status }),
-    deleteAnnotation: () =>
-      dispatch({ type: "DELETE_ANNOTATION", payload: null }),
-    saveAnnotationState: (start, end, text) =>
+    setEditStatus: (status, idx) =>
+      dispatch({
+        type: "SET_EDIT_STATUS",
+        payload: { status: status, index: idx },
+      }),
+    deleteAnnotation: (idx) =>
+      dispatch({ type: "DELETE_ANNOTATION", payload: { index: idx } }),
+    saveAnnotationState: (start, end, text, idx) =>
       dispatch({
         type: "SAVE_ANNOTATION_STATE",
-        payload: { startLine: start, endLine: end, content: text },
+        payload: { startLine: start, endLine: end, content: text, index: idx },
       }),
   };
 };
