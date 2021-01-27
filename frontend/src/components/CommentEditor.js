@@ -10,12 +10,11 @@ import {
 import EditorToolbar from "./CommentEditorToolbar";
 import ReactMarkdown from "react-markdown";
 
-export default function CommentEditor() {
-  const [commentText, setCommentText] = useState("");
+export default function CommentEditor({ text, setText }) {
   const [currentTab, setcurrentTab] = useState("edit");
 
   const handleTextInput = (ev) => {
-    setCommentText(ev.target.value);
+    setText(ev.target.value);
   };
 
   return (
@@ -27,23 +26,23 @@ export default function CommentEditor() {
     >
       <Tab eventKey="edit" title="Edit">
         <EditorToolbar
-          currentText={commentText}
+          currentText={text}
           setInputTextFunc={(val) => {
-            setCommentText(val);
+            setText(val);
           }}
         />
         <InputGroup>
           <FormControl
             as="textarea"
             rows={3}
-            value={commentText}
+            value={text}
             onChange={handleTextInput}
             style={{ width: "80%" }}
           ></FormControl>
         </InputGroup>
       </Tab>
       <Tab eventKey="preview" title="Preview">
-        <ReactMarkdown>{commentText}</ReactMarkdown>
+        <ReactMarkdown>{text}</ReactMarkdown>
       </Tab>
     </Tabs>
   );
