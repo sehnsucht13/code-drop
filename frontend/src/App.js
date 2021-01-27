@@ -3,6 +3,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Container } from "react-bootstrap";
 import DropEditor from "./components/CodeDropEditor";
 import AnnotationContainer from "./components/AnnotationContainer";
+import Navbar from "./components/Navbar";
+
+import NewDropContainer from "./components/NewDropContainer";
+import HomePageContainer from "./components/HomePageContainer";
+import ErrorContainer from "./components/ErrorContainer";
+import { Switch, Route } from "react-router-dom";
 
 const testLang = `print("hello world")
 class help:
@@ -21,13 +27,22 @@ const codeSpanData = {
   3: "b",
 };
 
+// <Navbar />
+// <Container style={{ paddingTop: "5%" }}>
+//   <DropEditor />
+//   <AnnotationContainer />
+// </Container>
+
 function App() {
   return (
     <div className="App">
-      <Container>
-        <DropEditor />
-        <AnnotationContainer />
-      </Container>
+      <Switch>
+        <Route path="/" component={HomePageContainer} exact />
+        <Route path="/new" component={NewDropContainer} />
+        <Route path="/explore" component={null} />
+        <Route path="/profile" component={null} />
+        <Route component={ErrorContainer} />
+      </Switch>
     </div>
   );
 }
