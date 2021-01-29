@@ -61,19 +61,22 @@ export function uploadBegin() {
 export function sendDrop(title, language, text, visibility) {
   return (dispatch, getState) => {
     dispatch(uploadBegin());
+    let annotationArray = getState().annotationReducer.annotations;
+    console.log("Annotations from action creator", annotationArray);
     axios
       .post("/drops", {
         title: title,
         lang: language,
         text: text,
         visibility: visibility,
+        annotations: annotationArray,
       })
       .then((response) => {
-        console.log(response.status);
+        console.log(response.data);
         dispatch(uploadSuccess());
       })
       .catch((err) => {
-        console.log("Error with post request", err);
+        console.log("Error with post request when uploading", err);
         dispatch(uploadFail());
       });
   };
