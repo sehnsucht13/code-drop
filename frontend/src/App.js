@@ -1,14 +1,11 @@
-import BlockCodeView from "./components/BlockCode";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Container } from "react-bootstrap";
-import DropEditor from "./components/CodeDropEditor";
-import AnnotationContainer from "./components/AnnotationContainer";
-import Navbar from "./components/Navbar";
 
 import NewDropContainer from "./components/NewDropContainer";
 import HomePageContainer from "./components/HomePageContainer";
 import ErrorContainer from "./components/ErrorContainer";
 import { Switch, Route } from "react-router-dom";
+
+const axios = require("axios");
 
 const testLang = `print("hello world")
 class help:

@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "react-bootstrap";
 import DropAnnotation from "./CodeDropAnnotation";
 import { connect } from "react-redux";
+import { add_annotation } from "../actions/annotation_actions";
 
 function AnnotationContainer({ annotations, addAnnotation }) {
   return (
@@ -16,15 +17,14 @@ function AnnotationContainer({ annotations, addAnnotation }) {
 }
 
 const mapStateToProps = (state) => {
-  console.log("App state", state);
   return {
-    annotations: state.annotations,
+    annotations: state.annotationReducer.annotations,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addAnnotation: () => dispatch({ type: "NEW_ANNOTATION", payload: null }),
+    addAnnotation: () => dispatch(add_annotation()),
   };
 };
 

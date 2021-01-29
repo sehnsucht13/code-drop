@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import { Form, Row, Col, Button, ButtonGroup } from "react-bootstrap";
 import CommentEditor from "./CommentEditor";
 import { connect } from "react-redux";
+import {
+  set_annotation_edit_status,
+  delete_annotation,
+  save_annotation,
+} from "../actions/annotation_actions";
 
 function CodeDropAnnotation({
   index,
@@ -84,8 +89,7 @@ function CodeDropAnnotation({
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log("For Drop Own props", ownProps);
-  const annotationInfo = state.annotations[ownProps.index];
+  const annotationInfo = state.annotationReducer.annotations[ownProps.index];
   return {
     index: ownProps.index,
     id: annotationInfo.id,
@@ -99,17 +103,10 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setEditStatus: (status, idx) =>
-      dispatch({
-        type: "SET_EDIT_STATUS",
-        payload: { status: status, index: idx },
-      }),
-    deleteAnnotation: (idx) =>
-      dispatch({ type: "DELETE_ANNOTATION", payload: { index: idx } }),
+      dispatch(set_annotation_edit_status(status, idx)),
+    deleteAnnotation: (idx) => dispatch(delete_annotation(idx)),
     saveAnnotationState: (start, end, text, idx) =>
-      dispatch({
-        type: "SAVE_ANNOTATION_STATE",
-        payload: { startLine: start, endLine: end, content: text, index: idx },
-      }),
+      dispatch(save_annotation(start, end, text, idx)),
   };
 };
 
