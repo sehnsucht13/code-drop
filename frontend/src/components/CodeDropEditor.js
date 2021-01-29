@@ -3,7 +3,7 @@ import { Controlled as CodeMirror } from "react-codemirror2";
 import { Form, Row, Col, Button } from "react-bootstrap";
 import CodeMirrorLanguages from "../helpers/CodeMirrorLanguages";
 import { connect } from "react-redux";
-const axios = require("axios");
+import { sendDrop } from "../actions/annotation_actions";
 
 require("codemirror");
 require("codemirror/lib/codemirror.css");
@@ -103,26 +103,30 @@ import("codemirror/mode/xml/xml.js");
 import("codemirror/mode/xquery/xquery.js");
 import("codemirror/mode/yaml/yaml.js");
 
-function CodeDropEditor({ testDispatch }) {
+function CodeDropEditor({ uploadDrop }) {
   const [editorContent, setEditorContent] = useState("");
 
-  const [editorMode, setEditorMode] = useState(null);
-  const [dropName, setdropName] = useState("");
+  const [language, setLanguage] = useState(null);
+  const [title, setTitle] = useState("");
   const [visibility, setVisibility] = useState(true);
 
   const handleLanguageSelect = (ev) => {
     console.log(ev.target.value, CodeMirrorLanguages[ev.target.value]);
-    setEditorMode(CodeMirrorLanguages[ev.target.value]);
+    setLanguage(CodeMirrorLanguages[ev.target.value]);
   };
 
-  const handleDropNameChange = (ev) => setdropName(ev.target.value);
+  const handleDropNameChange = (ev) => setTitle(ev.target.value);
 
   const handleVisibility = (ev) => setVisibility(ev.target.value);
 
   return (
     <div>
       <Row className="justify-content-end">
-        <Button onClick={testDispatch}>Publish</Button>
+        <Button
+          onClick={() => uploadDrop(title, language, editorContent, visibility)}
+        >
+          Publish
+        </Button>
         <Button>Discard</Button>
       </Row>
 
@@ -132,7 +136,7 @@ function CodeDropEditor({ testDispatch }) {
             <Form.Label>Drop Name</Form.Label>
             <Form.Control
               placeholder="Code Drop Name"
-              value={dropName}
+              value={title}
               onChange={handleDropNameChange}
             ></Form.Control>
           </Form.Group>
@@ -173,7 +177,7 @@ function CodeDropEditor({ testDispatch }) {
               console.log(value);
             }}
             options={{
-              mode: editorMode,
+              mode: language,
               electricChars: true,
               lineNumbers: true,
             }}
@@ -184,29 +188,12 @@ function CodeDropEditor({ testDispatch }) {
   );
 }
 
-function testThunk() {
-  return function (dispatch, getState) {
-    axios
-      .get("/drops")
-      .then((res) => {
-        console.log("got data", res.data);
-        return res.data;
-      })
-      .then((resJson) => {
-        console.log("State is", getState());
-        dispatch({ type: "TEST_ASYNC", payload: { msg: resJson } });
-        return resJson;
-      })
-      .catch((err) => {
-        console.log("Got an error from async", err);
-      });
-  };
-}
 const mapStateToProps = (state, ownProps) => {};
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    testDispatch: () => dispatch(testThunk()),
+    uploadDrop: (dropTitle, dropLanguage, dropText, visibility) =>
+      dispatch(sendDrop(dropTitle, dropLanguage, dropText, visibility)),
   };
 };
 
