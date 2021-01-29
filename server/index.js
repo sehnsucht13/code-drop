@@ -16,28 +16,42 @@ app.get("/", function (req, res) {
   res.json("Hello World from the server!");
 });
 
-app.post("/drops", (req, res) => {
+app.post("/drops", async (req, res) => {
   let title = req.body.title;
   let lang = req.body.lang;
   let visibility = req.body.visibility;
   let textBody = req.body.text;
+  let annotations = req.body.annotations;
+  console.log(
+    "SERVER RECEIVED",
+    title,
+    lang,
+    visibility,
+    textBody,
+    annotations
+  );
 
-  db.Drops.create({
+  let dropRecordInfo = await db.Drops.create({
     dropTitle: title,
     dropLanguage: lang,
     visibility: visibility,
     dropText: textBody,
-  })
-    .then((thing) => {
-      console.log("thing", thing.dataValues.id);
-      res.send("Created successfully").status(200);
-    })
-    .catch(() => {
-      res.send("There was an error creating a new drop").status(400);
+  });
+
+  let newDropId = dropRecordInfo.dataValues.id;
+  console.log(newDropId);
+
+  annotations.forEach((annotation) => {
+    db.DropAnnotations.create({
+      startLine: annotation.start,
+      endLine: annotation.end,
+      annotation_text: annotation.text,
+      dropId: newDropId,
     });
-  console.log("body", req.body);
-  console.log("Received", title, lang, visibility, textBody);
+  });
+  res.json({ id: newDropId }).status(200);
 });
+
 app.delete("/drops/:dropId", (req, res) => {
   let dropId = req.params.dropId;
 });
@@ -45,7 +59,34 @@ app.put("/drops/:dropId", (req, res) => {
   let dropId = req.params.dropId;
 });
 
-app.get("/drops", (req, res) => {
+app.get("/drops/:dropId", async (req, res) => {
+  //res.json("Hello from drops get");
+  let dropId = req.params.dropId;
+  let dropRecord = await db.Drops.findByPk(dropId, {
+    attributes: ["id", "dropTitle", "dropLanguage", "visibility", "dropText"],
+  });
+  console.log("Retrieve a record", dropRecord);
+  let annotations = await db.DropAnnotations.findAll({
+    attributes: {
+      exclude: ["createdAt", "updatedAt", "dropId"],
+    },
+    where: {
+      dropId: dropRecord.dataValues.id,
+    },
+  });
+  console.log(
+    "Annotations retrieve are",
+    annotations.map((annotation) => annotation.dataValues)
+  );
+
+  const respObject = {
+    codeDrop: dropRecord.dataValues,
+    dropAnnotations: annotations.map((annotation) => annotation.dataValues),
+  };
+  res.json(respObject).status(200);
+});
+
+app.get("/drops/paginate", (req, res) => {
   res.json("Hello from drops get");
 });
 
