@@ -13,5 +13,14 @@
     "express": "^4.17.1",
     "mariadb": "^2.5.2",
     "sequelize": "^6.4.0"
+  },
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "nodemon": "^2.0.7"
+  },
+  "scripts": {
+    "start-server": "cd frontend && yarn start",
+    "start-client": "nodemon server/index.js",
+    "dev": "concurrently -k \"yarn start-server\" \"yarn start-client\""
   }
 }
