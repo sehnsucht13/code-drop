@@ -1,11 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import { Provider } from "react-redux";
+import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import { createStore } from "redux";
-import { Provider } from "react-redux";
-import { BrowserRouter } from "react-router-dom";
 
 // TODO: Move these to separate files.
 const miniReducer = (state = {}, { type, payload }) => {
@@ -65,6 +66,9 @@ const miniReducer = (state = {}, { type, payload }) => {
         return item;
       });
       return { ...state, annotations: newAnnotationState };
+    case "TEST_ASYNC":
+      console.log("Retrieve a test with", payload);
+      return state;
     default:
       console.log("default case");
   }
@@ -83,7 +87,7 @@ const initialState = {
   ],
 };
 
-const store = createStore(miniReducer, initialState);
+const store = createStore(miniReducer, initialState, applyMiddleware(thunk));
 
 ReactDOM.render(
   <React.StrictMode>
