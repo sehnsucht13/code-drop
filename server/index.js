@@ -59,6 +59,25 @@ app.put("/drops/:dropId", (req, res) => {
   let dropId = req.params.dropId;
 });
 
+app.get("/drops/paginate", async (req, res) => {
+  // TODO: Use try/catch here to turn params into int in case it fails.
+  const pageStart = parseInt(req.query.start || 0);
+  const pageLimit = parseInt(req.query.count || 15);
+
+  if (isNaN(pageStart) || isNaN(pageLimit)) {
+    res.status(400);
+  } else {
+    let rows = await db.Drops.findAll({
+      offset: pageStart,
+      limit: pageLimit,
+      where: { visibility: 1 },
+      order: [["updatedAt", "DESC"]],
+      attributes: ["id", "dropTitle", "dropLanguage"],
+    });
+    res.json(rows.map((row) => row.dataValues));
+  }
+});
+
 app.get("/drops/:dropId", async (req, res) => {
   //res.json("Hello from drops get");
   let dropId = req.params.dropId;
@@ -84,10 +103,6 @@ app.get("/drops/:dropId", async (req, res) => {
     dropAnnotations: annotations.map((annotation) => annotation.dataValues),
   };
   res.json(respObject).status(200);
-});
-
-app.get("/drops/paginate", (req, res) => {
-  res.json("Hello from drops get");
 });
 
 db.sequelize
