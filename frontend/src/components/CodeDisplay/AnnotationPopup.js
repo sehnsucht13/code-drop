@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 
 export default function AnnotationPopup({ index, showIcon, annotationText }) {
   const [show, setShow] = useState(false);
-  console.log(annotationText);
+  // console.log(annotationText);
   const popover = (
     <Popover
       id={index}

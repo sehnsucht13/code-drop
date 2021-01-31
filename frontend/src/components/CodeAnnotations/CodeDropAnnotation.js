@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Form, Row, Col, Button, ButtonGroup } from "react-bootstrap";
-import CommentEditor from "./CommentEditor";
+import { Form, Col, Button, ButtonGroup } from "react-bootstrap";
 import { connect } from "react-redux";
+import CommentEditor from "../CommentEditor/CommentEditor";
 import {
   set_annotation_edit_status,
   delete_annotation,
   save_annotation,
-} from "../actions/annotation_actions";
+} from "../../actions/annotation_actions";
 
 function CodeDropAnnotation({
   index,

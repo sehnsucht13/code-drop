@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Highlight, { Prism } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/github";
 import CodeLine from "./CodeLine";
-import CommentContainer from "./CommentContainer";
 
 const axios = require("axios");
 
@@ -13,7 +12,7 @@ const generateMap = (annotations) => {
       indexMap[i] = annotation;
     }
   });
-  console.log("The generated map is:", indexMap);
+  // console.log("The generated map is:", indexMap);
   return indexMap;
 };
 
@@ -47,7 +46,7 @@ export default function BlockCodeView({
           <pre className={className} style={style}>
             {tokens.map((line, i) => {
               if (i in indexMap) {
-                console.log(indexMap[i]);
+                // console.log(indexMap[i]);
                 return (
                   <CodeLine
                     line={line}

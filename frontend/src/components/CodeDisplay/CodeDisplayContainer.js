@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import NavBar from "./Navbar";
+import { Tabs, Tab } from "react-bootstrap";
+
+import NavBar from "../NavBar/Navbar";
 import BlockCodeDisplay from "./BlockCode";
 import InlineCodeDisplay from "./InlineCodeDisplay";
-import { Tabs, Tab } from "react-bootstrap";
 
 function CodeDisplayContainer({ dropID }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +20,7 @@ function CodeDisplayContainer({ dropID }) {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get(`/drops/21`)
+      .get(`/drops/22`)
       .then((response) => {
         console.log("Response from the server is", response.data);
         setCodeDrop(response.data.codeDrop);

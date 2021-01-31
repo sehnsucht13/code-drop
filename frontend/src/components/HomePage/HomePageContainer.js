@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "./Navbar";
+import NavBar from "../NavBar/Navbar";
 
-import BlockCode from "./BlockCode";
-import DropsList from "./DropsList";
+import DropsList from "../DropsList";
 import { Button } from "react-bootstrap";
-import { query } from "express";
 const axios = require("axios");
 
 const getNextPage = (setDropsCallback, setPageParams, currentPageParams) => {

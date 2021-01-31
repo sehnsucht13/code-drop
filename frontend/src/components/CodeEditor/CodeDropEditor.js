@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import { Form, Row, Col, Button } from "react-bootstrap";
-import CodeMirrorLanguages from "../helpers/CodeMirrorLanguages";
 import { connect } from "react-redux";
-import { sendDrop } from "../actions/annotation_actions";
+import { sendDrop } from "../../actions/annotation_actions";
+import CodeMirrorLanguages from "../../helpers/CodeMirrorLanguages";
 
 require("codemirror");
 require("codemirror/lib/codemirror.css");

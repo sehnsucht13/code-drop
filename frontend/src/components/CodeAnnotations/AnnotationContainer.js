@@ -1,8 +1,8 @@
 import React from "react";
 import { Button } from "react-bootstrap";
-import DropAnnotation from "./CodeDropAnnotation";
 import { connect } from "react-redux";
-import { add_annotation } from "../actions/annotation_actions";
+import { add_annotation } from "../../actions/annotation_actions";
+import DropAnnotation from "./CodeDropAnnotation";
 
 function AnnotationContainer({ annotations, addAnnotation }) {
   return (

@@ -1,7 +1,7 @@
 import React from "react";
 import { Container } from "react-bootstrap";
 import CommentDisplay from "./CommentDisplay";
-import CommentEditor from "./CommentEditor";
+import CommentEditor from "../CommentEditor";
 
 const sampleComments = [
   {

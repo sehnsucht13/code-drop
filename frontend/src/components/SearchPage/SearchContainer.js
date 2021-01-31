@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import NavBar from "./Navbar";
+import NavBar from "../NavBar/Navbar";
 import { useLocation, Link } from "react-router-dom";
 import { Container, Form, Col, Button } from "react-bootstrap";
 import queryString from "query-string";
-import CodeMirrorLanguages from "../helpers/CodeMirrorLanguages";
 import axios from "axios";
 
 import SearchBar from "./SearchBar";

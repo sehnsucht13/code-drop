@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form, Col } from "react-bootstrap";
-import CodeMirrorLanguages from "../helpers/CodeMirrorLanguages";
+import CodeMirrorLanguages from "../../helpers/CodeMirrorLanguages";
 import { Link } from "react-router-dom";
 
 function SearchBar() {
