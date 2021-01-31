@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import NavBar from "./Navbar";
+import BlockCodeDisplay from "./BlockCode";
+import InlineCodeDisplay from "./InlineCodeDisplay";
 import { Tabs, Tab } from "react-bootstrap";
 
 function CodeDisplayContainer({ dropID }) {
@@ -37,8 +39,15 @@ function CodeDisplayContainer({ dropID }) {
         <h1>Loading...</h1>
       ) : (
         <Tabs activeKey={currentTab} onSelect={handleTabClick}>
-          <Tab eventKey="block" title="Block View"></Tab>
-          <Tab eventKey="inline" title="Inline View"></Tab>
+          <Tab eventKey="block" title="Block View">
+            <BlockCodeDisplay {...codeDrop} annotations={codeDropAnnotations} />
+          </Tab>
+          <Tab eventKey="inline" title="Inline View">
+            <InlineCodeDisplay
+              {...codeDrop}
+              annotations={codeDropAnnotations}
+            />
+          </Tab>
         </Tabs>
       )}
     </div>
