@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 import { Controlled as CodeMirror } from "react-codemirror2";
 import { set_editor_instance } from "../../actions/editor_actions";
+import { set_drop_text } from "../../actions/new_drop_actions";
 require("codemirror");
 require("codemirror/lib/codemirror.css");
 
@@ -124,10 +125,20 @@ export const DropEditor = ({
   tabSize,
   fontSize,
   keyMap,
-  shouldSend,
   set_editor_instance,
+  set_drop_text,
 }) => {
   const [editorContent, setEditorContent] = useState("");
+
+  const handleEditorBlur = (editor, event) => {
+    set_drop_text(editor.getValue());
+  };
+
+  const handleOnChange = (editor, data, value) => {
+    setEditorContent(value);
+  };
+
+  const handleMountEvent = (instance) => set_editor_instance(instance);
 
   return (
     <CodeMirror
@@ -135,13 +146,9 @@ export const DropEditor = ({
       onBeforeChange={(editor, data, value) => {
         setEditorContent(value);
       }}
-      onChange={(editor, data, value) => {
-        //console.log(value);
-      }}
-      editorDidMount={(instance) => {
-        console.log("EDITOR MOUNTED");
-        set_editor_instance(instance);
-      }}
+      onChange={handleOnChange}
+      onBlur={handleEditorBlur}
+      editorDidMount={handleMountEvent}
       options={{
         mode: language,
         theme: theme,
@@ -169,6 +176,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = {
   set_editor_instance,
+  set_drop_text,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DropEditor);
