@@ -102,7 +102,7 @@ function EditorSettingsModal({
 }
 
 const mapStateToProps = (state, ownProps) => {
-  console.log("State from modal is", state);
+  // console.log("State from modal is", state);
   return {
     theme: state.editor.theme,
     wrap: state.editor.line_wrap,
