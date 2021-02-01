@@ -6,16 +6,17 @@ import CodeDisplaycontainer from "./components/CodeDisplay/CodeDisplayContainer"
 import ErrorContainer from "./components/Error/ErrorContainer";
 import SearchContainer from "./components/SearchPage/SearchContainer";
 import NewDropContainer from "./components/CodeEditor/NewDropContainer";
+import LoadingPage from "./components/Loading/LoadingPage";
 
 function App() {
   return (
-    <div className="App">
+    <div className="App" style={{ height: "100%" }}>
       <Switch>
         <Route path="/" component={HomePageContainer} exact />
         <Route path="/show" component={CodeDisplaycontainer} />
-        <Route path="/new" component={NewDropContainer} />
+        <Route path="/create" component={NewDropContainer} />
         <Route path="/search" component={SearchContainer} />
-        <Route path="/profile" component={ErrorContainer} />
+        <Route path="/profile" component={LoadingPage} />
         <Route component={ErrorContainer} />
       </Switch>
     </div>
