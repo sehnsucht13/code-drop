@@ -58,17 +58,25 @@ export function uploadBegin() {
   };
 }
 
-export function sendDrop(title, language, text, visibility) {
+export function sendDrop() {
   return (dispatch, getState) => {
+    const annotationArray = getState().annotationReducer.annotations;
+    const dropText = getState().newDrop.text;
+    const dropLang = getState().newDrop.language;
+    const dropTitle = getState().newDrop.title;
+    const dropDesc = getState().newDrop.description;
+    const dropVisibility = getState().newDrop.visibility;
+    console.log("About to send state", annotationArray, getState().newDrop);
+
+    // TODO: Check for any errors and refuse to send here!
     dispatch(uploadBegin());
-    let annotationArray = getState().annotationReducer.annotations;
-    console.log("Annotations from action creator", annotationArray);
     axios
       .post("/drops", {
-        title: title,
-        lang: language,
-        text: text,
-        visibility: visibility,
+        title: dropTitle,
+        lang: dropLang,
+        text: dropText,
+        description: dropDesc,
+        visibility: dropVisibility,
         annotations: annotationArray,
       })
       .then((response) => {

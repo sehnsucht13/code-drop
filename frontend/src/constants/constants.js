@@ -20,3 +20,4 @@ export const SET_DROP_TITLE = "SET_DROP_TITLE";
 export const SET_DROP_VISIBLITY = "SET_DROP_VISIBILITY";
 export const SET_DROP_DESC = "SET_DROP_DESC";
 export const SET_DROP_LANG = "SET_DROP_LANG";
+export const SET_DROP_TEXT = "SET_DROP_TEXT";

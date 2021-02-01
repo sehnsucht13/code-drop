@@ -3,6 +3,7 @@ import {
   SET_DROP_LANG,
   SET_DROP_TITLE,
   SET_DROP_VISIBLITY,
+  SET_DROP_TEXT,
 } from "../constants/constants";
 
 export const set_drop_visibility = (payload) => ({
@@ -23,4 +24,9 @@ export const set_drop_description = (payload) => ({
 export const set_drop_language = (payload) => ({
   type: SET_DROP_LANG,
   payload: { language: payload },
+});
+
+export const set_drop_text = (payload) => ({
+  type: SET_DROP_TEXT,
+  payload: { text: payload },
 });

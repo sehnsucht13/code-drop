@@ -3,6 +3,7 @@ import {
   SET_DROP_LANG,
   SET_DROP_TITLE,
   SET_DROP_VISIBLITY,
+  SET_DROP_TEXT,
 } from "../constants/constants";
 
 const initialState = {
@@ -10,6 +11,7 @@ const initialState = {
   description: "",
   visibility: true,
   language: null,
+  text: "",
 };
 
 const new_drop_reducer = (state = initialState, { type, payload }) => {
@@ -21,6 +23,9 @@ const new_drop_reducer = (state = initialState, { type, payload }) => {
     case SET_DROP_TITLE:
       return { ...state, ...payload };
     case SET_DROP_VISIBLITY:
+      return { ...state, ...payload };
+    case SET_DROP_TEXT:
+      console.log("Got a drop text action", payload);
       return { ...state, ...payload };
     default:
       return state;
