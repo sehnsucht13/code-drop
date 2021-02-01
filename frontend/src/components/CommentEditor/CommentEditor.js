@@ -1,20 +1,12 @@
 import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  InputGroup,
-  FormControl,
-  Tabs,
-  Tab,
-} from "react-bootstrap";
-import EditorToolbar from "./CommentEditorToolbar";
+import { InputGroup, FormControl, Tabs, Tab } from "react-bootstrap";
 import ReactMarkdown from "react-markdown";
 
-export default function CommentEditor({ text, setText }) {
+export default function CommentEditor({ value, onChange, onBlur }) {
   const [currentTab, setcurrentTab] = useState("edit");
 
   const handleTextInput = (ev) => {
-    setText(ev.target.value);
+    onChange(ev.target.value);
   };
 
   return (
@@ -25,24 +17,17 @@ export default function CommentEditor({ text, setText }) {
       }}
     >
       <Tab eventKey="edit" title="Edit">
-        <EditorToolbar
-          currentText={text}
-          setInputTextFunc={(val) => {
-            setText(val);
-          }}
-        />
-        <InputGroup>
-          <FormControl
-            as="textarea"
-            rows={3}
-            value={text}
-            onChange={handleTextInput}
-            style={{ width: "80%" }}
-          ></FormControl>
-        </InputGroup>
+        <FormControl
+          as="textarea"
+          rows={5}
+          value={value}
+          onChange={handleTextInput}
+          onBlur={onBlur}
+          style={{ width: "100%", marginTop: "10px" }}
+        ></FormControl>
       </Tab>
       <Tab eventKey="preview" title="Preview">
-        <ReactMarkdown>{text}</ReactMarkdown>
+        <ReactMarkdown>{value}</ReactMarkdown>
       </Tab>
     </Tabs>
   );
