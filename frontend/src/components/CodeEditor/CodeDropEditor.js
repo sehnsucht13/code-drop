@@ -4,6 +4,7 @@ import { Form, Row, Col, Button } from "react-bootstrap";
 import { connect } from "react-redux";
 import { sendDrop } from "../../actions/annotation_actions";
 import CodeMirrorLanguages from "../../helpers/CodeMirrorLanguages";
+import { BsGear } from "react-icons/bs";
 
 require("codemirror");
 require("codemirror/lib/codemirror.css");
@@ -131,16 +132,25 @@ function CodeDropEditor({ uploadDrop }) {
       </Row>
 
       <Form>
-        <Form.Row>
-          <Form.Group as={Col}>
-            <Form.Label>Drop Name</Form.Label>
-            <Form.Control
-              placeholder="Code Drop Name"
-              value={title}
-              onChange={handleDropNameChange}
-            ></Form.Control>
-          </Form.Group>
-          <Form.Group as={Col}>
+        <Form.Group>
+          <Form.Label srOnly>Code-Drop Name:</Form.Label>
+          <Form.Control
+            placeholder="Name..."
+            value={title}
+            onChange={handleDropNameChange}
+          ></Form.Control>
+        </Form.Group>
+        <Form.Group>
+          <Form.Label srOnly>Description:</Form.Label>
+          <Form.Control
+            placeholder="Description..."
+            value={title}
+            onChange={handleDropNameChange}
+          ></Form.Control>
+        </Form.Group>
+
+        <Form.Group as={Row}>
+          <Col md={6}>
             <Form.Label>Language</Form.Label>
             <Form.Control
               as="select"
@@ -151,8 +161,8 @@ function CodeDropEditor({ uploadDrop }) {
                 return <option value={key}>{key}</option>;
               })}
             </Form.Control>
-          </Form.Group>
-          <Form.Group as={Col}>
+          </Col>
+          <Col md={5}>
             <Form.Label>Visibility</Form.Label>
             <Form.Control
               as="select"
@@ -162,8 +172,13 @@ function CodeDropEditor({ uploadDrop }) {
               <option value={true}>Public</option>
               <option value={false}>Private</option>
             </Form.Control>
-          </Form.Group>
-        </Form.Row>
+          </Col>
+          <Col md={1} className="d-flex justify-content-end align-items-end">
+            <Button>
+              <BsGear size={25} />
+            </Button>
+          </Col>
+        </Form.Group>
 
         <hr style={{ height: 2 }} />
 
