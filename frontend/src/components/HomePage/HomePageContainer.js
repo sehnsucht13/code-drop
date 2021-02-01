@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import NavBar from "../NavBar/Navbar";
 
 import DropsList from "../DropsList";
-import { Button } from "react-bootstrap";
+import { Button, Row, Container } from "react-bootstrap";
 const axios = require("axios");
 
 const getNextPage = (setDropsCallback, setPageParams, currentPageParams) => {
@@ -24,11 +24,15 @@ const getNextPage = (setDropsCallback, setPageParams, currentPageParams) => {
 
 function HomePageContainer() {
   const [drops, setDrops] = useState([]);
+  const [morePagesAvailable, setMorePagesAvailable] = useState(true);
   const [queryParams, setQueryParams] = useState({ start: 0, count: 15 });
 
   const appendDrops = (newDrops) => {
-    console.log("Appending drops", newDrops);
-    setDrops(drops.concat(newDrops));
+    if (newDrops.length === 0) {
+      setMorePagesAvailable(false);
+    } else {
+      setDrops(drops.concat(newDrops));
+    }
   };
   useEffect(() => {
     axios
@@ -36,19 +40,32 @@ function HomePageContainer() {
         params: { start: queryParams.start, count: queryParams.count },
       })
       .then((result) => {
-        console.log("Got the drops");
+        console.log("Got the drops", result.data);
+        if (result.data.length === 0) {
+          setMorePagesAvailable(false);
+        }
         setDrops(result.data);
       });
   }, []);
   return (
     <div>
       <NavBar />
-      <DropsList drops={drops} />
-      <Button
-        onClick={() => getNextPage(appendDrops, setQueryParams, queryParams)}
-      >
-        Show More
-      </Button>
+      <Container fluid>
+        <DropsList drops={drops} />
+        <Row className="justify-content-center">
+          {morePagesAvailable ? (
+            <Button
+              onClick={() =>
+                getNextPage(appendDrops, setQueryParams, queryParams)
+              }
+            >
+              Show More
+            </Button>
+          ) : (
+            <p>No more drops available!</p>
+          )}
+        </Row>
+      </Container>
     </div>
   );
 }
