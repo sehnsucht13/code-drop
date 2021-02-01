@@ -6,11 +6,18 @@ import EditorSettingsModal from "./EditorSettingsModal";
 import DropEditor from "./DropEditor";
 import DropInput from "./DropInput";
 
-function CodeDropEditor({ uploadDrop }) {
+function CodeDropEditor({ sendDrop }) {
   return (
     <div>
       <Row className="justify-content-end">
-        <Button>Publish</Button>
+        <Button
+          onClick={() => {
+            console.log("SUBMIT BUTTON CLICKED");
+            sendDrop();
+          }}
+        >
+          Publish
+        </Button>
         <Button>Discard</Button>
       </Row>
       <hr style={{ height: 2 }} />
@@ -24,11 +31,8 @@ function CodeDropEditor({ uploadDrop }) {
 
 const mapStateToProps = (state, ownProps) => {};
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    uploadDrop: (dropTitle, dropLanguage, dropText, visibility) =>
-      dispatch(sendDrop(dropTitle, dropLanguage, dropText, visibility)),
-  };
+const mapDispatchToProps = {
+  sendDrop,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CodeDropEditor);
