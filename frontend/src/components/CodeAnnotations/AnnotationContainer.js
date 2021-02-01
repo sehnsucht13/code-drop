@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "react-bootstrap";
+import { Button, Row } from "react-bootstrap";
 import { connect } from "react-redux";
 import { add_annotation } from "../../actions/annotation_actions";
 import DropAnnotation from "./CodeDropAnnotation";
@@ -11,7 +11,9 @@ function AnnotationContainer({ annotations, addAnnotation }) {
         <DropAnnotation index={index} />
       ))}
       <hr style={{ height: 2 }} />
-      <Button onClick={addAnnotation}>New Annotation</Button>
+      <Row className="justify-content-center">
+        <Button onClick={addAnnotation}>Add Annotation</Button>
+      </Row>
     </div>
   );
 }
