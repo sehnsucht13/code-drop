@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Form, Row, Col, Button } from "react-bootstrap";
+import { Form, FormControl, Row, Col, Button } from "react-bootstrap";
 import { BsGear } from "react-icons/bs";
 import CodeMirrorLanguages from "../../helpers/CodeMirrorLanguages";
 import EditorSettingsModal from "./EditorSettingsModal";
@@ -23,23 +23,24 @@ export const DropInput = ({
 }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [isTitleinValid, setIsTitleInvalid] = useState(false);
 
   const [showEditorOptions, setShowEditorOptions] = useState(false);
 
   const handleDropTitleChange = (ev) => setTitle(ev.target.value);
   const handleDescriptionChange = (ev) => setDescription(ev.target.value);
 
-  const handleDropTitleBlur = () => set_drop_title(title);
+  const handleDropTitleBlur = () => {
+    if (title.length === 0) {
+      setIsTitleInvalid(true);
+    }
+    set_drop_title(title);
+  };
   const handleDescriptionBlur = (ev) => set_drop_description(description);
 
   const handleVisibility = (ev) => set_drop_visibility(ev.target.value);
 
   const handleLanguageSelect = (ev) => {
-    // console.log(
-    //   "Language selected",
-    //   ev.target.value,
-    //   CodeMirrorLanguages[ev.target.value]
-    // );
     set_editor_language(CodeMirrorLanguages[ev.target.value]);
     set_drop_language(ev.target.value);
   };
@@ -59,7 +60,12 @@ export const DropInput = ({
             value={title}
             onChange={handleDropTitleChange}
             onBlur={handleDropTitleBlur}
+            isInvalid={isTitleinValid}
+            maxLength="200"
           ></Form.Control>
+          <FormControl.Feedback type="invalid">
+            Drop title cannot be empty!
+          </FormControl.Feedback>
         </Form.Group>
         <Form.Group>
           <Form.Label srOnly>Description:</Form.Label>
@@ -68,6 +74,7 @@ export const DropInput = ({
             value={description}
             onChange={handleDescriptionChange}
             onBlur={handleDescriptionBlur}
+            maxLength="300"
           ></Form.Control>
         </Form.Group>
 
@@ -107,7 +114,6 @@ export const DropInput = ({
 };
 
 const mapStateToProps = (state, ownProps) => {
-  console.log("STATE from INPUTS IS ", state);
   return {
     visibility: state.newDrop.visibility,
     language: state.newDrop.language,
