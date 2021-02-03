@@ -55,15 +55,16 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/login", (req, res, next) => {
+  console.log("Received a login request with", req.body);
   passport.authenticate("local", (err, user, info) => {
     if (err) throw err;
-    if (!user) res.send("No User Exists").status(401);
+    if (!user) res.json({ msg: "No User Exists" }).status(401);
     else {
       req.logIn(user, (err) => {
         if (err) {
           console.log("There was an error loggin in user", err);
         }
-        res.send("Successfully Authenticated").status(200);
+        res.redirect("/");
         console.log("User logged in successfully", req.user);
       });
     }

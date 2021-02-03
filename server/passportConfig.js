@@ -4,7 +4,6 @@ const bcrypt = require("bcryptjs");
 const localStrategy = require("passport-local").Strategy;
 
 module.exports = function (passport) {
-  console.log("db object is", db);
   passport.use(
     new localStrategy(async (username, password, done) => {
       let user = await db.Users.findOne({ where: { username: username } });
@@ -29,14 +28,16 @@ module.exports = function (passport) {
   passport.serializeUser((user, cb) => {
     cb(null, user.dataValues.id);
   });
-  passport.deserializeUser((id, cb) => {
+  passport.deserializeUser(async (id, cb) => {
     console.log("Deserializing", id);
-    db.Users.findOne({ where: { id: id } }, (err, user) => {
-      console.log("from deserialize, ", err, user);
+    try {
+      let user = await db.Users.findOne({ where: { id: id } });
       const userInformation = {
         username: user && user.username,
       };
-      cb(err, userInformation);
-    });
+      cb(null, userInformation);
+    } catch (err) {
+      cb(err, null);
+    }
   });
 };
