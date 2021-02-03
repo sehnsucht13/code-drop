@@ -1,7 +1,13 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-var cors = require("cors");
+const cors = require("cors");
+const passport = require("passport");
+const passportLocal = require("passport-local").Strategy;
+const cookieParser = require("cookie-parser");
+const bcrypt = require("bcryptjs");
+const session = require("express-session");
+
 const db = require("./models");
 
 let app = express();
@@ -12,6 +18,43 @@ app.use(bodyParser.json());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+app.use(cookieParser(process.env.SESSION_SECRET));
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.post("/register", async (req, res) => {
+  let password = req.body.password;
+  let username = req.body.username;
+  if (!password || !username) {
+    res.json({ msg: "Password or Username are not provided" }).status(401);
+  }
+  let user = await db.Users.findOne({
+    where: {
+      username: username,
+    },
+  });
+  if (user !== null) {
+    res.json({ msg: "This username is already taken!" });
+    return;
+  }
+  const hashedPassword = await bcrypt.hash(password, 10);
+  let newUser = db.Users.create({
+    username: username,
+    password: hashedPassword,
+  });
+  console.log("The new user created is", newUser);
+  res.json({ msg: "User created successfully!" }).status(200);
+});
+
+app.post("/login");
+
 app.get("/", function (req, res) {
   res.json("Hello World from the server!");
 });
@@ -21,6 +64,7 @@ app.post("/drops", async (req, res) => {
   let lang = req.body.lang;
   let visibility = req.body.visibility;
   let textBody = req.body.text;
+  let description = req.body.description;
   let annotations = req.body.annotations;
   console.log(
     "SERVER RECEIVED",
@@ -28,14 +72,16 @@ app.post("/drops", async (req, res) => {
     lang,
     visibility,
     textBody,
+    description,
     annotations
   );
 
   let dropRecordInfo = await db.Drops.create({
-    dropTitle: title,
-    dropLanguage: lang,
+    title: title,
+    lang: lang,
     visibility: visibility,
-    dropText: textBody,
+    text: textBody,
+    description: description,
   });
 
   let newDropId = dropRecordInfo.dataValues.id;
@@ -72,17 +118,23 @@ app.get("/drops/paginate", async (req, res) => {
       limit: pageLimit,
       where: { visibility: 1 },
       order: [["updatedAt", "DESC"]],
-      attributes: ["id", "dropTitle", "dropLanguage"],
+      attributes: ["id", "title", "description", "lang", "updatedAt"],
     });
+    console.log("Rows from paginate are", rows);
     res.json(rows.map((row) => row.dataValues));
   }
+});
+
+app.get("/drops/search", async (req, res) => {
+  console.log(req.query);
+  res.json({ status: "found" }).status(200);
 });
 
 app.get("/drops/:dropId", async (req, res) => {
   //res.json("Hello from drops get");
   let dropId = req.params.dropId;
   let dropRecord = await db.Drops.findByPk(dropId, {
-    attributes: ["id", "dropTitle", "dropLanguage", "visibility", "dropText"],
+    attributes: ["id", "title", "lang", "visibility", "text", "description"],
   });
   console.log("Retrieve a record", dropRecord);
   let annotations = await db.DropAnnotations.findAll({
