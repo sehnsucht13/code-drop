@@ -54,21 +54,38 @@ app.post("/register", async (req, res) => {
   res.json({ msg: "User created successfully!" }).status(200);
 });
 
-app.post("/login", (req, res, next) => {
-  console.log("Received a login request with", req.body);
-  passport.authenticate("local", (err, user, info) => {
-    if (err) throw err;
-    if (!user) res.json({ msg: "No User Exists" }).status(401);
-    else {
-      req.logIn(user, (err) => {
-        if (err) {
-          console.log("There was an error loggin in user", err);
-        }
-        res.redirect("/");
-        console.log("User logged in successfully", req.user);
-      });
-    }
-  })(req, res, next);
+app.post("/login", passport.authenticate("local"), (req, res) => {
+  console.log("Successful auth with", req.body);
+  res.redirect("/");
+  // console.log("Received a login request with", req.body);
+  // passport.authenticate("local", (err, user, info) => {
+  //   if (err) throw err;
+  //   if (!user) {
+  //     console.log("User does not exist");
+  //     res.status(200).json({ msg: "User does not exist" });
+  //   } else {
+  //     req.logIn(user, (err) => {
+  //       if (err) {
+  //         console.log("Error when loggin in is", err);
+  //         res.status(401).end();
+  //       } else {
+  //         console.log("User logged in successfully", req.user);
+  //         res.redirect("/");
+  //         //res.status(200).end()
+  //       }
+  //     });
+  //   }
+  // })(req, res, next);
+});
+
+app.get("/user", function (req, res) {
+  console.log("Got the user route", req.user);
+  res.send(req.user);
+});
+
+app.get("/logout", function (req, res) {
+  console.log("Got the logout route", req.user);
+  req.logout();
 });
 
 app.get("/", function (req, res) {

@@ -5,11 +5,14 @@ const localStrategy = require("passport-local").Strategy;
 
 module.exports = function (passport) {
   passport.use(
-    new localStrategy(async (username, password, done) => {
+    new localStrategy(async function (username, password, done) {
+      console.log("CALLED THE LOCAL STRAT");
       let user = await db.Users.findOne({ where: { username: username } });
+      console.log("LOCAL START USER", user);
 
       if (user === null) {
-        return done(null, false);
+        console.log("User not found");
+        return done("User not logged in", false);
       }
 
       bcrypt.compare(password, user.dataValues.password, (err, result) => {
@@ -17,8 +20,10 @@ module.exports = function (passport) {
           console.log("error loggin in user");
         }
         if (result === true) {
+          console.log("Bcrypt compare is true");
           return done(null, user);
         } else {
+          console.log("Bcrypt compare is false");
           return done(null, false);
         }
       });
