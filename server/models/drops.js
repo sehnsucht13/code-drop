@@ -1,11 +1,11 @@
 module.exports = (sequelize, Sequelize) => {
   const Drops = sequelize.define("drops", {
-    dropTitle: {
+    title: {
       type: Sequelize.STRING(100),
       allowNull: false,
       notEmpty: true,
     },
-    dropLanguage: {
+    lang: {
       type: Sequelize.STRING,
       allowNull: false,
       notEmpty: true,
@@ -14,7 +14,12 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.BOOLEAN,
       defaultValue: true,
     },
-    dropText: {
+    text: {
+      type: Sequelize.TEXT,
+      notEmpty: true,
+      allowNull: false,
+    },
+    description: {
       type: Sequelize.TEXT,
       notEmpty: true,
       allowNull: false,
