@@ -28,6 +28,7 @@ app.use(
 app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(passport.initialize());
 app.use(passport.session());
+require("./passportConfig")(passport);
 
 app.post("/register", async (req, res) => {
   let password = req.body.password;
@@ -53,7 +54,21 @@ app.post("/register", async (req, res) => {
   res.json({ msg: "User created successfully!" }).status(200);
 });
 
-app.post("/login");
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) throw err;
+    if (!user) res.send("No User Exists");
+    else {
+      req.logIn(user, (err) => {
+        if (err) {
+          console.log("There was an error loggin in user", err);
+        }
+        res.send("Successfully Authenticated");
+        console.log("User logged in successfully", req.user);
+      });
+    }
+  })(req, res, next);
+});
 
 app.get("/", function (req, res) {
   res.json("Hello World from the server!");
