@@ -12,7 +12,24 @@ const axios = require("axios");
 function NavigationBar({ isAuth, hasChecked, set_auth, checked_auth, logout }) {
   const [searchInput, setSearchInput] = useState("");
 
-  // Check if the user has an ongoing valid session.
+  // Run before mounting
+  useEffect(() => {
+    if (!hasChecked) {
+      axios
+        .get("/user")
+        .then((response) => {
+          checked_auth(true);
+          if (response.data === "") {
+            set_auth(false, undefined);
+          } else {
+            set_auth(true, response.data.username);
+          }
+        })
+        .catch();
+    }
+  }, []);
+
+  // Change state if user logs out
   useEffect(() => {
     if (!hasChecked) {
       axios
@@ -66,15 +83,11 @@ function NavigationBar({ isAuth, hasChecked, set_auth, checked_auth, logout }) {
               Profile
             </Nav.Link>
           )}
-
+        </Nav>
+        <Nav className="justify-content-end">
           {isAuth && (
             <Nav.Link
-              onSelect={() => {
-                console.log("Logged out click");
-                logout();
-              }}
               onClick={() => {
-                console.log("Logged out click");
                 logout();
               }}
             >
