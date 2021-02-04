@@ -3,9 +3,16 @@ import { connect } from "react-redux";
 import NavBar from "../NavBar/Navbar";
 import { Container, Form, Button, Row } from "react-bootstrap";
 import { useHistory, Link } from "react-router-dom";
+
+import { set_auth, checked_auth } from "../../actions/auth_actions";
 const axios = require("axios");
 
-export const LoginContainer = (props) => {
+export const LoginContainer = ({
+  isAuth,
+  hasChecked,
+  checked_auth,
+  set_auth,
+}) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [isValidated, setIsValidated] = useState(false);
@@ -33,6 +40,11 @@ export const LoginContainer = (props) => {
           if (response.status === 200) {
             console.log("redirect");
             setLoginError(false);
+            // checked_auth(false);
+            if (isAuth) {
+              set_auth(false, undefined);
+            }
+            checked_auth(false);
             history.push("/");
           }
         })
@@ -103,8 +115,14 @@ export const LoginContainer = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({});
+const mapStateToProps = (state) => ({
+  isAuth: state.auth.isAuth,
+  hasChecked: state.auth.hasCheckedAuth,
+});
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = {
+  checked_auth,
+  set_auth,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginContainer);
