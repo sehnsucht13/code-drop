@@ -12,12 +12,23 @@ const sequelize = new Sequelize(
   }
 );
 
+const Users = require("./user")(sequelize, Sequelize);
 const Drops = require("./drops")(sequelize, Sequelize);
 const DropAnnotations = require("./dropannotations")(sequelize, Sequelize);
-const Users = require("./user")(sequelize, Sequelize);
+const Comments = require("./comment")(sequelize, Sequelize);
+const Stars = require("./stars")(sequelize, Sequelize);
 
 Drops.hasMany(DropAnnotations);
-// Drops.hasOne(Users);
+Drops.belongsTo(Users);
+
+DropAnnotations.belongsTo(Users);
+DropAnnotations.belongsTo(Drops);
+
+Comments.belongsTo(Users);
+Comments.belongsTo(Drops);
+
+Stars.belongsTo(Users);
+Stars.belongsTo(Drops);
 
 module.exports = {
   sequelize: sequelize,
@@ -25,4 +36,6 @@ module.exports = {
   Drops: Drops,
   DropAnnotations: DropAnnotations,
   Users: Users,
+  Comments: Comments,
+  Stars: Stars,
 };
