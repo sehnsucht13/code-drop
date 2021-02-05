@@ -31,6 +31,7 @@ module.exports = function (passport) {
   );
 
   passport.serializeUser((user, cb) => {
+    console.log("Serializing user", user.dataValues.id);
     cb(null, user.dataValues.id);
   });
   passport.deserializeUser(async (id, cb) => {
@@ -39,6 +40,7 @@ module.exports = function (passport) {
       let user = await db.Users.findOne({ where: { id: id } });
       const userInformation = {
         username: user && user.username,
+        uid: user && user.id,
       };
       cb(null, userInformation);
     } catch (err) {
