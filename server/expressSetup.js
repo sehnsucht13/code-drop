@@ -44,4 +44,4 @@ function startServer() {
     });
 }
 
-module.exports = { app: app, startServer: startServer };
+module.exports = { app: app, db: db, startServer: startServer };
