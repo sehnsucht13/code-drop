@@ -1,5 +1,13 @@
-import { Card, Row, Button } from "react-bootstrap";
+import {
+  Card,
+  Row,
+  Button,
+  InputGroup,
+  FormControl,
+  ButtonGroup,
+} from "react-bootstrap";
 import { BiStar, BiGitRepoForked } from "react-icons/bi";
+import { Link } from "react-router-dom";
 
 import React from "react";
 
@@ -11,35 +19,52 @@ function DropsList({ drops }) {
   return (
     <div className="code-drops-display">
       {drops.map((drop) => (
-        <a
-          style={{ cursor: "pointer" }}
-          onClick={() => console.log("Hello world")}
-        >
-          <Card key={drop.id} style={{ marginBottom: "1%" }}>
-            <Card.Body>
-              <Row className="justify-content-end">
-                <Button style={{ marginRight: "5px" }}>Star</Button>
+        <Card key={drop.id} style={{ marginTop: "1rem", paddingBottom: "0" }}>
+          <Card.Body>
+            <Row
+              className="justify-content-end"
+              style={{ marginBottom: "0.5rem" }}
+            >
+              <ButtonGroup
+                style={{
+                  paddingRight: "0.5rem",
+                }}
+              >
+                <Button>Star</Button>
+                <Button
+                  variant="light"
+                  disabled
+                  style={{ paddingLeft: "0.5rem", marginLeft: "0" }}
+                >
+                  44
+                </Button>
+              </ButtonGroup>
+              <ButtonGroup>
                 <Button>Fork</Button>
-              </Row>
-              <Card.Title>{drop.title}</Card.Title>
-              <Card.Subtitle className="mb-1 ">
+                <Button
+                  variant="light"
+                  disabled
+                  style={{ paddingLeft: "0.5rem", marginLeft: "0" }}
+                >
+                  44
+                </Button>
+              </ButtonGroup>
+            </Row>
+            <Link
+              to={{ pathname: "/view", search: `?id=${drop.id}` }}
+              style={{ textDecoration: "none" }}
+            >
+              <Card.Title className="mb-3">{drop.title}</Card.Title>
+              <Card.Subtitle className="">
                 {drop.description}
-              </Card.Subtitle>
-              <Card.Text className="d-flex justify-content-between">
                 <div className="mb-1 text-muted">{drop.lang}</div>
-                <div className="mb-1 text-muted">
-                  <span>Stars: 44 </span>
-                  <span>Forks: 33</span>
-                </div>
-              </Card.Text>
-              <Row>
                 <div className="mb-1 text-muted">
                   Last Activity: {drop.updatedAt}
                 </div>
-              </Row>
-            </Card.Body>
-          </Card>
-        </a>
+              </Card.Subtitle>
+            </Link>
+          </Card.Body>
+        </Card>
       ))}
     </div>
   );
