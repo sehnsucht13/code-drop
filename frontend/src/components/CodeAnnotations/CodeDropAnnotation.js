@@ -24,56 +24,98 @@ function CodeDropAnnotation({
   const [commentText, setCommentText] = useState(text);
 
   const [startLineWarningMsg, setStartLineWarningMsg] = useState(undefined);
+  const [isStartLineInvalid, setIsStartLineInvalid] = useState(false);
+
   const [endLineWarningMsg, setEndLineWarningMsg] = useState(undefined);
+  const [isEndLineInvalid, setIsEndLineInvalid] = useState(false);
 
-  const validateStartIndex = (val) => {
-    if (isNaN(val)) {
-      setStartLineWarningMsg("Start index must be an integer!");
-    } else if (val > editorInstance.lineCount()) {
-      // Case of input referencing a line number that does not exist
-      setStartLineWarningMsg(
-        "Start index cannot exceed the total number of lines of code!"
-      );
-    } else if (val > endLineNum) {
-      setStartLineWarningMsg("Start Index cannot exceed the End Index.");
-    } else {
-      setStartLineWarningMsg(undefined);
+  // If start not a number
+  // If start more than end
+  // If start line does not exist
+  // If start line less than 0
+  // If start line is more than max line in editor
+
+  // If end not a number
+  // If end line is more than max
+  const validateIndexValues = (startLineNum, endLineNum) => {
+    let startLineWarnings = [];
+    let endLineWarnings = [];
+
+    // TODO: Refactor this. There has to be abetter way of verifying all of these conditions
+    if (startLineNum.length !== 0 && isNaN(parseInt(startLineNum))) {
+      startLineWarnings.push("Start line index must be a number!");
     }
-  };
 
-  const validateEndIndex = (val) => {
-    if (isNaN(val)) {
-      setEndLineWarningMsg("End index must be an integer!");
-    } else if (val > editorInstance.lineCount()) {
-      // Case of input referencing a line number that does not exist
-      setEndLineWarningMsg(
-        "End index cannot exceed the total number of lines of code!"
+    if (endLineNum.length !== 0 && isNaN(parseInt(endLineNum))) {
+      endLineWarnings.push("End line index must be a number!");
+    }
+
+    if (parseInt(startLineNum) < 0) {
+      startLineWarnings.push("Start line index cannot be less than 0");
+    }
+
+    if (parseInt(startLineNum) > editorInstance.lineCount()) {
+      startLineWarnings.push(
+        "Start line index cannot exceed the maximum number editor lines!"
       );
-    } else if (val < startLineNum) {
-      setEndLineWarningMsg("End Index cannot be smaller than the Start Index");
+    }
+
+    if (parseInt(startLineNum) < 0) {
+      startLineWarnings.push("Start line index cannot be less than 0!");
+    }
+
+    if (parseInt(endLineNum) > editorInstance.lineCount()) {
+      endLineWarnings.push(
+        "End line index cannot exceed the maximum number editor lines!"
+      );
+    }
+
+    if (parseInt(startLineNum) > parseInt(endLineNum)) {
+      startLineWarnings.push(
+        "Start line index must not be greater than end line index!"
+      );
+      endLineWarnings.push(
+        "End line index must not be smaller than start line index!"
+      );
+    }
+
+    if (startLineWarnings.length !== 0) {
+      setStartLineWarningMsg(startLineWarnings[0]);
+      setIsStartLineInvalid(true);
     } else {
-      setEndLineWarningMsg(undefined);
+      console.log("start line valid");
+      setIsStartLineInvalid(false);
+      setStartLineWarningMsg("");
+    }
+    console.log("Endline warnings", endLineWarnings);
+    console.log(endLineWarnings);
+    if (endLineWarnings.length !== 0) {
+      setEndLineWarningMsg(endLineWarnings[0]);
+      setIsEndLineInvalid(true);
+    } else {
+      console.log("end line valid");
+      setIsEndLineInvalid(false);
+      setEndLineWarningMsg("");
     }
   };
 
   const handleStartLineNumChange = (ev) => {
-    console.log("Number of lines in editor are:", editorInstance.lineCount());
-    validateStartIndex(parseInt(ev.target.value));
+    validateIndexValues(ev.target.value, endLineNum);
     setStartLineNum(ev.target.value);
   };
 
   const handleEndLineNumChange = (ev) => {
-    validateEndIndex(parseInt(ev.target.value));
+    validateIndexValues(startLineNum, ev.target.value);
     setendLineNum(ev.target.value);
   };
 
   const handleStartLineBlur = () => {
-    validateStartIndex(parseInt(startLineNum));
+    validateIndexValues(startLineNum, endLineNum);
     saveAnnotationState(startLineNum, endLineNum, commentText, index);
   };
 
   const handleEndLineBlur = () => {
-    validateEndIndex(parseInt(endLineNum));
+    validateIndexValues(startLineNum, endLineNum);
     saveAnnotationState(startLineNum, endLineNum, commentText, index);
   };
 
@@ -99,10 +141,8 @@ function CodeDropAnnotation({
               value={startLineNum}
               onChange={handleStartLineNumChange}
               onBlur={handleStartLineBlur}
-              type="number"
-              as="input"
-              min="1"
-              isInvalid={startLineWarningMsg ? true : false}
+              type="text"
+              isInvalid={isStartLineInvalid}
             ></Form.Control>
             <FormControl.Feedback type="invalid">
               {startLineWarningMsg}
@@ -114,10 +154,8 @@ function CodeDropAnnotation({
               value={endLineNum}
               onChange={handleEndLineNumChange}
               onBlur={handleEndLineBlur}
-              type="number"
-              as="input"
-              min="1"
-              isInvalid={endLineWarningMsg ? true : false}
+              type="text"
+              isInvalid={isEndLineInvalid}
             ></Form.Control>
             <FormControl.Feedback type="invalid">
               {endLineWarningMsg}
