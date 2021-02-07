@@ -40,7 +40,7 @@ module.exports = (passportInstance) => {
 
   router.get("/session", function (req, res) {
     // console.log("Got the session route", req.user);
-    res.send(req.user).status(200);
+    res.status(200).send(req.user);
   });
 
   router.get("/logout", function (req, res) {
