@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import {
   set_editor_font_size,
@@ -7,7 +7,7 @@ import {
   set_editor_tab_size,
   set_editor_theme,
 } from "../../actions/editor_actions";
-import { Form, Row, Col, Modal } from "react-bootstrap";
+import { Form, Modal } from "react-bootstrap";
 
 import CodeMirrorThemes from "../../helpers/CodeMirrorThemes";
 
@@ -26,6 +26,8 @@ function EditorSettingsModal({
   set_editor_theme,
 }) {
   const fontSizes = [8, 9, 10, 11, 12, 13, 14, 15, 16];
+  const tabSizes = [2, 4, 8];
+
   return (
     <Modal show={showModal} onHide={() => closeModal()}>
       <Modal.Header closeButton={true}>
@@ -90,7 +92,7 @@ function EditorSettingsModal({
               defaultValue={tabSize}
               onChange={(ev) => set_editor_tab_size(ev.target.value)}
             >
-              {[2, 4, 8].map((size) => (
+              {tabSizes.map((size) => (
                 <option value={size}>{size}</option>
               ))}
             </Form.Control>
