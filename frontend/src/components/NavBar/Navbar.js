@@ -44,7 +44,7 @@ function NavigationBar({ isAuth, hasChecked, set_auth, checked_auth, logout }) {
         })
         .catch();
     }
-  }, [isAuth, hasChecked]);
+  }, [isAuth, hasChecked, set_auth, checked_auth]);
 
   const handleSearchInput = (ev) => {
     setSearchInput(ev.target.value);
@@ -111,7 +111,6 @@ function NavigationBar({ isAuth, hasChecked, set_auth, checked_auth, logout }) {
 }
 
 const mapStateToProps = (state) => {
-  console.log("State from navbar is", state.auth);
   return {
     isAuth: state.auth.isAuth,
     hasChecked: state.auth.hasCheckedAuth,

@@ -47,6 +47,7 @@ export const LoginContainer = ({
                 .then((resp) => {
                   if (resp.status === 200) {
                     set_auth(false, undefined);
+                    checked_auth(false);
                     history.push("/");
                   }
                 })
@@ -54,7 +55,7 @@ export const LoginContainer = ({
                   console.log("Error logging out");
                 });
             } else {
-              set_auth(false, undefined);
+              checked_auth(false);
               history.push("/");
             }
           }
