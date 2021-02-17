@@ -5,63 +5,144 @@ import { Container, Form, Button, Row } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
 const axios = require("axios");
 
+const PASSWORD_NO_MATCH_ERR = "Passwords do not match!";
+const PASSWORD_EMPTY_ERR = "Please enter a password!";
+const USERNAME_TAKEN_ERR = "Username is already taken!";
+const USERNAME_EMPTY_ERR = "Please enter a username!";
+
 export const RegisterContainer = (props) => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isValidated, setIsValidated] = useState(false);
+
+  // Form Fields validation status
+  const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
+  const [isUsernameInvalid, setIsUsernameInvalid] = useState(false);
+  const [isConfirmPasswordInvalid, setIsConfirmPasswordInvalid] = useState(
+    false
+  );
+  // Form fields error strings
+  const [confirmPasswordErrString, setConfirmPasswordErrString] = useState(
+    PASSWORD_EMPTY_ERR
+  );
+  const [passwordErrString, setPasswordErrString] = useState(
+    PASSWORD_EMPTY_ERR
+  );
+  const [usernameErrString, setUsernameErrString] = useState(
+    USERNAME_EMPTY_ERR
+  );
+
   const history = useHistory();
 
   const handlePassword = (ev) => {
-    setPassword(ev.target.value);
+    const passwordValue = ev.target.value;
+    if (passwordValue !== confirmPassword && confirmPassword.length > 0) {
+      setPasswordErrString(PASSWORD_NO_MATCH_ERR);
+      setConfirmPasswordErrString(PASSWORD_NO_MATCH_ERR);
+      setIsPasswordInvalid(true);
+      setIsConfirmPasswordInvalid(true);
+    } else {
+      setIsPasswordInvalid(false);
+      setIsConfirmPasswordInvalid(false);
+    }
+    setPassword(passwordValue);
   };
 
   const handleConfirmPassword = (ev) => {
-    setConfirmPassword(ev.target.value);
+    const confirmPasswordValue = ev.target.value;
+    if (confirmPasswordValue !== password && password.length > 0) {
+      setPasswordErrString(PASSWORD_NO_MATCH_ERR);
+      setConfirmPasswordErrString(PASSWORD_NO_MATCH_ERR);
+      setIsPasswordInvalid(true);
+      setIsConfirmPasswordInvalid(true);
+    } else {
+      setIsPasswordInvalid(false);
+      setIsConfirmPasswordInvalid(false);
+    }
+    setConfirmPassword(confirmPasswordValue);
   };
 
   const handleUsername = (ev) => {
     setUserName(ev.target.value);
   };
+
+  const validateFormFields = () => {
+    if (userName.length === 0) {
+      setUsernameErrString(USERNAME_EMPTY_ERR);
+      setIsUsernameInvalid(true);
+    }
+
+    if (password !== confirmPassword) {
+      setPasswordErrString(PASSWORD_NO_MATCH_ERR);
+      setConfirmPasswordErrString(PASSWORD_NO_MATCH_ERR);
+      setIsPasswordInvalid(true);
+      setIsConfirmPasswordInvalid(true);
+      return false;
+    }
+
+    if (password.length === 0) {
+      setPasswordErrString(PASSWORD_EMPTY_ERR);
+      setIsPasswordInvalid(true);
+      return false;
+    }
+    if (confirmPassword.length === 0) {
+      setConfirmPasswordErrString(PASSWORD_EMPTY_ERR);
+      setIsConfirmPasswordInvalid(true);
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();
+    if (userName.length === 0) {
+      setUsernameErrString(USERNAME_EMPTY_ERR);
+      setIsUsernameInvalid(true);
+      return;
+    } else if (!isPasswordInvalid) {
+      setPasswordErrString(PASSWORD_NO_MATCH_ERR);
+      setConfirmPasswordErrString(PASSWORD_NO_MATCH_ERR);
+      setIsPasswordInvalid(true);
+      setIsConfirmPasswordInvalid(true);
+    }
 
     const form = event.currentTarget;
-    if (form.checkValidity() === true) {
-      setIsValidated(true);
+    if (validateFormFields() === true) {
+      setIsUsernameInvalid(false);
+      setIsPasswordInvalid(false);
+      setIsConfirmPasswordInvalid(false);
+
       axios
-        .post("/register", { username: userName, password: password })
+        .post("/auth/register", { username: userName, password: password })
         .then((response) => {
-          console.log("Response from server", response, response.status);
           if (response.status === 200 && response.data.status === "OK") {
-            console.log("GOT AN OK");
             history.push("/login");
           } else if (
             response.status === 200 &&
-            response.data.status === "ERROR"
+            response.data.status === "TAKEN"
           ) {
-            //history.push("/");
-            // TODO: Show user error that the username is taken
+            setUsernameErrString(USERNAME_TAKEN_ERR);
+            setIsUsernameInvalid(true);
           }
         })
         .catch((err) => {
           console.log("Err from server", err);
-          //setLoginError(true);
         });
     }
   };
 
   return (
-    <div>
-      <Container className="d-flex flex-column justify-content-center align-items-center">
+    <>
+      <NavBar />
+      <Container
+        className="d-flex flex-column justify-content-center align-items-center"
+        fluid
+        style={{ height: "75%" }}
+      >
         <Form
           noValidate
-          validated={isValidated}
-          onSubmit={(e) => {
-            console.log("Handled submit", e);
-            handleSubmit(e);
-          }}
+          onSubmit={handleSubmit}
           className="d-flex flex-column align-items-center"
         >
           <Form.Group controlId="formUsername">
@@ -73,10 +154,10 @@ export const RegisterContainer = (props) => {
               onChange={handleUsername}
               value={userName}
               name="username"
-              required
+              isInvalid={isUsernameInvalid}
             />
             <Form.Control.Feedback type="invalid">
-              Please provide a username!
+              {usernameErrString}
             </Form.Control.Feedback>
           </Form.Group>
 
@@ -89,8 +170,14 @@ export const RegisterContainer = (props) => {
               onChange={handlePassword}
               value={password}
               name="password"
-              required
+              isInvalid={isPasswordInvalid}
             />
+            <Form.Control.Feedback type="invalid">
+              {passwordErrString}
+            </Form.Control.Feedback>
+          </Form.Group>
+
+          <Form.Group controlId="formConfirmPassword">
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
               type="password"
@@ -98,23 +185,26 @@ export const RegisterContainer = (props) => {
               minLength="1"
               onChange={handleConfirmPassword}
               value={confirmPassword}
-              required
+              isInvalid={isConfirmPasswordInvalid}
             />
             <Form.Control.Feedback type="invalid">
-              Please provide a password!
+              {confirmPasswordErrString}
             </Form.Control.Feedback>
           </Form.Group>
+
           <Button variant="primary" type="submit">
-            Sign In
+            Register
           </Button>
         </Form>
-        <hr />
-        <Row className="d-flex flex-column align-items-center">
+        <Row
+          className="d-flex flex-column align-items-center"
+          style={{ paddingTop: "1em" }}
+        >
           Already have an account?
           <Link to="/login">Click here to log in</Link>
         </Row>
       </Container>
-    </div>
+    </>
   );
 };
 
