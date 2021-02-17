@@ -29,36 +29,56 @@ export const LoginContainer = ({
   const handleSubmit = (event) => {
     event.preventDefault();
     event.stopPropagation();
+    setIsValidated(true);
 
     const form = event.currentTarget;
     if (form.checkValidity() === true) {
-      setIsValidated(true);
       axios
-        .post("/login", { username: userName, password: password })
+        .post("/auth/login", {
+          username: userName,
+          password: password,
+        })
         .then((response) => {
           console.log("Response from server", response, response.status);
           if (response.status === 200) {
-            console.log("redirect");
-            setLoginError(false);
-            // checked_auth(false);
             if (isAuth) {
+              axios
+                .get("/auth/logout")
+                .then((resp) => {
+                  if (resp.status === 200) {
+                    set_auth(false, undefined);
+                    history.push("/");
+                  }
+                })
+                .catch((err) => {
+                  console.log("Error logging out");
+                });
+            } else {
               set_auth(false, undefined);
+              history.push("/");
             }
-            checked_auth(false);
-            history.push("/");
           }
         })
         .catch((err) => {
-          console.log("Err from server", err);
+          console.log("Error from server while loggin in", err);
           setLoginError(true);
         });
     }
   };
 
   return (
-    <div>
-      <Container className="d-flex flex-column justify-content-center align-items-center">
-        <Row>{loginError && <p>Error logging in</p>}</Row>
+    <>
+      <NavBar />
+      <Container
+        className="d-flex flex-column justify-content-center align-items-center"
+        fluid
+        style={{ height: "60%" }}
+      >
+        {loginError && (
+          <Row>
+            <p>Error logging in. Please try again.</p>
+          </Row>
+        )}
         <Row>
           <Form
             noValidate
@@ -106,12 +126,15 @@ export const LoginContainer = ({
             </Row>
           </Form>
         </Row>
-        <Row className="d-flex flex-column align-items-center">
+        <Row
+          className="d-flex flex-column align-items-center"
+          style={{ paddingTop: "1em" }}
+        >
           Don't have an account?
           <Link to="/register">Click here to create one</Link>
         </Row>
       </Container>
-    </div>
+    </>
   );
 };
 

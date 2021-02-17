@@ -16,13 +16,13 @@ function NavigationBar({ isAuth, hasChecked, set_auth, checked_auth, logout }) {
   useEffect(() => {
     if (!hasChecked) {
       axios
-        .get("/user")
+        .get("/auth/session")
         .then((response) => {
           checked_auth(true);
           if (response.data === "") {
             set_auth(false, undefined);
           } else {
-            set_auth(true, response.data.username);
+            set_auth(true, response.data);
           }
         })
         .catch();
@@ -33,13 +33,13 @@ function NavigationBar({ isAuth, hasChecked, set_auth, checked_auth, logout }) {
   useEffect(() => {
     if (!hasChecked) {
       axios
-        .get("/user")
+        .get("/auth/session")
         .then((response) => {
           checked_auth(true);
           if (response.data === "") {
             set_auth(false, undefined);
           } else {
-            set_auth(true, response.data.username);
+            set_auth(true, response.data);
           }
         })
         .catch();
@@ -111,7 +111,7 @@ function NavigationBar({ isAuth, hasChecked, set_auth, checked_auth, logout }) {
 }
 
 const mapStateToProps = (state) => {
-  console.log("State from navbar is", state);
+  console.log("State from navbar is", state.auth);
   return {
     isAuth: state.auth.isAuth,
     hasChecked: state.auth.hasCheckedAuth,
