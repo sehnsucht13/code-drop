@@ -6,8 +6,9 @@ import CodeDisplaycontainer from "./components/CodeDisplay/CodeDisplayContainer"
 import ErrorContainer from "./components/Error/ErrorContainer";
 import SearchContainer from "./components/SearchPage/SearchContainer";
 import NewDropContainer from "./components/CodeEditor/NewDropContainer";
-import LoadingPage from "./components/Loading/LoadingPage";
 import LoginContainer from "./components/Login/LoginContainer";
+import RegisterContainer from "./components/Register/RegisterContainer";
+import ProfileContainer from "./components/Profile/ProfileContainer";
 
 function App() {
   return (
@@ -17,8 +18,9 @@ function App() {
         <Route path="/view" component={CodeDisplaycontainer} />
         <Route path="/create" component={NewDropContainer} />
         <Route path="/search" component={SearchContainer} />
-        <Route path="/profile" component={LoadingPage} />
+        <Route path="/profile" component={ProfileContainer} />
         <Route path="/login" component={LoginContainer} />
+        <Route path="/register" component={RegisterContainer} />
         <Route component={ErrorContainer} />
       </Switch>
     </div>
