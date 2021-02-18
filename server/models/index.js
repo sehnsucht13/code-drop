@@ -20,6 +20,7 @@ const Comments = require("./comment")(sequelize, Sequelize);
 const Stars = require("./stars")(sequelize, Sequelize);
 
 Drops.hasMany(DropAnnotations);
+Drops.hasMany(Stars);
 Drops.belongsTo(Users);
 
 DropAnnotations.belongsTo(Users);

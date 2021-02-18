@@ -12,15 +12,54 @@ router.get("/paginate", async (req, res) => {
     return;
   }
 
-  let rows = await req.app.locals.db.Drops.findAll({
-    offset: pageStart,
-    limit: pageLimit,
-    where: { visibility: 1 },
-    order: [["updatedAt", "DESC"]],
-    attributes: ["id", "title", "description", "lang", "updatedAt"],
-  });
-  // console.log("Rows from paginate are", rows);
-  res.status(200).json(rows.map((row) => row.dataValues));
+  let rows;
+  if (req.user !== undefined) {
+    rows = await req.app.locals.db.Drops.findAll({
+      offset: pageStart,
+      limit: pageLimit,
+      where: { visibility: 1 },
+      order: [["updatedAt", "DESC"]],
+      attributes: ["id", "title", "description", "lang", "updatedAt"],
+      include: [
+        {
+          model: req.app.locals.db.Stars,
+          where: { userId: req.user.uid },
+          required: false,
+        },
+      ],
+    });
+  } else {
+    rows = await req.app.locals.db.Drops.findAll({
+      offset: pageStart,
+      limit: pageLimit,
+      where: { visibility: 1 },
+      order: [["updatedAt", "DESC"]],
+      attributes: ["id", "title", "description", "lang", "updatedAt"],
+    });
+  }
+  console.log("Rows from paginate are", rows);
+  const response = await Promise.all(
+    rows.map(async (row) => {
+      if (req.user !== undefined) {
+        const rowData = { ...row.dataValues };
+        rowData.isStarred = row.dataValues.stars.length === 0 ? false : true;
+        delete rowData.stars;
+
+        const starCount = await req.app.locals.db.Stars.count({
+          where: { dropId: rowData.id },
+        });
+        rowData.starCount = starCount;
+        return rowData;
+      } else {
+        const starCount = await req.app.locals.db.Stars.count({
+          where: { dropId: row.dataValues.id },
+        });
+        return { ...row.dataValues, isStarred: false, starCount: starCount };
+      }
+    })
+  );
+
+  res.status(200).json(response);
 });
 
 // Retrieve all the comments for a drop if they exist.
@@ -135,16 +174,16 @@ router.delete("/:dropId/comments/:cId", async (req, res) => {
 router.delete("/:dropId/stars", async (req, res) => {
   let dropId = parseInt(req.params.dropId);
 
-  if (user === undefined) {
+  if (req.user === undefined) {
     res.status(401).end();
     return;
-  } else if (isNan(dropId)) {
+  } else if (isNaN(dropId)) {
     res.status(400).end();
     return;
   }
 
   const starInstance = await req.app.locals.db.Stars.findOne({
-    where: { userId: user.uid, dropId: dropId },
+    where: { userId: req.user.uid, dropId: dropId },
   });
 
   // If the star does not exist
@@ -152,8 +191,15 @@ router.delete("/:dropId/stars", async (req, res) => {
     res.status(404).end();
     return;
   }
-
   await starInstance.destroy();
+
+  // TODO: Reduce user's stars
+  const userModel = await req.app.locals.db.Users.findByPk(dropId);
+  if (userModel !== null) {
+    userModel.numStars -= 1;
+    await userModel.save();
+  }
+
   res.status(200).end();
 });
 
@@ -234,7 +280,7 @@ router.post("/drop/:dropId/comments", async (req, res) => {
   res.status(200).json({ id: commentModel.dataValues.id });
 });
 
-router.post("/drop/:dropId/stars", async (req, res) => {
+router.post("/:dropId/stars", async (req, res) => {
   const dropId = parseInt(req.params.dropId);
   // User is not logged in
   if (req.user === undefined) {
