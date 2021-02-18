@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import queryString from "query-string";
+import { useLocation } from "react-router-dom";
+
 import { Tabs, Tab } from "react-bootstrap";
 
 import NavBar from "../NavBar/Navbar";
@@ -12,6 +15,9 @@ function CodeDisplayContainer({ dropID }) {
   const [codeDropAnnotations, setcodeDropAnnotations] = useState([]);
   const [currentTab, setcurrentTab] = useState("block");
 
+  const searchParams = queryString.parse(useLocation().search);
+  console.log("searchParams", searchParams);
+
   const handleTabClick = (tabKey) => {
     setcurrentTab(tabKey);
   };
@@ -20,7 +26,7 @@ function CodeDisplayContainer({ dropID }) {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get(`/drops/22`)
+      .get(`/drops/${searchParams.id}`)
       .then((response) => {
         console.log("Response from the server is", response.data);
         setCodeDrop(response.data.codeDrop);

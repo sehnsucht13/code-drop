@@ -3,10 +3,6 @@ import {
   DELETE_ANNOTATION,
   ADD_ANNOTATION,
   SAVE_ANNOTATION,
-  UPLOAD_DROP,
-  UPLOAD_DROP_BEGIN,
-  UPLOAD_DROP_FAIL,
-  UPLOAD_DROP_SUCCESS,
 } from "../constants/constants";
 
 const axios = require("axios");
@@ -36,56 +32,5 @@ export function add_annotation() {
   return {
     type: ADD_ANNOTATION,
     payload: null,
-  };
-}
-
-export function uploadSuccess() {
-  return {
-    type: UPLOAD_DROP_SUCCESS,
-    payload: null,
-  };
-}
-export function uploadFail() {
-  return {
-    type: UPLOAD_DROP_FAIL,
-    payload: null,
-  };
-}
-export function uploadBegin() {
-  return {
-    type: UPLOAD_DROP_BEGIN,
-    payload: null,
-  };
-}
-
-export function sendDrop() {
-  return (dispatch, getState) => {
-    const annotationArray = getState().annotationReducer.annotations;
-    const dropText = getState().newDrop.text;
-    const dropLang = getState().newDrop.language;
-    const dropTitle = getState().newDrop.title;
-    const dropDesc = getState().newDrop.description;
-    const dropVisibility = getState().newDrop.visibility;
-    console.log("About to send state", annotationArray, getState().newDrop);
-
-    // TODO: Check for any errors and refuse to send here!
-    dispatch(uploadBegin());
-    axios
-      .post("/drops", {
-        title: dropTitle,
-        lang: dropLang,
-        text: dropText,
-        description: dropDesc,
-        visibility: dropVisibility,
-        annotations: annotationArray,
-      })
-      .then((response) => {
-        console.log(response.data);
-        dispatch(uploadSuccess());
-      })
-      .catch((err) => {
-        console.log("Error with post request when uploading", err);
-        dispatch(uploadFail());
-      });
   };
 }

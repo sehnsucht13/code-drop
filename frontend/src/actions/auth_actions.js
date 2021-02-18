@@ -21,7 +21,7 @@ export const logout = () => {
   return (dispatch, getState) => {
     // TODO: Check for any errors and refuse to send here!
     axios
-      .get("/logout")
+      .get("/auth/logout")
       .then((response) => {
         console.log("Success when loggin out", response.data);
         dispatch(logout_success(false, false));

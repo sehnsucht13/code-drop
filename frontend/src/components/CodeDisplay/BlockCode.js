@@ -17,9 +17,10 @@ const generateMap = (annotations) => {
 };
 
 export default function BlockCodeView({
-  dropText,
-  dropLanguage,
-  dropTitle,
+  text,
+  lang,
+  title,
+  description,
   id,
   visibility,
   annotations,
@@ -29,19 +30,14 @@ export default function BlockCodeView({
 
   useEffect(() => {
     setIndexMap(generateMap(annotations));
-    setPaddingLength(dropText.split("\n").length.toString().length);
-  }, [annotations, dropText]);
+    setPaddingLength(text.split("\n").length.toString().length);
+  }, [annotations, text]);
 
   return (
     <div id="block-code-display">
-      <h1>{dropTitle}</h1>
-      <h3>{"Language: ".concat(dropLanguage)}</h3>
-      <Highlight
-        Prism={Prism}
-        theme={theme}
-        code={dropText}
-        language={dropLanguage}
-      >
+      <h1>{title}</h1>
+      <h3>{"Language: ".concat(lang)}</h3>
+      <Highlight Prism={Prism} theme={theme} code={text} language={lang}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre className={className} style={style}>
             {tokens.map((line, i) => {

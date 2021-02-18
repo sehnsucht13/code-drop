@@ -29,14 +29,6 @@ function CodeDropAnnotation({
   const [endLineWarningMsg, setEndLineWarningMsg] = useState(undefined);
   const [isEndLineInvalid, setIsEndLineInvalid] = useState(false);
 
-  // If start not a number
-  // If start more than end
-  // If start line does not exist
-  // If start line less than 0
-  // If start line is more than max line in editor
-
-  // If end not a number
-  // If end line is more than max
   const validateIndexValues = (startLineNum, endLineNum) => {
     let startLineWarnings = [];
     let endLineWarnings = [];
@@ -60,8 +52,8 @@ function CodeDropAnnotation({
       );
     }
 
-    if (parseInt(startLineNum) < 0) {
-      startLineWarnings.push("Start line index cannot be less than 0!");
+    if (parseInt(startLineNum) < 1) {
+      startLineWarnings.push("Start line index cannot be less than 1!");
     }
 
     if (parseInt(endLineNum) > editorInstance.lineCount()) {
@@ -88,12 +80,10 @@ function CodeDropAnnotation({
       setStartLineWarningMsg("");
     }
     console.log("Endline warnings", endLineWarnings);
-    console.log(endLineWarnings);
     if (endLineWarnings.length !== 0) {
       setEndLineWarningMsg(endLineWarnings[0]);
       setIsEndLineInvalid(true);
     } else {
-      console.log("end line valid");
       setIsEndLineInvalid(false);
       setEndLineWarningMsg("");
     }

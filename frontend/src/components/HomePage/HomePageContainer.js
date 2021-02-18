@@ -36,7 +36,7 @@ function HomePageContainer() {
   };
   useEffect(() => {
     axios
-      .get("/drops/paginate", {
+      .get("/drop/paginate", {
         params: { start: queryParams.start, count: queryParams.count },
       })
       .then((result) => {

@@ -25,9 +25,10 @@ export default function annotationReducer(
           {
             id: state.annotations.length + 1,
             text: "",
-            start: null,
-            end: null,
+            start: "",
+            end: "",
             isEdited: false,
+            // shouldFocus
           },
         ],
       };

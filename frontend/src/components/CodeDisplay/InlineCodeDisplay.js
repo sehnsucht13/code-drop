@@ -69,9 +69,10 @@ function createChunks(splitTextArray, sortedAnnotations) {
 }
 
 function InlineCodeDisplay({
-  dropText,
-  dropLanguage,
-  dropTitle,
+  text,
+  lang,
+  title,
+  description,
   id,
   visibility,
   annotations,
@@ -81,7 +82,7 @@ function InlineCodeDisplay({
   const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
-    const textArray = dropText.split(/\n/);
+    const textArray = text.split(/\n/);
 
     const asort = annotations.sort(annotationSortFn);
     setSortedAnnotations(asort);
@@ -89,15 +90,15 @@ function InlineCodeDisplay({
     setTextChunks(chunks);
     setIsProcessing(false);
     // console.log("Here are the processed items", sortedAnnotations, textArray);
-  }, [dropText]);
+  }, [text]);
 
   if (isProcessing) {
     return <h1>Loading...</h1>;
   } else {
     return (
       <div id="inline-code-display">
-        <h1>{dropTitle}</h1>
-        <h3>{"Language: ".concat(dropLanguage)}</h3>
+        <h1>{title}</h1>
+        <h3>{"Language: ".concat(lang)}</h3>
         {textChunks.map((chunk) => {
           // console.log("lines and index are:", chunk.lines, chunk.annotationIdx);
           if (chunk.annotationIdx === -1) {
@@ -105,7 +106,7 @@ function InlineCodeDisplay({
               <InlineChunk
                 lines={chunk.lines}
                 annotation={undefined}
-                lang={dropLanguage}
+                lang={lang}
                 offsetIdx={chunk.startIdx}
               />
             );
@@ -114,7 +115,7 @@ function InlineCodeDisplay({
               <InlineChunk
                 lines={chunk.lines}
                 annotation={sortedAnnotations[chunk.annotationIdx]}
-                lang={dropLanguage}
+                lang={lang}
                 offsetIdx={chunk.startIdx}
               />
             );

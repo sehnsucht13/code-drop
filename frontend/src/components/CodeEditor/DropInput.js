@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Form, FormControl, Row, Col, Button } from "react-bootstrap";
 import { BsGear } from "react-icons/bs";
@@ -7,7 +7,7 @@ import EditorSettingsModal from "./EditorSettingsModal";
 import {
   set_drop_description,
   set_drop_language,
-  set_drop_title,
+  set_drop_title_content,
   set_drop_visibility,
 } from "../../actions/new_drop_actions";
 import { set_editor_language } from "../../actions/editor_actions";
@@ -18,26 +18,34 @@ export const DropInput = ({
   set_drop_title,
   set_drop_visibility,
   set_editor_language,
+  title,
+  description,
   language,
   visibility,
 }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [isTitleinValid, setIsTitleInvalid] = useState(false);
+  const [titleContent, setTitleContent] = useState(title.content);
+  const [descriptionContent, setDescriptionContent] = useState(description);
+
+  const [isTitleInvalid, setIsTitleInvalid] = useState(false);
+  const [titleErrMsg, setTitleErrMsg] = useState(undefined);
 
   const [showEditorOptions, setShowEditorOptions] = useState(false);
 
-  const handleDropTitleChange = (ev) => setTitle(ev.target.value);
-  const handleDescriptionChange = (ev) => setDescription(ev.target.value);
+  useEffect(() => {
+    setIsTitleInvalid(title.isInvalid);
+  }, [title]);
+
+  const handleDropTitleChange = (ev) => setTitleContent(ev.target.value);
+  const handleDescriptionChange = (ev) =>
+    setDescriptionContent(ev.target.value);
 
   const handleDropTitleBlur = () => {
     if (title.length === 0) {
       setIsTitleInvalid(true);
     }
-    set_drop_title(title);
+    set_drop_title_content(title);
   };
   const handleDescriptionBlur = (ev) => set_drop_description(description);
-
   const handleVisibility = (ev) => set_drop_visibility(ev.target.value);
 
   const handleLanguageSelect = (ev) => {
@@ -56,12 +64,13 @@ export const DropInput = ({
         <Form.Group>
           <Form.Label srOnly>Code-Drop Name:</Form.Label>
           <Form.Control
-            placeholder="Name..."
-            value={title}
+            placeholder="Title..."
+            value={titleContent}
             onChange={handleDropTitleChange}
             onBlur={handleDropTitleBlur}
-            isInvalid={isTitleinValid}
-            maxLength="200"
+            isInvalid={isTitleInvalid}
+            minLength="1"
+            maxLength="90"
           ></Form.Control>
           <FormControl.Feedback type="invalid">
             Drop title cannot be empty!
@@ -71,9 +80,10 @@ export const DropInput = ({
           <Form.Label srOnly>Description:</Form.Label>
           <Form.Control
             placeholder="Description..."
-            value={description}
+            value={descriptionContent}
             onChange={handleDescriptionChange}
             onBlur={handleDescriptionBlur}
+            minLength="0"
             maxLength="300"
           ></Form.Control>
         </Form.Group>
@@ -115,6 +125,8 @@ export const DropInput = ({
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    title: state.newDrop.title,
+    description: state.newDrop.description,
     visibility: state.newDrop.visibility,
     language: state.newDrop.language,
   };
@@ -123,7 +135,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = {
   set_drop_description,
   set_drop_language,
-  set_drop_title,
+  set_drop_title_content,
   set_drop_visibility,
   set_editor_language,
 };

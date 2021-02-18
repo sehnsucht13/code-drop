@@ -1,7 +1,7 @@
 import React from "react";
 import { Row, Button } from "react-bootstrap";
 import { connect } from "react-redux";
-import { sendDrop } from "../../actions/annotation_actions";
+import { sendDrop } from "../../actions/new_drop_actions";
 import EditorSettingsModal from "./EditorSettingsModal";
 import DropEditor from "./DropEditor";
 import DropInput from "./DropInput";
