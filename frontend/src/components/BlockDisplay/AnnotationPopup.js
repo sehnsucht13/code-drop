@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BsFillCaretRightFill, BsX } from "react-icons/bs";
 import { IconContext } from "react-icons";
-import { OverlayTrigger, Popover, IconButton } from "react-bootstrap";
+import { OverlayTrigger, Popover } from "react-bootstrap";
 import ReactMarkdown from "react-markdown";
 
 export default function AnnotationPopup({ index, showIcon, annotationText }) {

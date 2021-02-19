@@ -3,8 +3,6 @@ import Highlight, { Prism } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/github";
 import CodeLine from "./CodeLine";
 
-const axios = require("axios");
-
 const generateMap = (annotations) => {
   let indexMap = {};
   annotations.forEach((annotation) => {

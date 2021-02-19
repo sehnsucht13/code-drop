@@ -5,7 +5,7 @@ import HomePageContainer from "./components/HomePage/HomePageContainer";
 import CodeDisplaycontainer from "./components/CodeDisplay/CodeDisplayContainer";
 import ErrorContainer from "./components/Error/ErrorContainer";
 import SearchContainer from "./components/SearchPage/SearchContainer";
-import NewDropContainer from "./components/CodeEditor/NewDropContainer";
+import NewDropContainer from "./components/DropEditor/NewDropContainer";
 import LoginContainer from "./components/Login/LoginContainer";
 import RegisterContainer from "./components/Register/RegisterContainer";
 import ProfileContainer from "./components/Profile/ProfileContainer";

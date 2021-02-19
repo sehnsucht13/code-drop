@@ -9,7 +9,7 @@ import BlockCodeDisplay from "../BlockDisplay/BlockDisplay";
 import InlineCodeDisplay from "../InlineDisplay/InlineDisplay";
 import LoadingPage from "../Loading/LoadingPage";
 
-function CodeDisplayContainer({ dropID }) {
+function CodeDisplayContainer() {
   const [isLoading, setIsLoading] = useState(true);
   const [codeDrop, setCodeDrop] = useState({});
   const [codeDropAnnotations, setcodeDropAnnotations] = useState([]);
