@@ -8,6 +8,7 @@ import {
   set_drop_description,
   set_drop_language,
   set_drop_title_content,
+  set_drop_title_error,
   set_drop_visibility,
 } from "../../actions/new_drop_actions";
 import { set_editor_language } from "../../actions/editor_actions";
@@ -15,7 +16,8 @@ import { set_editor_language } from "../../actions/editor_actions";
 export const DropInput = ({
   set_drop_description,
   set_drop_language,
-  set_drop_title,
+  set_drop_title_content,
+  set_drop_title_error,
   set_drop_visibility,
   set_editor_language,
   title,
@@ -40,12 +42,16 @@ export const DropInput = ({
     setDescriptionContent(ev.target.value);
 
   const handleDropTitleBlur = () => {
-    if (title.length === 0) {
-      setIsTitleInvalid(true);
+    console.log("Here is the title", titleContent);
+    if (titleContent.length === 0) {
+      set_drop_title_error({ errorMsg: undefined, isInvalid: true });
+      set_drop_title_content(titleContent);
+    } else {
+      set_drop_title_error({ errorMsg: undefined, isInvalid: false });
+      set_drop_title_content(titleContent);
     }
-    set_drop_title_content(title);
   };
-  const handleDescriptionBlur = (ev) => set_drop_description(description);
+  const handleDescriptionBlur = () => set_drop_description(descriptionContent);
   const handleVisibility = (ev) => set_drop_visibility(ev.target.value);
 
   const handleLanguageSelect = (ev) => {
@@ -136,6 +142,7 @@ const mapDispatchToProps = {
   set_drop_description,
   set_drop_language,
   set_drop_title_content,
+  set_drop_title_error,
   set_drop_visibility,
   set_editor_language,
 };

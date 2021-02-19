@@ -65,7 +65,7 @@ export function sendDrop() {
     const annotationArray = getState().annotationReducer.annotations;
     const dropText = getState().newDrop.text;
     const dropLang = getState().newDrop.language;
-    const dropTitle = getState().newDrop.title.content;
+    const dropTitle = getState().newDrop.title.content.title;
     const dropDesc = getState().newDrop.description;
     const dropVisibility = getState().newDrop.visibility;
     console.log("About to send state", annotationArray, getState().newDrop);
@@ -82,7 +82,7 @@ export function sendDrop() {
     // TODO: Check for any errors and refuse to send here!
     dispatch(uploadBegin());
     axios
-      .post("/drops", {
+      .post("/drop", {
         title: dropTitle,
         lang: dropLang,
         text: dropText,
