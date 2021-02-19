@@ -234,7 +234,7 @@ router.get("/:dropId/comments", async (req, res) => {
 router.get("/:dropId", async (req, res) => {
   //res.json("Hello from drops get");
   let dropId = parseInt(req.params.dropId);
-  if (isNan(dropId)) {
+  if (isNaN(dropId)) {
     res.status(400).end();
     return;
   }
@@ -285,7 +285,7 @@ router.delete("/:dropId/comments/:cId", async (req, res) => {
   const dropId = parseInt(req.params.dropId);
   const commentId = parseInt(req.params.cId);
 
-  if (isNan(dropId) || isNan(commentId)) {
+  if (isNaN(dropId) || isNaN(commentId)) {
     res.status(400).end();
     return;
   }
@@ -349,7 +349,7 @@ router.delete("/:dropId", async (req, res) => {
   if (user === undefined) {
     res.status(401).end();
     return;
-  } else if (isNan(dropId)) {
+  } else if (IsNaN(dropId)) {
     res.status(400).end();
     return;
   }
@@ -391,7 +391,7 @@ router.post("/drop/:dropId/comments", async (req, res) => {
   } else if (commentBody.length === 0) {
     res.status(400).end();
     return;
-  } else if (isNan(dropId)) {
+  } else if (isNaN(dropId)) {
     res.status(404).end();
     return;
   }
@@ -454,7 +454,7 @@ router.post("/:dropId/stars", async (req, res) => {
   res.status(200).end();
 });
 
-router.post("/drop", async (req, res) => {
+router.post("/", async (req, res) => {
   let title = req.body.title;
   let lang = req.body.lang || "";
   let visibility = req.body.visibility;
@@ -470,12 +470,21 @@ router.post("/drop", async (req, res) => {
     typeof title !== "string" ||
     typeof visibility !== "boolean" ||
     typeof textBody !== "string" ||
-    text.length === 0
+    textBody.length === 0
   ) {
     res.status(400).end();
     return;
   }
 
+  console.log(
+    "Attributes are",
+    title,
+    lang,
+    visibility,
+    description,
+    textBody,
+    annotations
+  );
   try {
     let dropRecordInfo = await req.app.locals.db.Drops.create({
       title: title,
@@ -485,12 +494,7 @@ router.post("/drop", async (req, res) => {
       description: description,
       userId: req.user.uid,
     });
-  } catch (error) {
-    console.error(error);
-    res.send(500).end();
-  }
 
-  try {
     annotations.forEach(async (annotation) => {
       await req.app.locals.db.DropAnnotations.create({
         startLine: annotation.start,
@@ -505,6 +509,13 @@ router.post("/drop", async (req, res) => {
     console.error(error);
     res.status(500).end();
   }
+
+  // try {
+  //   res.status(200).json({ id: dropRecordInfo.dataValues.id });
+  // } catch (error) {
+  //   console.error(error);
+  //   res.status(500).end();
+  // }
 });
 
 // TODO: Finish
@@ -516,7 +527,7 @@ router.put("/drops/:dropId", async (req, res) => {
   const textBody = req.body.text;
   const description = req.body.description || "";
   const annotations = req.body.annotations || [];
-  if (isNan(dropId)) {
+  if (isNaN(dropId)) {
     res.status(400).end();
     return;
   } else if (req.user === undefined) {
