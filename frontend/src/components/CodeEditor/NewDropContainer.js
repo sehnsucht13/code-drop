@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "react-bootstrap";
 
 import DropEditor from "./CodeDropEditor";
-import AnnotationContainer from "../CodeAnnotations/AnnotationContainer";
+import AnnotationContainer from "../CodeAnnotation/AnnotationContainer";
 import Navbar from "../NavBar/Navbar";
 
 function NewDropContainer() {

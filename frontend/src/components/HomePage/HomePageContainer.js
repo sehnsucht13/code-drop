@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../NavBar/Navbar";
 
-import DropsList from "../DropsList";
+import DropsList from "../DropListDisplay/DropsList";
 import { Button, Row, Container } from "react-bootstrap";
 const axios = require("axios");
 

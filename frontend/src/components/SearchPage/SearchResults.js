@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Row } from "react-bootstrap";
 
-import DropsList from "../DropsList";
+import DropsList from "../DropListDisplay/DropsList";
 
 import axios from "axios";
 

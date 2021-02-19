@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../NavBar/Navbar";
-import DropsList from "../DropsList";
+import DropsList from "../DropListDisplay/DropsList";
 import SearchResults from "./SearchResults";
 import { useLocation, Link } from "react-router-dom";
 import { Container, Button, Row } from "react-bootstrap";
