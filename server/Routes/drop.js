@@ -152,6 +152,11 @@ router.get("/paginate", async (req, res) => {
           where: { userId: req.user.uid },
           required: false,
         },
+        {
+          model: req.app.locals.db.Users,
+          attributes: ["id", "username"],
+          required: false,
+        },
       ],
     });
   } else {
@@ -161,6 +166,13 @@ router.get("/paginate", async (req, res) => {
       where: { visibility: 1 },
       order: [["updatedAt", "DESC"]],
       attributes: ["id", "title", "description", "lang", "updatedAt"],
+      include: [
+        {
+          model: req.app.locals.db.Users,
+          attributes: ["id", "username"],
+          required: false,
+        },
+      ],
     });
   }
   console.log("Rows from paginate are", rows);
