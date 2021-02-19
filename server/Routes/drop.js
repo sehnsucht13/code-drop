@@ -1,7 +1,138 @@
 const express = require("express");
 const router = express.Router();
 
-// Perform a paginated search
+// Perform paginated search
+router.get("/search", async (req, res) => {
+  // TODO: Use try/catch here to turn params into int in case it fails.
+  const pageStart = parseInt(req.query.start || 0);
+  const pageLimit = parseInt(req.query.count || 15);
+  const timeWindow = req.query.t || "all_time";
+  const searchField = req.query.field || "title";
+  const searchTerm = req.query.contains || "";
+  if (isNaN(pageStart) || isNaN(pageLimit) || searchTerm.length === 0) {
+    console.log("sent bad request");
+    res.status(400).end();
+    return;
+  }
+
+  console.log("limit", pageLimit);
+  let searchParams = {};
+  const now = new Date();
+  const gteOp = req.app.locals.db.Sequelize.Op.gte;
+  const containsOp = req.app.locals.db.Sequelize.Op.substring;
+  let minDate;
+
+  switch (timeWindow) {
+    case "day":
+      minDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
+    case "week":
+      minDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+      break;
+    case "month":
+      minDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      break;
+    case "year":
+      minDate = new Date(now.getFullYear(), 0, 1);
+      break;
+    case "all_time":
+      minDate = new Date(2020, 0, 1);
+      break;
+    default:
+      res.status(400).end();
+      return;
+  }
+  searchParams.updatedAt = { [gteOp]: minDate };
+
+  switch (searchField) {
+    case "title":
+      searchParams.title = { [containsOp]: searchTerm };
+      break;
+    case "language":
+      searchParams.lang = { [containsOp]: searchTerm };
+      break;
+    case "user":
+      // This case is not handled here but instead in the join condition
+      break;
+    default:
+      res.status(400).end();
+      return;
+  }
+
+  console.log("Search params are", searchParams);
+
+  let rows;
+  if (req.user !== undefined) {
+    rows = await req.app.locals.db.Drops.findAll({
+      offset: pageStart,
+      limit: pageLimit,
+      where: { visibility: 1, ...searchParams },
+      order: [["updatedAt", "DESC"]],
+      attributes: ["id", "title", "description", "lang", "updatedAt"],
+      include: [
+        {
+          model: req.app.locals.db.Stars,
+          where: { userId: req.user.uid },
+          required: false,
+        },
+        {
+          model: req.app.locals.db.Users,
+          attributes: ["id", "username"],
+          where:
+            searchField === "user"
+              ? { username: { [containsOp]: searchTerm } }
+              : {},
+          required: searchField === "user" ? true : false,
+        },
+      ],
+    });
+  } else {
+    rows = await req.app.locals.db.Drops.findAll({
+      offset: pageStart,
+      limit: pageLimit,
+      where: { visibility: 1, ...searchParams },
+      order: [["updatedAt", "DESC"]],
+      attributes: ["id", "title", "description", "lang", "updatedAt"],
+      include: [
+        {
+          model: req.app.locals.db.Users,
+          attributes: ["id", "username"],
+          where:
+            searchField === "user"
+              ? { username: { [containsOp]: searchTerm } }
+              : {},
+          required: searchField === "user" ? true : false,
+        },
+      ],
+    });
+  }
+  console.log("Rows from search are", rows);
+
+  const response = await Promise.all(
+    rows.map(async (row) => {
+      if (req.user !== undefined) {
+        const rowData = { ...row.dataValues };
+        rowData.isStarred = row.dataValues.stars.length === 0 ? false : true;
+        delete rowData.stars;
+
+        const starCount = await req.app.locals.db.Stars.count({
+          where: { dropId: rowData.id },
+        });
+        rowData.starCount = starCount;
+        return rowData;
+      } else {
+        const starCount = await req.app.locals.db.Stars.count({
+          where: { dropId: row.dataValues.id },
+        });
+        return { ...row.dataValues, isStarred: false, starCount: starCount };
+      }
+    })
+  );
+
+  res.status(200).json(response);
+});
+
+// Return newest drops in paginated form
 router.get("/paginate", async (req, res) => {
   // TODO: Use try/catch here to turn params into int in case it fails.
   const pageStart = parseInt(req.query.start || 0);
