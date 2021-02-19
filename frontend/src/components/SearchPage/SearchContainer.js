@@ -1,30 +1,23 @@
 import React, { useEffect, useState } from "react";
 import NavBar from "../NavBar/Navbar";
+import DropsList from "../DropsList";
+import SearchResults from "./SearchResults";
 import { useLocation, Link } from "react-router-dom";
-import { Container, Form, Col, Button } from "react-bootstrap";
+import { Container, Button, Row } from "react-bootstrap";
 import queryString from "query-string";
 import axios from "axios";
 
 import SearchBar from "./SearchBar";
 
 function SearchContainer() {
-  // Stores the parsed query string parameters whenever the component is rendered again.
-  let searchParams = queryString.parse(useLocation().search);
-  console.log("The page params are ", searchParams);
-
-  // React.useEffect(() => {
-  //   axios
-  //     .get("/drops/search", { params: { ...searchParams } })
-  //     .then((response) => {
-  //       console.log("Response from server is", response.data);
-  //     });
-  // }, [searchParams]);
-
+  let queryParams = queryString.parse(useLocation().search);
+  console.log("got query params", queryParams);
   return (
     <div>
       <NavBar />
       <Container fluid>
         <SearchBar />
+        <SearchResults searchParams={queryParams} />
       </Container>
     </div>
   );

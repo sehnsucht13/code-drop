@@ -18,6 +18,7 @@ function App() {
         <Route path="/view" component={CodeDisplaycontainer} />
         <Route path="/create" component={NewDropContainer} />
         <Route path="/search" component={SearchContainer} />
+        <Route path="/explore" component={SearchContainer} />
         <Route path="/profile" component={ProfileContainer} />
         <Route path="/login" component={LoginContainer} />
         <Route path="/register" component={RegisterContainer} />
