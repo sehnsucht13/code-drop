@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { Tabs, Tab } from "react-bootstrap";
 import axios from "axios";
 import queryString from "query-string";
-import { useLocation } from "react-router-dom";
-
-import { Tabs, Tab } from "react-bootstrap";
 
 import NavBar from "../NavBar/Navbar";
-import BlockCodeDisplay from "./BlockDisplay";
-import InlineCodeDisplay from "./InlineDisplay";
+import BlockCodeDisplay from "../BlockDisplay/BlockDisplay";
+import InlineCodeDisplay from "../InlineDisplay/InlineDisplay";
 import LoadingPage from "../Loading/LoadingPage";
 
 function CodeDisplayContainer({ dropID }) {

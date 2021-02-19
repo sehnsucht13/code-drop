@@ -1,7 +1,7 @@
 import React from "react";
 import Highlight, { Prism } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/github";
-import CodeLine from "./CodeLine";
+import CodeLine from "../BlockDisplay/CodeLine";
 import ReactMarkdown from "react-markdown";
 import { Card } from "react-bootstrap";
 
