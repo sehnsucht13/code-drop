@@ -210,22 +210,24 @@ router.get("/:dropId/comments", async (req, res) => {
 
   const comments = await req.app.locals.db.Comments.findAll({
     where: { dropId: dropId },
-    attributes: ["id", "text", "updatedAt", "userId"],
+    attributes: ["id", "text", "updatedAt"],
+    include: [
+      {
+        model: req.app.locals.db.Users,
+        attributes: ["id", "username"],
+        required: false,
+      },
+    ],
   });
 
   if (comments !== null) {
-    const filteredComments = comments.map(async (comment) => {
-      const commentAuthor = await req.app.locals.db.Users.findByPk(
-        comment.dataValues.userId,
-        {
-          attributes: ["username"],
-        }
-      );
-      return { ...comment, username: commentAuthor.dataValues.username };
+    const filteredComments = comments.map((comment) => {
+      return { ...comment.dataValues, user: { ...comment.user.dataValues } };
     });
-
+    console.log("Returning ", filteredComments);
     res.status(200).json(filteredComments);
   } else {
+    console.log("Returning nothing");
     res.status(200).json({});
   }
 });
@@ -290,20 +292,20 @@ router.delete("/:dropId/comments/:cId", async (req, res) => {
     return;
   }
 
-  if (user === undefined) {
+  if (req.user === undefined) {
     res.status(401).end();
     return;
   }
 
-  const commentInstance = await db.Comments.findOne({
-    where: { userId: user.uid, dropId: dropId, id: commentId },
+  const commentInstance = await req.app.locals.db.Comments.findOne({
+    where: { userId: req.user.uid, dropId: dropId, id: commentId },
   });
   // If the drop does not exist
   if (commentInstance === null) {
     res.status(404).end();
     return;
   } else {
-    commentInstance.destroy();
+    await commentInstance.destroy();
     res.status(200).end();
   }
 });
@@ -380,7 +382,7 @@ router.delete("/:dropId", async (req, res) => {
   res.status(200).end();
 });
 
-router.post("/drop/:dropId/comments", async (req, res) => {
+router.post("/:dropId/comments", async (req, res) => {
   const commentBody = req.body.text || "";
   const dropId = parseInt(req.params.dropId);
 
@@ -556,7 +558,7 @@ router.put("/drops/:dropId", async (req, res) => {
   }
 });
 
-router.put("/drops/:dropId/comments/:commentId", async (req, res) => {
+router.put("/:dropId/comments/:commentId", async (req, res) => {
   const dropId = parseInt(req.params.dropId);
   const commentId = parseInt(req.params.commentId);
   const commentBody = req.body.text;
@@ -568,12 +570,19 @@ router.put("/drops/:dropId/comments/:commentId", async (req, res) => {
   ) {
     res.status(400).end();
     return;
+  } else if (req.user === undefined) {
+    res.status(401).end();
+    return;
   }
 
   try {
-    const commentModel = await req.app.locals.db.findByPk(commentId);
+    const commentModel = await req.app.locals.db.Comments.findByPk(commentId);
     if (commentModel === null) {
       res.status(404).end();
+      return;
+    } else if (req.user.uid !== commentModel.userId) {
+      res.status(401).end();
+      return;
     }
     commentModel.text = commentBody;
     await commentModel.save();
