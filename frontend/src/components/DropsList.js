@@ -18,6 +18,7 @@ function DropsList({ drops }) {
           id={drop.id}
           hasStar={drop.isStarred}
           starCount={drop.starCount}
+          user={drop.user}
         />
       ))}
     </div>

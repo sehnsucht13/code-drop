@@ -1,10 +1,25 @@
-import { Card, Row, Button, ButtonGroup } from "react-bootstrap";
+import { Card, Row, Col, Button, ButtonGroup } from "react-bootstrap";
 import { BiGitRepoForked } from "react-icons/bi";
 import { BsStar, BsStarFill } from "react-icons/bs";
 import { Link, useHistory } from "react-router-dom";
 import React, { useState } from "react";
 
 const axios = require("axios");
+
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "June",
+  "July",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 function DropItem({
   id,
@@ -14,11 +29,15 @@ function DropItem({
   description,
   hasStar,
   starCount,
+  user,
 }) {
   const [isStarred, setIsStarred] = useState(hasStar);
   const [numStars, setNumStars] = useState(starCount);
   const history = useHistory();
-  console.log("Id is ", id, hasStar);
+  let [month, day, year] = new Date(lastUpdate)
+    .toLocaleDateString("en-US")
+    .split("/");
+  console.log(month, day, year);
 
   const handleStarClick = () => {
     if (isStarred) {
@@ -56,48 +75,65 @@ function DropItem({
   };
 
   return (
-    <Card key={id} style={{ marginTop: "1rem", paddingBottom: "0" }}>
-      <Card.Body>
-        <Row className="justify-content-end" style={{ marginBottom: "0.5rem" }}>
-          <ButtonGroup
-            style={{
-              paddingRight: "0.5rem",
-            }}
-          >
-            <Button onClick={handleStarClick}>
-              {isStarred ? (
-                <>
-                  <BsStarFill style={{ marginRight: "0.5rem" }} />
-                  Unstar
-                </>
-              ) : (
-                <>
-                  <BsStar style={{ marginRight: "0.5rem" }} />
-                  Star
-                </>
-              )}
-            </Button>
-            <Button
-              variant="light"
-              disabled
-              style={{ paddingLeft: "0.5rem", marginLeft: "0" }}
+    <Card key={id} style={{ marginTop: "0.5rem", paddingBottom: "0" }}>
+      <Card.Body style={{ paddingTop: "0.5rem" }}>
+        <Row
+          className="show-grid justify-content-between"
+          style={{ marginBottom: "0rem", paddingTop: "0rem" }}
+        >
+          <Col style={{ paddingLeft: "1rem" }}>
+            <span
+              className="font-weight-bold text-center"
+              style={{ fontSize: "1.5rem" }}
             >
-              {numStars}
-            </Button>
-          </ButtonGroup>
-          <ButtonGroup>
-            <Button>
-              <BiGitRepoForked style={{ marginRight: "0.5rem" }} />
-              Fork
-            </Button>
-            <Button
-              variant="light"
-              disabled
-              style={{ paddingLeft: "0.5rem", marginLeft: "0" }}
+              {user.username}
+            </span>
+            <br />
+            <span classNae="font-weight-light">
+              {`${monthNames[month - 1]} ${day}, ${year}`}
+            </span>
+          </Col>
+          <Col sm={4} className="d-flex flex-column">
+            <ButtonGroup
+              style={{
+                paddingRight: "0.5rem",
+                marginTop: "0.5rem",
+                // marginBottom: "1rem",
+              }}
             >
-              44
-            </Button>
-          </ButtonGroup>
+              <Button onClick={handleStarClick} style={{ marginTop: "0rem" }}>
+                {isStarred ? (
+                  <>
+                    <BsStarFill style={{ marginRight: "0.5rem" }} />
+                    Unstar
+                  </>
+                ) : (
+                  <>
+                    <BsStar style={{ marginRight: "0.5rem" }} />
+                    Star
+                  </>
+                )}
+              </Button>
+              <Button
+                variant="light"
+                disabled
+                style={{ paddingLeft: "0.5rem", marginLeft: "0" }}
+              >
+                {numStars}
+              </Button>
+              <Button style={{ marginRight: "0.5rem", paddingLeft: "1rem" }}>
+                <BiGitRepoForked />
+                Fork
+              </Button>
+              <Button
+                variant="light"
+                disabled
+                style={{ paddingLeft: "0.5rem", marginLeft: "0" }}
+              >
+                44
+              </Button>
+            </ButtonGroup>
+          </Col>
         </Row>
         <Link
           to={{ pathname: "/view", search: `?id=${id}` }}
@@ -107,7 +143,6 @@ function DropItem({
           <Card.Subtitle className="">
             {description}
             <div className="mb-1 text-muted">{language}</div>
-            <div className="mb-1 text-muted">Last Activity: {lastUpdate}</div>
           </Card.Subtitle>
         </Link>
       </Card.Body>
