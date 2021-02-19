@@ -96,7 +96,12 @@ function CommentContainer({ dropId, isAuth }) {
               onChange={handleEditorOnChange}
               onBlur={handleEditorOnBlur}
             />
-            <Button onClick={handleNewCommentSubmit}>Submit</Button>
+            <Row
+              className="justify-content-end"
+              style={{ paddingRight: "1rem", paddingTop: "0.5rem" }}
+            >
+              <Button onClick={handleNewCommentSubmit}>Submit</Button>
+            </Row>
           </div>
         </>
       ) : (
