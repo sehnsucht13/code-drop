@@ -6,8 +6,9 @@ import { useLocation } from "react-router-dom";
 import { Tabs, Tab } from "react-bootstrap";
 
 import NavBar from "../NavBar/Navbar";
-import BlockCodeDisplay from "./BlockCode";
-import InlineCodeDisplay from "./InlineCodeDisplay";
+import BlockCodeDisplay from "./BlockDisplay";
+import InlineCodeDisplay from "./InlineDisplay";
+import LoadingPage from "../Loading/LoadingPage";
 
 function CodeDisplayContainer({ dropID }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +27,7 @@ function CodeDisplayContainer({ dropID }) {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get(`/drops/${searchParams.id}`)
+      .get(`/drop/${searchParams.id}`)
       .then((response) => {
         console.log("Response from the server is", response.data);
         setCodeDrop(response.data.codeDrop);
@@ -43,7 +44,7 @@ function CodeDisplayContainer({ dropID }) {
     <div>
       <NavBar />
       {isLoading ? (
-        <h1>Loading...</h1>
+        <LoadingPage />
       ) : (
         <Tabs activeKey={currentTab} onSelect={handleTabClick}>
           <Tab eventKey="block" title="Block View">

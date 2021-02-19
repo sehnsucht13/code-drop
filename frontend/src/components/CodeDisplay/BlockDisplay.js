@@ -42,7 +42,6 @@ export default function BlockCodeView({
           <pre className={className} style={style}>
             {tokens.map((line, i) => {
               if (i in indexMap) {
-                // console.log(indexMap[i]);
                 return (
                   <CodeLine
                     line={line}
