@@ -9,6 +9,10 @@ export default function CommentEditor({ value, onChange, onBlur }) {
     onChange(ev.target.value);
   };
 
+  const handleTextBlur = (ev) => {
+    onBlur(ev.target.value);
+  };
+
   return (
     <Tabs
       activeKey={currentTab}
@@ -22,7 +26,7 @@ export default function CommentEditor({ value, onChange, onBlur }) {
           rows={5}
           value={value}
           onChange={handleTextInput}
-          onBlur={onBlur}
+          onBlur={handleTextBlur}
           style={{ width: "100%", marginTop: "10px" }}
         ></FormControl>
       </Tab>

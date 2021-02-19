@@ -1,39 +1,118 @@
-import React from "react";
-import { Container } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { connect } from "react-redux";
+import { Button, Alert, Row } from "react-bootstrap";
+import axios from "axios";
 import CommentDisplay from "./CommentDisplay";
-import CommentEditor from "../CommentEditor";
+import CommentEditor from "../CommentEditor/CommentEditor";
 
-const sampleComments = [
-  {
-    id: "1",
-    text: `# Here is a title
+function CommentContainer({ dropId, isAuth }) {
+  const [comments, setComments] = useState([]);
+  const [newCommentText, setNewCommentText] = useState("");
+  const [hasSubmitIssue, setHasSubmitIssue] = useState(false);
 
-    Here is a comment`,
-    author: "TestUser1",
-    datePosted: "today",
-  },
-  {
-    id: "2",
-    text: `# Here is a title
+  const handleEditorOnChange = (newVal) => {
+    setNewCommentText(newVal);
+  };
+  const handleEditorOnBlur = (newVal) => {
+    setNewCommentText(newVal);
+  };
 
-    Here is a comment with some more stuff *like bold*`,
-    author: "TestUser2",
-    datePosted: "19-3-2020",
-  },
-];
+  const refreshComments = (successCallback, errorCallback) => {
+    axios
+      .get(`/drop/${dropId}/comments`)
+      .then((response) => {
+        if (response.status === 200) {
+          setComments(response.data);
+          successCallback();
+        }
+      })
+      .catch((err) => {
+        errorCallback(err);
+      });
+  };
 
-export default function CommentContainer() {
+  const handleNewCommentSubmit = () => {
+    axios
+      .post(`/drop/${dropId}/comments`, {
+        text: newCommentText,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          axios
+            .get(`/drop/${dropId}/comments`)
+            .then((response) => {
+              if (response.status === 200) {
+                setHasSubmitIssue(false);
+                setNewCommentText("");
+                setComments(response.data);
+              }
+            })
+            .catch((err) => {
+              setHasSubmitIssue(false);
+            });
+        }
+      })
+      .catch((err) => {
+        console.log("Have an error");
+        setHasSubmitIssue(true);
+      });
+  };
+
+  useEffect(() => {
+    axios
+      .get(`/drop/${dropId}/comments`)
+      .then((response) => {
+        if (response.status === 200) {
+          setComments(response.data);
+        }
+      })
+      .catch((err) => {});
+  }, [dropId]);
+
   return (
-    <Container>
-      {sampleComments.map((comment) => (
+    <>
+      {comments.map((comment) => (
         <CommentDisplay
-          commentString={comment.text}
-          commentAuthor={comment.author}
-          datePosted={comment.datePosted}
+          dropId={dropId}
           commentId={comment.id}
+          commentText={comment.text}
+          authorUsername={comment.user.username}
+          authorId={comment.user.id}
+          lastUpdate={comment.updatedAt}
+          refreshComments={refreshComments}
         />
       ))}
-      <CommentEditor />
-    </Container>
+      <hr />
+      {isAuth ? (
+        <>
+          {hasSubmitIssue && (
+            <Alert variant="danger">
+              There was an issue submitting your comment. Please try again!
+            </Alert>
+          )}
+          <div style={{ paddingBottom: "2rem" }}>
+            <CommentEditor
+              value={newCommentText}
+              onChange={handleEditorOnChange}
+              onBlur={handleEditorOnBlur}
+            />
+            <Button onClick={handleNewCommentSubmit}>Submit</Button>
+          </div>
+        </>
+      ) : (
+        <Row
+          className="justify-content-center"
+          style={{ paddingBottom: "1rem" }}
+        >
+          <Button>Sign In to comment</Button>
+        </Row>
+      )}
+    </>
   );
 }
+
+const mapStateToProps = (state) => ({
+  isAuth: state.auth.isAuth,
+});
+
+export default connect(mapStateToProps)(CommentContainer);
