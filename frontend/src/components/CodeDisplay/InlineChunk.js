@@ -3,13 +3,13 @@ import Highlight, { Prism } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/github";
 import CodeLine from "./CodeLine";
 import ReactMarkdown from "react-markdown";
+import { Card } from "react-bootstrap";
 
-function InlineChunk({ lines, annotation, lang, offsetIdx }) {
+function InlineChunk({ lines, annotation, lang, offsetIdx, chunkNum }) {
   const joinedLines = lines.join("\n");
   return (
-    <div
-      style={{ borderWidth: "2px", borderStyle: "solid", borderColor: "black" }}
-    >
+    <Card>
+      <Card.Title>{"Chunk ".concat(chunkNum)}</Card.Title>
       <ReactMarkdown>
         {annotation === undefined ? null : annotation.annotation_text}
       </ReactMarkdown>
@@ -32,7 +32,7 @@ function InlineChunk({ lines, annotation, lang, offsetIdx }) {
           </pre>
         )}
       </Highlight>
-    </div>
+    </Card>
   );
 }
 

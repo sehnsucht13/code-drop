@@ -26,7 +26,7 @@ function CodeDisplayContainer({ dropID }) {
   useEffect(() => {
     setIsLoading(true);
     axios
-      .get(`/drops/${searchParams.id}`)
+      .get(`/drop/${searchParams.id}`)
       .then((response) => {
         console.log("Response from the server is", response.data);
         setCodeDrop(response.data.codeDrop);
