@@ -10,12 +10,10 @@ router.get("/search", async (req, res) => {
   const searchField = req.query.field || "title";
   const searchTerm = req.query.contains || "";
   if (isNaN(pageStart) || isNaN(pageLimit) || searchTerm.length === 0) {
-    console.log("sent bad request");
     res.status(400).end();
     return;
   }
 
-  console.log("limit", pageLimit);
   let searchParams = {};
   const now = new Date();
   const gteOp = req.app.locals.db.Sequelize.Op.gte;
@@ -58,8 +56,6 @@ router.get("/search", async (req, res) => {
       res.status(400).end();
       return;
   }
-
-  console.log("Search params are", searchParams);
 
   let rows;
   if (req.user !== undefined) {
@@ -106,7 +102,6 @@ router.get("/search", async (req, res) => {
       ],
     });
   }
-  console.log("Rows from search are", rows);
 
   const response = await Promise.all(
     rows.map(async (row) => {
