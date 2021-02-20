@@ -27,11 +27,15 @@
     "supertest": "^6.1.3"
   },
   "scripts": {
-    "start-server": "cd frontend && yarn start",
-    "start-client": "nodemon server/index.js",
+    "start-client": "cd frontend && yarn start",
+    "start-server": "nodemon server/index.js",
     "dev": "concurrently -k \"yarn start-server\" \"yarn start-client\"",
     "test": "jest"
   }, 
+ "nodemonConfig": {
+    "ignore": ["frontend/*", "node_modules/*"],
+    "delay": "1000"
+  },
   "jest": {
     "testEnvironment": "node",
     "modulePathIgnorePatterns": [
