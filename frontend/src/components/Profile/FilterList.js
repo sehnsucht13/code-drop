@@ -24,6 +24,7 @@ export default function FilterList({ drops }) {
   };
 
   const handleFilterBy = (ev) => {
+    setFilteredDrops(drops);
     setFilterBy(ev.target.value);
   };
 
@@ -41,9 +42,13 @@ export default function FilterList({ drops }) {
             value={filterInput}
           />
         </Col>
-        <Col xs={12} md={3} style={{ paddingLeft: "0.3rem" }}>
+        <Col xs={12} md={3}>
           <Row className="justify-content-end">
-            <Col xs={4}>
+            <Col
+              xs={4}
+              style={{ paddingRight: "0" }}
+              className="d-flex flex-column justify-content-center"
+            >
               <Form.Label>Filter By:</Form.Label>
             </Col>
             <Col xs={8}>
@@ -54,7 +59,7 @@ export default function FilterList({ drops }) {
                 style={{ width: "100%" }}
               >
                 <option value="title">Title</option>
-                <option value="language">Language</option>
+                <option value="lang">Language</option>
               </Form.Control>
             </Col>
           </Row>

@@ -3,23 +3,9 @@ import { BiGitRepoForked } from "react-icons/bi";
 import { BsStar, BsStarFill } from "react-icons/bs";
 import { Link, useHistory } from "react-router-dom";
 import React, { useState } from "react";
+import formatDate from "../../helpers/DateFormat";
 
 const axios = require("axios");
-
-const monthNames = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "June",
-  "July",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
 
 function DropItem({
   id,
@@ -34,10 +20,6 @@ function DropItem({
   const [isStarred, setIsStarred] = useState(hasStar);
   const [numStars, setNumStars] = useState(starCount);
   const history = useHistory();
-  let [month, day, year] = new Date(lastUpdate)
-    .toLocaleDateString("en-US")
-    .split("/");
-  console.log(month, day, year);
 
   const handleStarClick = () => {
     if (isStarred) {
@@ -107,7 +89,7 @@ function DropItem({
               className="font-weight-light"
               style={{ paddingBottom: "0", marginBottom: "0" }}
             >
-              {`${monthNames[month - 1]} ${day}, ${year}`}
+              {formatDate(lastUpdate)}
             </p>
           </Col>
           <Col sm={3} className="d-flex flex-row justify-content-end">
