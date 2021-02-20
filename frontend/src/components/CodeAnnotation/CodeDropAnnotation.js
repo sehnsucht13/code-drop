@@ -14,10 +14,11 @@ function CodeDropAnnotation({
   text,
   startIdx,
   endIdx,
+  hasError,
   editorLineCount,
   deleteAnnotation,
   saveAnnotationState,
-  setAnnotationStatus,
+  set_annotation_error_status,
 }) {
   // State of text inputs
   const [startLineNum, setStartLineNum] = useState(startIdx);
@@ -36,11 +37,14 @@ function CodeDropAnnotation({
     let endLineWarnings = [];
 
     // TODO: Refactor this. There has to be abetter way of verifying all of these conditions
-    if (startLineNum.length !== 0 && isNaN(parseInt(startLineNum))) {
+    // Src: https://stackoverflow.com/questions/175739/built-in-way-in-javascript-to-check-if-a-string-is-a-valid-number
+    // using "parseInt" will stop parsing as soon as it encounters an integer. Therefore
+    // the string "23afc" will result in the number 23 instead of NaN value.
+    if (startLineNum.length !== 0 && isNaN(startLineNum)) {
       startLineWarnings.push("Start line index must be a number!");
     }
 
-    if (endLineNum.length !== 0 && isNaN(parseInt(endLineNum))) {
+    if (endLineNum.length !== 0 && isNaN(endLineNum)) {
       endLineWarnings.push("End line index must be a number!");
     }
 
@@ -110,13 +114,17 @@ function CodeDropAnnotation({
   const handleStartLineBlur = () => {
     const errorStatus = validateInputIndexValues(startLineNum, endLineNum);
     saveAnnotationState(startLineNum, endLineNum, commentText, index);
-    setAnnotationStatus(errorStatus);
+    if (errorStatus !== hasError) {
+      set_annotation_error_status(index, errorStatus);
+    }
   };
 
   const handleEndLineBlur = () => {
     const errorStatus = validateInputIndexValues(startLineNum, endLineNum);
     saveAnnotationState(startLineNum, endLineNum, commentText, index);
-    setAnnotationStatus(errorStatus);
+    if (errorStatus !== hasError) {
+      set_annotation_error_status(index, errorStatus);
+    }
   };
 
   const handleTextChange = (newText) => {
@@ -182,12 +190,19 @@ function CodeDropAnnotation({
 
 const mapStateToProps = (state, ownProps) => {
   const annotationProps = state.annotationReducer.annotations[ownProps.index];
+  // console.log(
+  //   "State for annotation at index",
+  //   ownProps.index,
+  //   "is: ",
+  //   annotationProps
+  // );
   return {
     index: ownProps.index,
     id: annotationProps.id,
     text: annotationProps.text,
     startIdx: annotationProps.start,
     endIdx: annotationProps.end,
+    hasError: annotationProps.hasError,
     editorLineCount: state.newDrop.editorLineCount,
   };
 };
@@ -197,8 +212,8 @@ const mapDispatchToProps = (dispatch) => {
     deleteAnnotation: (idx) => dispatch(delete_annotation(idx)),
     saveAnnotationState: (start, end, text, idx) =>
       dispatch(save_annotation(start, end, text, idx)),
-    setAnnotationStatus: (status) =>
-      dispatch(set_annotation_error_status(status)),
+    set_annotation_error_status: (idx, status) =>
+      dispatch(set_annotation_error_status(idx, status)),
   };
 };
 
