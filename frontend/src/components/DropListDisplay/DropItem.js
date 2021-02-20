@@ -81,22 +81,40 @@ function DropItem({
           className="justify-content-between"
           style={{ marginBottom: "0rem", paddingTop: "0rem" }}
         >
-          <Col style={{ paddingLeft: "1rem" }}>
-            <span
-              className="font-weight-bold text-center"
-              style={{ fontSize: "1.5rem" }}
+          <Col
+            style={{
+              paddingLeft: "1rem",
+              marginBottom: "0",
+              paddingBottom: "0",
+            }}
+          >
+            <Link
+              to={{ pathname: "/profile", search: `?id=${user.id}` }}
+              style={{ color: "black" }}
             >
-              {user.username}
-            </span>
-            <br />
-            <span classNae="font-weight-light">
+              <p
+                className="text-left"
+                style={{
+                  fontSize: "1.5rem",
+                  paddingBottom: "0",
+                  marginBottom: "0",
+                }}
+              >
+                {user.username}
+              </p>
+            </Link>
+            <p
+              className="font-weight-light"
+              style={{ paddingBottom: "0", marginBottom: "0" }}
+            >
               {`${monthNames[month - 1]} ${day}, ${year}`}
-            </span>
+            </p>
           </Col>
           <Col sm={3} className="d-flex flex-row justify-content-end">
             <ButtonGroup
               style={{
                 paddingRight: "0.5rem",
+                paddingBottom: "0rem",
                 marginTop: "1rem",
                 marginBottom: "1rem",
               }}
