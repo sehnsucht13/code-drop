@@ -27,35 +27,77 @@ router.get("/:userId/stars", async (req, res) => {
 
 // Retrieve the profile of a user
 router.get("/:userId/profile", async (req, res) => {
-  const userId = req.params.userId;
-
-  let userModel = await req.app.locals.db.Users.findByPk(userId, {
-    attributes: ["id", "username", "description", "numStars", "numForks"],
-  });
-
-  //   console.log("User model is", userModel);
-  if (userModel === null) {
-    res.status(404).end();
+  const userId = parseInt(req.params.userId);
+  if (isNaN(userId)) {
+    res.status(400).end();
     return;
   }
 
-  let userDrops = undefined;
-  // If the current user is requesting their profile, return private drops as well
-  if (req.user !== undefined && req.user.uid === parseInt(userId)) {
-    userDrops = await req.app.locals.db.Drops.findAll({
-      where: { userId: userId },
-      attributes: ["id", "title", "lang"],
+  try {
+    let userModel = await req.app.locals.db.Users.findByPk(userId, {
+      attributes: ["id", "username", "description", "numStars", "numForks"],
     });
-  } else {
-    userDrops = await req.app.locals.db.Drops.findAll({
-      where: { userId: userId, visibility: true },
-      attributes: ["id", "title", "lang"],
-    });
-  }
 
-  res
-    .json({ profile: userModel.dataValues, drops: userDrops || [] })
-    .status(200);
+    //   console.log("User model is", userModel);
+    if (userModel === null) {
+      res.status(404).end();
+      return;
+    }
+
+    let userDrops = undefined;
+    let languageCount = undefined;
+
+    // If the current user is requesting their profile, return private drops as well
+    if (req.user !== undefined && req.user.uid === userId) {
+      userDrops = await req.app.locals.db.Drops.findAll({
+        where: { userId: userId },
+        attributes: ["id", "title", "lang"],
+      });
+
+      languageCount = await req.app.locals.db.Drops.findAll({
+        where: { userId: userId },
+        group: ["drops.lang"],
+        attributes: [
+          "lang",
+          [
+            req.app.locals.db.sequelize.fn(
+              "count",
+              req.app.locals.db.sequelize.col("lang")
+            ),
+            "count",
+          ],
+        ],
+      });
+    } else {
+      userDrops = await req.app.locals.db.Drops.findAll({
+        where: { userId: userId, visibility: true },
+        attributes: ["id", "title", "lang"],
+      });
+
+      languageCount = await req.app.locals.db.Drops.findAll({
+        where: { userId: userId, visibility: true },
+        group: ["drops.lang"],
+        attributes: [
+          "lang",
+          [
+            req.app.locals.db.sequelize.fn(
+              "count",
+              req.app.locals.db.sequelize.col("lang")
+            ),
+            "count",
+          ],
+        ],
+      });
+    }
+    res.status(200).json({
+      profile: userModel.dataValues,
+      drops: userDrops || [],
+      counts: languageCount || [],
+    });
+  } catch (err) {
+    console.log("Error", err);
+    res.status(500).end();
+  }
 });
 
 router.put("/:userId/profile", async (req, res) => {
@@ -82,20 +124,27 @@ router.put("/:userId/profile", async (req, res) => {
 });
 
 router.delete("/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  if (req.user === undefined || req.user.uid !== parseInt(userId)) {
+  const userId = parseInt(req.params.userId);
+  if (isNaN(userId)) {
+    res.status(400).end();
+    return;
+  } else if (req.user === undefined || req.user.uid !== userId) {
     res.status(401).end();
     return;
   }
 
-  const userModel = await req.app.locals.db.Users.findByPk(userId);
+  try {
+    const userModel = await req.app.locals.db.Users.findByPk(userId);
 
-  if (userModel === null) {
-    res.status(404).end();
-  } else {
-    await userModel.destroy();
-    req.logout();
-    res.status(200).end();
+    if (userModel === null) {
+      res.status(404).end();
+    } else {
+      await userModel.destroy();
+      req.logout();
+      res.status(200).end();
+    }
+  } catch {
+    res.status(500).end();
   }
 });
 
