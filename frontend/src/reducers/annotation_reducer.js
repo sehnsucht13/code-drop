@@ -8,7 +8,6 @@ import {
 
 const default_state = {
   annotations: [],
-  hasError: false,
 };
 
 export default function annotationReducer(
@@ -26,6 +25,7 @@ export default function annotationReducer(
             text: "",
             start: "",
             end: "",
+            hasError: false,
           },
         ],
       };
@@ -60,12 +60,18 @@ export default function annotationReducer(
         hasError: false,
       };
     case SET_ANNOTATION_ERROR_STATUS:
-      return {
-        ...state,
-        ...payload,
-      };
+      console.log("Setting annotation status", payload);
+      const modifiedAnnotationState = state.annotations.map((item, index) => {
+        if (index === payload.index) {
+          return {
+            ...item,
+            hasError: payload.hasError,
+          };
+        }
+        return item;
+      });
+      return { ...state, annotations: modifiedAnnotationState };
     default:
       return state;
-      break;
   }
 }

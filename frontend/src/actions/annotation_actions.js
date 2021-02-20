@@ -13,10 +13,10 @@ export function delete_annotation(index) {
   };
 }
 
-export function set_annotation_error_status(status) {
+export function set_annotation_error_status(index, status) {
   return {
     type: SET_ANNOTATION_ERROR_STATUS,
-    payload: { hasError: status },
+    payload: { index: index, hasError: status },
   };
 }
 
