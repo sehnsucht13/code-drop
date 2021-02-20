@@ -9,7 +9,14 @@ const axios = require("axios");
 // Source for combining react-router-dom with react-bootstrap
 // https://stackoverflow.com/questions/54843302/reactjs-bootstrap-navbar-and-routing-not-working-together
 
-function NavigationBar({ isAuth, hasChecked, set_auth, checked_auth, logout }) {
+function NavigationBar({
+  isAuth,
+  hasChecked,
+  set_auth,
+  checked_auth,
+  logout,
+  user,
+}) {
   const [searchInput, setSearchInput] = useState("");
 
   // Run before mounting
@@ -79,7 +86,10 @@ function NavigationBar({ isAuth, hasChecked, set_auth, checked_auth, logout }) {
             </Nav.Link>
           )}
           {isAuth && (
-            <Nav.Link as={Link} to="/profile">
+            <Nav.Link
+              as={Link}
+              to={{ pathname: "/profile", search: `?id=${user.uid}` }}
+            >
               Profile
             </Nav.Link>
           )}
@@ -113,6 +123,7 @@ function NavigationBar({ isAuth, hasChecked, set_auth, checked_auth, logout }) {
 const mapStateToProps = (state) => {
   return {
     isAuth: state.auth.isAuth,
+    user: state.auth.user,
     hasChecked: state.auth.hasCheckedAuth,
   };
 };
