@@ -5,21 +5,20 @@ import {
   SET_DROP_TITLE_ERROR,
   SET_DROP_VISIBLITY,
   SET_DROP_TEXT,
+  RESET_DROP_INFO,
 } from "../constants/constants";
 
 const initialState = {
   title: {
     content: "",
-    isInvalid: false,
-    errorMsg: undefined,
+    hasError: false, // Prevents submission if there is an error in the title
   },
   description: "",
   visibility: true,
   language: null,
-  text: "",
+  editorText: "", // Contents of the editor
+  editorLineCount: 0, // Number of lines in the editor. Used by annotations to find errors
 };
-
-// title: {content, isValid, errorMsg}
 
 const new_drop_reducer = (state = initialState, { type, payload }) => {
   switch (type) {
@@ -34,15 +33,25 @@ const new_drop_reducer = (state = initialState, { type, payload }) => {
         ...state,
         title: {
           ...state.title,
-          isInvalid: payload.isInvalid,
-          errorMsg: payload.errorMsg,
+          ...payload,
         },
       };
     case SET_DROP_VISIBLITY:
       return { ...state, ...payload };
     case SET_DROP_TEXT:
-      console.log("Got a drop text action", payload);
       return { ...state, ...payload };
+    case RESET_DROP_INFO:
+      return {
+        title: {
+          content: "",
+          hasError: false,
+        },
+        description: "",
+        visibility: true,
+        language: null,
+        editorText: "",
+        editorLineCount: 0,
+      };
     default:
       return state;
   }

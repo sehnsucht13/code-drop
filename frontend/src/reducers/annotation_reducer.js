@@ -1,15 +1,14 @@
 import {
   DELETE_ANNOTATION,
   SAVE_ANNOTATION,
-  SET_ANNOTATION_EDIT_STATUS,
   ADD_ANNOTATION,
+  DELETE_ALL_ANNOTATIONS,
+  SET_ANNOTATION_ERROR_STATUS,
 } from "../constants/constants";
 
 const default_state = {
   annotations: [],
-  isError: false,
-  isSending: false,
-  sendSuccess: false,
+  hasError: false,
 };
 
 export default function annotationReducer(
@@ -27,25 +26,10 @@ export default function annotationReducer(
             text: "",
             start: "",
             end: "",
-            isEdited: false,
-            // shouldFocus
           },
         ],
       };
-    case SET_ANNOTATION_EDIT_STATUS:
-      console.log("Got an edit status message");
-      const newAnnotationArr = state.annotations.map((item, index) => {
-        if (index === payload.index) {
-          return { ...item, isEdited: payload.status };
-        }
-        return item;
-      });
-      return {
-        ...state,
-        annotations: newAnnotationArr,
-      };
     case DELETE_ANNOTATION:
-      console.log("Got a delete");
       const newAnnotationStatus = state.annotations.filter((item, index) => {
         if (index === payload.index) {
           return false;
@@ -65,15 +49,23 @@ export default function annotationReducer(
             start: payload.startLine,
             end: payload.endLine,
             text: payload.content,
-            isEdited: false,
           };
         }
         return item;
       });
-      console.log(newAnnotationState);
       return { ...state, annotations: newAnnotationState };
+    case DELETE_ALL_ANNOTATIONS:
+      return {
+        annotations: [],
+        hasError: false,
+      };
+    case SET_ANNOTATION_ERROR_STATUS:
+      return {
+        ...state,
+        ...payload,
+      };
     default:
-      console.log("default case");
       return state;
+      break;
   }
 }

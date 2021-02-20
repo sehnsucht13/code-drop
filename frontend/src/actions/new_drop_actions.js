@@ -8,8 +8,15 @@ import {
   UPLOAD_DROP_BEGIN,
   UPLOAD_DROP_FAIL,
   UPLOAD_DROP_SUCCESS,
+  RESET_DROP_INFO,
 } from "../constants/constants";
+import { delete_all_annotations } from "./annotation_actions";
 const axios = require("axios");
+
+export const reset_drop_info = () => ({
+  type: RESET_DROP_INFO,
+  payload: null,
+});
 
 export const set_drop_visibility = (payload) => ({
   type: SET_DROP_VISIBLITY,
@@ -21,9 +28,9 @@ export const set_drop_title_content = (payload) => ({
   payload: { title: payload },
 });
 
-export const set_drop_title_error = ({ errorMsg, isInvalid }) => ({
+export const set_drop_title_error = (payload) => ({
   type: SET_DROP_TITLE_ERROR,
-  payload: { errorMsg: errorMsg, isInvalid: isInvalid },
+  payload: { hasError: payload },
 });
 
 export const set_drop_description = (payload) => ({
@@ -36,9 +43,9 @@ export const set_drop_language = (payload) => ({
   payload: { language: payload },
 });
 
-export const set_drop_text = (payload) => ({
+export const set_drop_text = ({ text, lineCount }) => ({
   type: SET_DROP_TEXT,
-  payload: { text: payload },
+  payload: { editorText: text, editorLineCount: lineCount },
 });
 
 export function uploadSuccess() {
@@ -91,7 +98,9 @@ export function sendDrop() {
         annotations: annotationArray,
       })
       .then((response) => {
-        console.log(response.data);
+        // Erase data from store
+        dispatch(reset_drop_info());
+        dispatch(delete_all_annotations());
         dispatch(uploadSuccess());
       })
       .catch((err) => {
