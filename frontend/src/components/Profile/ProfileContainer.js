@@ -50,25 +50,19 @@ export const ProfileContainer = ({ isAuth, user }) => {
           <LoadingPage />
         )
       ) : (
-        <Container
-          className="d-flex"
-          style={{ height: "185%", paddingBottom: "1rem" }}
-          fluid
-        >
-          <Col xs={12} style={{ paddingTop: "1.5rem" }}>
-            <SideBar
-              username={profileData.profile.username}
-              description={profileData.profile.description}
-            />
-            <hr />
-            <StatSummary
-              numStars={profileData.profile.numStars}
-              numForks={profileData.profile.numForks}
-            />
-            <PieChart counts={profileData.counts} />
-            <hr />
-            <FilterList drops={profileData.drops} />
-          </Col>
+        <Container className="d-flex flex-column" fluid>
+          <SideBar
+            username={profileData.profile.username}
+            description={profileData.profile.description}
+          />
+          <hr />
+          <StatSummary
+            numStars={profileData.profile.numStars}
+            numForks={profileData.profile.numForks}
+          />
+          <PieChart counts={profileData.counts} />
+          <hr />
+          <FilterList drops={profileData.drops} />
         </Container>
       )}
       <Footer />

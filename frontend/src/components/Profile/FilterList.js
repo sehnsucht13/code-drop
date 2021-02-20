@@ -32,7 +32,7 @@ export default function FilterList({ drops }) {
   return (
     <div style={{ paddingBottom: "2rem" }}>
       <Form inline style={{ paddingBottom: "1rem" }}>
-        <Col xs={9} style={{ paddingLeft: "0" }}>
+        <Col xs={12} md={9} style={{ paddingLeft: "0" }}>
           <Form.Control
             style={{ width: "100%" }}
             as="input"
@@ -41,24 +41,27 @@ export default function FilterList({ drops }) {
             value={filterInput}
           />
         </Col>
-        <Col xs={3} style={{ paddingLeft: "0.3rem" }}>
+        <Col xs={12} md={3} style={{ paddingLeft: "0.3rem" }}>
           <Row className="justify-content-end">
-            <Form.Label style={{ paddingRight: "0.5rem" }}>
-              Filter By:
-            </Form.Label>
-            <Form.Control
-              as="select"
-              onChange={handleFilterBy}
-              value={filterBy}
-            >
-              <option value="title">Title</option>
-              <option value="language">Language</option>
-            </Form.Control>
+            <Col xs={4}>
+              <Form.Label>Filter By:</Form.Label>
+            </Col>
+            <Col xs={8}>
+              <Form.Control
+                as="select"
+                onChange={handleFilterBy}
+                value={filterBy}
+                style={{ width: "100%" }}
+              >
+                <option value="title">Title</option>
+                <option value="language">Language</option>
+              </Form.Control>
+            </Col>
           </Row>
         </Col>
       </Form>
       <ListGroup
-        style={{ minHeight: "25rem", maxHeight: "25rem", overflowY: "auto" }}
+        style={{ minHeight: "25rem", maxHeight: "25rem", overflowY: "scroll" }}
       >
         {filteredDrops.map((drop) => (
           <FilterListItem

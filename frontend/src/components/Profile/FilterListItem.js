@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Col, Row, ListGroupItem, Button } from "react-bootstrap";
+import { Col, Row, ListGroup, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 const axios = require("axios");
 
@@ -16,7 +16,7 @@ function FilterListItem({ title, language, id, isAuth }) {
   const handleEdit = () => {};
 
   return (
-    <ListGroupItem>
+    <ListGroup.Item>
       <Row className="justify-content-between">
         <Col xs={9}>
           <Link to={{ pathname: "/view", search: `?id=${id}` }}>
@@ -35,7 +35,7 @@ function FilterListItem({ title, language, id, isAuth }) {
           </Col>
         )}
       </Row>
-    </ListGroupItem>
+    </ListGroup.Item>
   );
 }
 
