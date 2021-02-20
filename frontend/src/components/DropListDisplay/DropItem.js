@@ -78,7 +78,7 @@ function DropItem({
     <Card key={id} style={{ marginTop: "0.5rem", paddingBottom: "0" }}>
       <Card.Body style={{ paddingTop: "0.5rem" }}>
         <Row
-          className="show-grid justify-content-between"
+          className="justify-content-between"
           style={{ marginBottom: "0rem", paddingTop: "0rem" }}
         >
           <Col style={{ paddingLeft: "1rem" }}>
@@ -93,15 +93,18 @@ function DropItem({
               {`${monthNames[month - 1]} ${day}, ${year}`}
             </span>
           </Col>
-          <Col sm={4} className="d-flex flex-column">
+          <Col sm={3} className="d-flex flex-row justify-content-end">
             <ButtonGroup
               style={{
                 paddingRight: "0.5rem",
-                marginTop: "0.5rem",
-                // marginBottom: "1rem",
+                marginTop: "1rem",
+                marginBottom: "1rem",
               }}
             >
-              <Button onClick={handleStarClick} style={{ marginTop: "0rem" }}>
+              <Button
+                onClick={handleStarClick}
+                style={{ paddingLeft: "0.5rem", paddingRight: "0.5rem" }}
+              >
                 {isStarred ? (
                   <>
                     <BsStarFill style={{ marginRight: "0.5rem" }} />
@@ -109,27 +112,21 @@ function DropItem({
                   </>
                 ) : (
                   <>
-                    <BsStar style={{ marginRight: "0.5rem" }} />
+                    <BsStar
+                      style={{ marginLeft: "0", marginRight: "0.5rem" }}
+                    />
                     Star
                   </>
                 )}
               </Button>
-              <Button
-                variant="light"
-                disabled
-                style={{ paddingLeft: "0.5rem", marginLeft: "0" }}
-              >
+              <Button variant="light" disabled style={{}}>
                 {numStars}
               </Button>
-              <Button style={{ marginRight: "0.5rem", paddingLeft: "1rem" }}>
+              <Button style={{}}>
                 <BiGitRepoForked />
                 Fork
               </Button>
-              <Button
-                variant="light"
-                disabled
-                style={{ paddingLeft: "0.5rem", marginLeft: "0" }}
-              >
+              <Button variant="light" disabled style={{}}>
                 44
               </Button>
             </ButtonGroup>
