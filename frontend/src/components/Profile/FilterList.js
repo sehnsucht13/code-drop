@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  Row,
-  Button,
-  Col,
-  ListGroup,
-  ListGroupItem,
-  Form,
-} from "react-bootstrap";
+import { Row, Col, ListGroup, Form } from "react-bootstrap";
 import FilterListItem from "./FilterListItem";
 
 export default function FilterList({ drops }) {
@@ -28,7 +21,6 @@ export default function FilterList({ drops }) {
       setFilteredDrops(newFilteredList);
     }
     setFilterInput(newFilterInput);
-    // console.log("New input is", filterInput, ev.target.value);
   };
 
   const handleFilterBy = (ev) => {
@@ -38,9 +30,9 @@ export default function FilterList({ drops }) {
   const handleDelete = () => {};
 
   return (
-    <Col xs={12}>
-      <Form inline>
-        <Col xs={8}>
+    <div style={{ paddingBottom: "2rem" }}>
+      <Form inline style={{ paddingBottom: "1rem" }}>
+        <Col xs={9} style={{ paddingLeft: "0" }}>
           <Form.Control
             style={{ width: "100%" }}
             as="input"
@@ -49,9 +41,11 @@ export default function FilterList({ drops }) {
             value={filterInput}
           />
         </Col>
-        <Col xs={4}>
-          <Row className="justify-content-around">
-            <Form.Label>Filter By:</Form.Label>
+        <Col xs={3} style={{ paddingLeft: "0.3rem" }}>
+          <Row className="justify-content-end">
+            <Form.Label style={{ paddingRight: "0.5rem" }}>
+              Filter By:
+            </Form.Label>
             <Form.Control
               as="select"
               onChange={handleFilterBy}
@@ -64,17 +58,16 @@ export default function FilterList({ drops }) {
         </Col>
       </Form>
       <ListGroup
-        as="div"
         style={{ minHeight: "25rem", maxHeight: "25rem", overflowY: "auto" }}
       >
         {filteredDrops.map((drop) => (
           <FilterListItem
             title={drop.title}
-            language={drop.language}
+            language={drop.lang}
             id={drop.id}
           />
         ))}
       </ListGroup>
-    </Col>
+    </div>
   );
 }

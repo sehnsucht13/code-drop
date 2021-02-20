@@ -13,7 +13,7 @@ function FilterListItem({ title, language, id }) {
   const handleEdit = () => {};
   return (
     <ListGroupItem>
-      <Row className="justify-content-between" noGutters>
+      <Row className="justify-content-between">
         <Col xs={8}>
           <Link>
             <p className="h5">{title}</p>
