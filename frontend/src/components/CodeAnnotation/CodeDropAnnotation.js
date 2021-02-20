@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Row, FormControl, Col, Button } from "react-bootstrap";
 import { connect } from "react-redux";
 import CommentEditor from "../CommentEditor/CommentEditor";
 import {
-  set_annotation_edit_status,
   delete_annotation,
   save_annotation,
+  set_annotation_error_status,
 } from "../../actions/annotation_actions";
 
 function CodeDropAnnotation({
@@ -14,22 +14,24 @@ function CodeDropAnnotation({
   text,
   startIdx,
   endIdx,
-  isEdited,
-  editorInstance,
+  editorLineCount,
   deleteAnnotation,
   saveAnnotationState,
+  setAnnotationStatus,
 }) {
+  // State of text inputs
   const [startLineNum, setStartLineNum] = useState(startIdx);
   const [endLineNum, setendLineNum] = useState(endIdx);
   const [commentText, setCommentText] = useState(text);
 
+  // Contains warning status and message for start line index
   const [startLineWarningMsg, setStartLineWarningMsg] = useState(undefined);
   const [isStartLineInvalid, setIsStartLineInvalid] = useState(false);
-
+  // Contains warning status and message for end line index
   const [endLineWarningMsg, setEndLineWarningMsg] = useState(undefined);
   const [isEndLineInvalid, setIsEndLineInvalid] = useState(false);
 
-  const validateIndexValues = (startLineNum, endLineNum) => {
+  const validateInputIndexValues = (startLineNum, endLineNum) => {
     let startLineWarnings = [];
     let endLineWarnings = [];
 
@@ -46,7 +48,7 @@ function CodeDropAnnotation({
       startLineWarnings.push("Start line index cannot be less than 0");
     }
 
-    if (parseInt(startLineNum) > editorInstance.lineCount()) {
+    if (parseInt(startLineNum) > editorLineCount) {
       startLineWarnings.push(
         "Start line index cannot exceed the maximum number editor lines!"
       );
@@ -56,7 +58,7 @@ function CodeDropAnnotation({
       startLineWarnings.push("Start line index cannot be less than 1!");
     }
 
-    if (parseInt(endLineNum) > editorInstance.lineCount()) {
+    if (parseInt(endLineNum) > editorLineCount) {
       endLineWarnings.push(
         "End line index cannot exceed the maximum number editor lines!"
       );
@@ -75,11 +77,9 @@ function CodeDropAnnotation({
       setStartLineWarningMsg(startLineWarnings[0]);
       setIsStartLineInvalid(true);
     } else {
-      console.log("start line valid");
       setIsStartLineInvalid(false);
       setStartLineWarningMsg("");
     }
-    console.log("Endline warnings", endLineWarnings);
     if (endLineWarnings.length !== 0) {
       setEndLineWarningMsg(endLineWarnings[0]);
       setIsEndLineInvalid(true);
@@ -87,26 +87,36 @@ function CodeDropAnnotation({
       setIsEndLineInvalid(false);
       setEndLineWarningMsg("");
     }
+
+    // Set error status to prevent submission if there is an error in either one of the
+    // indexes.
+    return endLineWarnings.length !== 0 || startLineWarnings.length !== 0;
   };
 
+  useEffect(() => {
+    validateInputIndexValues(startLineNum, endLineNum);
+  }, [editorLineCount]);
+
   const handleStartLineNumChange = (ev) => {
-    validateIndexValues(ev.target.value, endLineNum);
+    validateInputIndexValues(ev.target.value, endLineNum);
     setStartLineNum(ev.target.value);
   };
 
   const handleEndLineNumChange = (ev) => {
-    validateIndexValues(startLineNum, ev.target.value);
+    validateInputIndexValues(startLineNum, ev.target.value);
     setendLineNum(ev.target.value);
   };
 
   const handleStartLineBlur = () => {
-    validateIndexValues(startLineNum, endLineNum);
+    const errorStatus = validateInputIndexValues(startLineNum, endLineNum);
     saveAnnotationState(startLineNum, endLineNum, commentText, index);
+    setAnnotationStatus(errorStatus);
   };
 
   const handleEndLineBlur = () => {
-    validateIndexValues(startLineNum, endLineNum);
+    const errorStatus = validateInputIndexValues(startLineNum, endLineNum);
     saveAnnotationState(startLineNum, endLineNum, commentText, index);
+    setAnnotationStatus(errorStatus);
   };
 
   const handleTextChange = (newText) => {
@@ -171,25 +181,24 @@ function CodeDropAnnotation({
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const annotationInfo = state.annotationReducer.annotations[ownProps.index];
+  const annotationProps = state.annotationReducer.annotations[ownProps.index];
   return {
     index: ownProps.index,
-    id: annotationInfo.id,
-    text: annotationInfo.text,
-    startIdx: annotationInfo.start,
-    endIdx: annotationInfo.end,
-    isEdited: annotationInfo.isEdited,
-    editorInstance: state.editor.instance,
+    id: annotationProps.id,
+    text: annotationProps.text,
+    startIdx: annotationProps.start,
+    endIdx: annotationProps.end,
+    editorLineCount: state.newDrop.editorLineCount,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setEditStatus: (status, idx) =>
-      dispatch(set_annotation_edit_status(status, idx)),
     deleteAnnotation: (idx) => dispatch(delete_annotation(idx)),
     saveAnnotationState: (start, end, text, idx) =>
       dispatch(save_annotation(start, end, text, idx)),
+    setAnnotationStatus: (status) =>
+      dispatch(set_annotation_error_status(status)),
   };
 };
 

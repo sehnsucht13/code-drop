@@ -125,20 +125,19 @@ export const DropEditor = ({
   tabSize,
   fontSize,
   keyMap,
-  set_editor_instance,
+  editorText,
   set_drop_text,
 }) => {
-  const [editorContent, setEditorContent] = useState("");
+  const [editorContent, setEditorContent] = useState(editorText);
+  // const [editorInstance, setEditorInstance] = useState(undefined);
 
   const handleEditorBlur = (editor, event) => {
-    set_drop_text(editor.getValue());
+    set_drop_text({ text: editor.getValue(), lineCount: editor.lineCount() });
   };
 
   const handleOnChange = (editor, data, value) => {
     setEditorContent(value);
   };
-
-  const handleMountEvent = (instance) => set_editor_instance(instance);
 
   return (
     <CodeMirror
@@ -148,7 +147,6 @@ export const DropEditor = ({
       }}
       onChange={handleOnChange}
       onBlur={handleEditorBlur}
-      editorDidMount={handleMountEvent}
       options={{
         mode: language,
         theme: theme,
@@ -163,7 +161,6 @@ export const DropEditor = ({
 };
 
 const mapStateToProps = (state, ownProps) => {
-  console.log("The state from the editor component is", state);
   return {
     theme: state.editor.theme,
     language: state.editor.language,
@@ -171,11 +168,11 @@ const mapStateToProps = (state, ownProps) => {
     tabSize: state.editor.tab_size,
     fontSize: state.editor.font_size,
     keyMap: state.editor.keymap,
+    editorText: state.newDrop.editorText,
   };
 };
 
 const mapDispatchToProps = {
-  set_editor_instance,
   set_drop_text,
 };
 
