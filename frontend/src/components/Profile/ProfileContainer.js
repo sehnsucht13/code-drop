@@ -52,17 +52,15 @@ export const ProfileContainer = ({ isAuth, user }) => {
       ) : (
         <Container
           className="d-flex"
-          style={{ height: "150%", paddingBottom: "1rem" }}
+          style={{ height: "185%", paddingBottom: "1rem" }}
           fluid
         >
-          <Col md={3} style={{ paddingTop: "1.5rem" }}>
+          <Col xs={12} style={{ paddingTop: "1.5rem" }}>
             <SideBar
               username={profileData.profile.username}
               description={profileData.profile.description}
             />
-          </Col>
-          {/* <div style={{ borderLeft: "0.2rem solid #000000" }}></div> */}
-          <Col xs={12} md={9} style={{ paddingTop: "1.5rem" }}>
+            <hr />
             <StatSummary
               numStars={profileData.profile.numStars}
               numForks={profileData.profile.numForks}
