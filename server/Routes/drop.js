@@ -175,7 +175,6 @@ router.get("/paginate", async (req, res) => {
       ],
     });
   }
-  console.log("Rows from paginate are", rows);
   const response = await Promise.all(
     rows.map(async (row) => {
       if (req.user !== undefined) {
@@ -520,13 +519,12 @@ router.post("/", async (req, res) => {
   // }
 });
 
-// TODO: Finish
-router.put("/drops/:dropId", async (req, res) => {
+router.put("/:dropId", async (req, res) => {
   const dropId = parseInt(req.params.dropId);
   const title = req.body.title;
   const lang = req.body.lang || "";
-  const visibility = req.body.visibility;
-  const textBody = req.body.text;
+  const visibility = req.body.visibility || true;
+  const text = req.body.text;
   const description = req.body.description || "";
   const annotations = req.body.annotations || [];
   if (isNaN(dropId)) {
@@ -536,25 +534,80 @@ router.put("/drops/:dropId", async (req, res) => {
     res.status(401).end();
     return;
   } else if (
-    typeof title !== "string" ||
-    typeof visibility !== "boolean" ||
-    typeof textBody !== "string" ||
+    text === undefined ||
     text.length === 0 ||
+    title === undefined ||
     title.length === 0
   ) {
     res.status(400).end();
     return;
   }
 
-  const dropModel = await req.app.locals.db.findOne({
-    where: {
-      id: dropId,
-      userId: req.user.uid,
-    },
+  let newAnnotations = [];
+  let updatedAnnotations = {};
+  annotations.forEach((annotation) => {
+    if (annotation.dbId !== undefined) {
+      updatedAnnotations[annotation.dbId] = annotation;
+    } else {
+      newAnnotations.concat(annotation);
+    }
   });
-  if (dropModel === null) {
-    res.status(404).end();
-    return;
+
+  try {
+    // Retrieve the model of the drop that is being updated
+    const dropModel = await req.app.locals.db.Drops.findOne({
+      where: {
+        id: dropId,
+        userId: req.user.uid,
+      },
+    });
+    if (dropModel === null) {
+      res.status(404).end();
+      return;
+    } else {
+      dropModel.title = title;
+      dropModel.lang = lang;
+      dropModel.visibility = visibility;
+      dropModel.text = text;
+      dropModel.description = description;
+      await dropModel.save();
+    }
+
+    const dropAnnotationModels = await req.app.locals.db.DropAnnotations.findAll(
+      {
+        where: {
+          dropId: dropId,
+        },
+        raw: false,
+      }
+    );
+
+    // Iterating through the result set produced by FindAll using "for ... of..." does
+    // not work for some reason. ForEach is used here instead.
+    dropAnnotationModels.forEach((annotationModel) => {
+      if (annotationModel.dataValues.id in updatedAnnotations) {
+        annotationModel.startLine =
+          updatedAnnotations[annotationModel.id].start;
+        annotationModel.endLine = updatedAnnotations[annotationModel.id].end;
+        annotationModel.annotation_text =
+          updatedAnnotations[annotationModel.id].text;
+        annotationModel.save();
+      } else {
+        annotationModel.destroy();
+      }
+    });
+
+    for (const newAnnotation in newAnnotations) {
+      await req.app.locals.db.DropAnnotations.create({
+        startLine: newAnnotation.start,
+        endLine: newAnnotation.end,
+        annotation_text: newAnnotation.text,
+      });
+    }
+    res.status(200).end();
+  } catch (err) {
+    console.log("Error in put", err);
+    res.status(500).end();
   }
 });
 
