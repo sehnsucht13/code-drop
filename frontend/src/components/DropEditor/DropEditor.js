@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
 import { Controlled as CodeMirror } from "react-codemirror2";
@@ -129,7 +129,12 @@ export const DropEditor = ({
   set_drop_text,
 }) => {
   const [editorContent, setEditorContent] = useState(editorText);
-  // const [editorInstance, setEditorInstance] = useState(undefined);
+  const [editorLanguage, setEditorLanguage] = useState(language);
+
+  useEffect(() => {
+    console.log("language is", language);
+    setEditorLanguage(language);
+  }, [language]);
 
   const handleEditorBlur = (editor, event) => {
     set_drop_text({ text: editor.getValue(), lineCount: editor.lineCount() });
@@ -148,7 +153,7 @@ export const DropEditor = ({
       onChange={handleOnChange}
       onBlur={handleEditorBlur}
       options={{
-        mode: language,
+        mode: editorLanguage,
         theme: theme,
         keyMap: keyMap,
         tabSize: tabSize,

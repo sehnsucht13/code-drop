@@ -34,8 +34,11 @@ export const DropInput = ({
   const [showEditorOptions, setShowEditorOptions] = useState(false);
 
   useEffect(() => {
+    console.log("Ran effect!", title.content);
     setIsTitleInvalid(title.isInvalid);
-  }, [title]);
+    setTitleContent(title.content);
+    setDescriptionContent(description);
+  }, [title, description]);
 
   const handleDropTitleChange = (ev) => setTitleContent(ev.target.value);
   const handleDescriptionChange = (ev) =>

@@ -25,6 +25,12 @@ function CodeDropAnnotation({
   const [endLineNum, setendLineNum] = useState(endIdx);
   const [commentText, setCommentText] = useState(text);
 
+  useEffect(() => {
+    setStartLineNum(startIdx);
+    setendLineNum(endIdx);
+    setCommentText(text);
+  }, [startIdx, endIdx, text]);
+
   // Contains warning status and message for start line index
   const [startLineWarningMsg, setStartLineWarningMsg] = useState(undefined);
   const [isStartLineInvalid, setIsStartLineInvalid] = useState(false);
