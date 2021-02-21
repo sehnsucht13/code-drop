@@ -29,12 +29,10 @@ export const DropInput = ({
   const [descriptionContent, setDescriptionContent] = useState(description);
 
   const [isTitleInvalid, setIsTitleInvalid] = useState(false);
-  const [titleErrMsg, setTitleErrMsg] = useState(undefined);
 
   const [showEditorOptions, setShowEditorOptions] = useState(false);
 
   useEffect(() => {
-    console.log("Ran effect!", title.content);
     setIsTitleInvalid(title.isInvalid);
     setTitleContent(title.content);
     setDescriptionContent(description);
@@ -45,12 +43,11 @@ export const DropInput = ({
     setDescriptionContent(ev.target.value);
 
   const handleDropTitleBlur = () => {
-    console.log("Here is the title", titleContent);
     if (titleContent.length === 0) {
-      set_drop_title_error({ errorMsg: undefined, isInvalid: true });
+      // set_drop_title_error({ errorMsg: undefined, isInvalid: true });
       set_drop_title_content(titleContent);
     } else {
-      set_drop_title_error({ errorMsg: undefined, isInvalid: false });
+      // set_drop_title_error({ errorMsg: undefined, isInvalid: false });
       set_drop_title_content(titleContent);
     }
   };
@@ -78,8 +75,10 @@ export const DropInput = ({
             onChange={handleDropTitleChange}
             onBlur={handleDropTitleBlur}
             isInvalid={isTitleInvalid}
-            minLength="1"
-            maxLength="90"
+            type="text"
+            minLength={1}
+            maxLength={100}
+            required
           ></Form.Control>
           <FormControl.Feedback type="invalid">
             Drop title cannot be empty!
@@ -92,8 +91,9 @@ export const DropInput = ({
             value={descriptionContent}
             onChange={handleDescriptionChange}
             onBlur={handleDescriptionBlur}
-            minLength="0"
-            maxLength="300"
+            type="text"
+            minLength={0}
+            maxLength={200}
           ></Form.Control>
         </Form.Group>
 
