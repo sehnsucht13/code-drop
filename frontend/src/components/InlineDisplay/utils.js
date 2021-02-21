@@ -40,12 +40,12 @@ export function createChunks(splitTextArray, sortedAnnotations) {
       annotationIdx: index,
       startIdx: chunkStart,
     });
-    chunkStart += currLineIndex;
+    chunkStart = currLineIndex;
   });
 
   if (currLineIndex < splitTextArray.length) {
     currChunkLines = [];
-    while (currLineIndex < splitTextArray.endLine) {
+    while (currLineIndex < splitTextArray.length) {
       currChunkLines.push(splitTextArray[currLineIndex]);
       currLineIndex++;
     }
