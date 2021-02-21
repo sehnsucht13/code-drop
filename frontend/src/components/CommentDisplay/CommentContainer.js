@@ -4,11 +4,13 @@ import { Button, Alert, Row } from "react-bootstrap";
 import axios from "axios";
 import CommentDisplay from "./CommentDisplay";
 import CommentEditor from "../CommentEditor/CommentEditor";
+import FetchingComments from "../Loading/FetchingComments";
 
 function CommentContainer({ dropId, isAuth }) {
   const [comments, setComments] = useState([]);
   const [newCommentText, setNewCommentText] = useState("");
   const [hasSubmitIssue, setHasSubmitIssue] = useState(false);
+  const [areCommentsLoaded, setAreCommentsLoaded] = useState(false);
 
   const handleEditorOnChange = (newVal) => {
     setNewCommentText(newVal);
@@ -18,15 +20,18 @@ function CommentContainer({ dropId, isAuth }) {
   };
 
   const refreshComments = (successCallback, errorCallback) => {
+    setAreCommentsLoaded(false);
     axios
       .get(`/drop/${dropId}/comments`)
       .then((response) => {
         if (response.status === 200) {
           setComments(response.data);
+          setAreCommentsLoaded(true);
           successCallback();
         }
       })
       .catch((err) => {
+        setAreCommentsLoaded(true);
         errorCallback(err);
       });
   };
@@ -45,10 +50,12 @@ function CommentContainer({ dropId, isAuth }) {
                 setHasSubmitIssue(false);
                 setNewCommentText("");
                 setComments(response.data);
+                setAreCommentsLoaded(true);
               }
             })
             .catch((err) => {
               setHasSubmitIssue(false);
+              setAreCommentsLoaded(true);
             });
         }
       })
@@ -64,55 +71,64 @@ function CommentContainer({ dropId, isAuth }) {
       .then((response) => {
         if (response.status === 200) {
           setComments(response.data);
+          setAreCommentsLoaded(true);
         }
       })
-      .catch((err) => {});
+      .catch((err) => {
+        setAreCommentsLoaded(true);
+      });
   }, [dropId]);
 
   return (
-    <>
-      {comments.map((comment) => (
-        <CommentDisplay
-          dropId={dropId}
-          commentId={comment.id}
-          commentText={comment.text}
-          authorUsername={comment.user.username}
-          authorId={comment.user.id}
-          lastUpdate={comment.updatedAt}
-          refreshComments={refreshComments}
-        />
-      ))}
-      <hr />
-      {isAuth ? (
-        <>
-          {hasSubmitIssue && (
-            <Alert variant="danger">
-              There was an issue submitting your comment. Please try again!
-            </Alert>
-          )}
-          <div style={{ paddingBottom: "2rem" }}>
-            <CommentEditor
-              value={newCommentText}
-              onChange={handleEditorOnChange}
-              onBlur={handleEditorOnBlur}
-            />
-            <Row
-              className="justify-content-end"
-              style={{ paddingRight: "1rem", paddingTop: "0.5rem" }}
-            >
-              <Button onClick={handleNewCommentSubmit}>Submit</Button>
-            </Row>
-          </div>
-        </>
+    <div>
+      {!areCommentsLoaded ? (
+        <FetchingComments />
       ) : (
-        <Row
-          className="justify-content-center"
-          style={{ paddingBottom: "1rem" }}
-        >
-          <Button>Sign In to comment</Button>
-        </Row>
+        <>
+          {comments.map((comment) => (
+            <CommentDisplay
+              dropId={dropId}
+              commentId={comment.id}
+              commentText={comment.text}
+              authorUsername={comment.user.username}
+              authorId={comment.user.id}
+              lastUpdate={comment.updatedAt}
+              refreshComments={refreshComments}
+            />
+          ))}
+          <hr />
+          {isAuth ? (
+            <>
+              {hasSubmitIssue && (
+                <Alert variant="danger">
+                  There was an issue submitting your comment. Please try again!
+                </Alert>
+              )}
+              <div style={{ paddingBottom: "2rem" }}>
+                <CommentEditor
+                  value={newCommentText}
+                  onChange={handleEditorOnChange}
+                  onBlur={handleEditorOnBlur}
+                />
+                <Row
+                  className="justify-content-end"
+                  style={{ paddingRight: "1rem", paddingTop: "0.5rem" }}
+                >
+                  <Button onClick={handleNewCommentSubmit}>Submit</Button>
+                </Row>
+              </div>
+            </>
+          ) : (
+            <Row
+              className="justify-content-center"
+              style={{ paddingBottom: "1rem" }}
+            >
+              <Button>Sign In to comment</Button>
+            </Row>
+          )}
+        </>
       )}
-    </>
+    </div>
   );
 }
 
