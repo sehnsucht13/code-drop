@@ -109,3 +109,56 @@ export function sendDrop() {
       });
   };
 }
+
+export function updateDrop(dropId) {
+  return (dispatch, getState) => {
+    const annotationArray = getState().annotationReducer.annotations.map(
+      (annotation) => {
+        return {
+          start: annotation.start,
+          end: annotation.end,
+          text: annotation.text,
+          dbId: annotation.dbId,
+        };
+      }
+    );
+    const dropText = getState().newDrop.editorText;
+    const dropLang = getState().newDrop.language;
+    const dropTitle = getState().newDrop.title.content;
+    const dropDesc = getState().newDrop.description;
+    const dropVisibility = getState().newDrop.visibility;
+    console.log("About to send state", annotationArray, getState().newDrop);
+    if (dropTitle.length === 0) {
+      dispatch(
+        set_drop_title_error({
+          errorMsg: "Title cannot be empty!",
+          isInvalid: true,
+        })
+      );
+      return;
+    }
+
+    // TODO: Check for any errors and refuse to send here!
+    dispatch(uploadBegin());
+    console.log("The drop id from dispatch is", dropId);
+    axios
+      .put(`/drop/${dropId}`, {
+        title: dropTitle,
+        lang: dropLang,
+        text: dropText,
+        description: dropDesc,
+        visibility: dropVisibility,
+        annotations: annotationArray,
+      })
+      .then((response) => {
+        // Erase data from store
+        dispatch(reset_drop_info());
+        dispatch(delete_all_annotations());
+        dispatch(uploadSuccess());
+      })
+      .catch((err) => {
+        console.log("Error with post request when uploading", err);
+        dispatch(uploadFail());
+      });
+  };
+}

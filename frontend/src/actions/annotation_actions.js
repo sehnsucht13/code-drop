@@ -23,14 +23,15 @@ export function set_annotation_error_status(index, status) {
 export function save_annotation(start, end, text, index) {
   return {
     type: SAVE_ANNOTATION,
-    payload: { startLine: start, endLine: end, content: text, index: index },
+    payload: { start: start, end: end, text: text, index: index },
   };
 }
 
-export function add_annotation() {
+export function add_annotation(start, end, text, index, dbId) {
+  console.log("Creating annotation with dbID", dbId);
   return {
     type: ADD_ANNOTATION,
-    payload: null,
+    payload: { start: start, end: end, text: text, index: index, dbId: dbId },
   };
 }
 

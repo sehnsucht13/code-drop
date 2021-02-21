@@ -22,10 +22,15 @@ export default function annotationReducer(
           ...state.annotations,
           {
             id: state.annotations.length + 1,
-            text: "",
-            start: "",
-            end: "",
+            text: payload.text || "",
+            start: payload.start || "",
+            end: payload.end || "",
+            // Indicates if there is an error anywhere within the annotation.
+            // If this is true, submission is prevented.
             hasError: false,
+            // This is the primary key of the annotation in the database.
+            // Used when an annotation is edited or forked.
+            dbId: payload.dbId || undefined,
           },
         ],
       };
@@ -46,9 +51,9 @@ export default function annotationReducer(
         if (index === payload.index) {
           return {
             ...item,
-            start: payload.startLine,
-            end: payload.endLine,
-            text: payload.content,
+            start: payload.start,
+            end: payload.end,
+            text: payload.text,
           };
         }
         return item;
