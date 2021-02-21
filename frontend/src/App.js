@@ -9,6 +9,7 @@ import NewDropContainer from "./components/NewDrop/NewDropContainer";
 import LoginContainer from "./components/Login/LoginContainer";
 import RegisterContainer from "./components/Register/RegisterContainer";
 import ProfileContainer from "./components/Profile/ProfileContainer";
+import DropEditContainer from "./components/DropEdit/DropEditContainer";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Switch>
         <Route path="/" component={HomePageContainer} exact />
         <Route path="/view" component={CodeDisplaycontainer} />
+        <Route path="/edit" component={DropEditContainer} />
         <Route path="/create" component={NewDropContainer} />
         <Route path="/search" component={SearchContainer} />
         <Route path="/explore" component={SearchContainer} />
