@@ -6,7 +6,10 @@ import {
   SET_DROP_VISIBLITY,
   SET_DROP_TEXT,
   RESET_DROP_INFO,
+  UPLOAD_DROP_SUCCESS,
+  UPLOAD_DROP_FAIL,
 } from "../constants/constants";
+import { SUCCESS, FAILURE } from "../constants/uploadConstants";
 
 const initialState = {
   title: {
@@ -18,6 +21,7 @@ const initialState = {
   language: null,
   editorText: "", // Contents of the editor
   editorLineCount: 0, // Number of lines in the editor. Used by annotations to find errors
+  uploadStatus: undefined,
 };
 
 const new_drop_reducer = (state = initialState, { type, payload }) => {
@@ -52,6 +56,17 @@ const new_drop_reducer = (state = initialState, { type, payload }) => {
         language: null,
         editorText: "",
         editorLineCount: 0,
+        uploadStatus: undefined,
+      };
+    case UPLOAD_DROP_SUCCESS:
+      return {
+        ...state,
+        uploadStatus: SUCCESS,
+      };
+    case UPLOAD_DROP_FAIL:
+      return {
+        ...state,
+        uploadStatus: FAILURE,
       };
     default:
       return state;
