@@ -10,15 +10,15 @@ import InlineCodeDisplay from "../InlineDisplay/InlineDisplay";
 import LoadingPage from "../Loading/LoadingPage";
 import CommentContainer from "../CommentDisplay/CommentContainer";
 import Footer from "../Footer/Footer";
+import ErrorPage from "../Error/ErrorContainer";
 
 function CodeDisplayContainer() {
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const [codeDrop, setCodeDrop] = useState({});
   const [codeDropAnnotations, setcodeDropAnnotations] = useState([]);
   const [currentTab, setcurrentTab] = useState("block");
-
   const searchParams = queryString.parse(useLocation().search);
-  console.log("searchParams", searchParams);
 
   const handleTabClick = (tabKey) => {
     setcurrentTab(tabKey);
@@ -35,7 +35,7 @@ function CodeDisplayContainer() {
         setIsLoading(false);
       })
       .catch((err) => {
-        setIsLoading(false);
+        setHasError(true);
       });
   }, []);
 
@@ -43,7 +43,10 @@ function CodeDisplayContainer() {
     <>
       <NavBar />
       {isLoading ? (
-        <LoadingPage />
+        <>
+          {!hasError && <LoadingPage />}
+          {hasError && <ErrorPage />}
+        </>
       ) : (
         <Container fluid>
           <Tabs activeKey={currentTab} onSelect={handleTabClick}>
