@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import NavBar from "../NavBar/Navbar";
-import DropsList from "../DropListDisplay/DropsList";
 import SearchResults from "./SearchResults";
-import { useLocation, Link } from "react-router-dom";
-import { Container, Button, Row } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
+import { Container } from "react-bootstrap";
 import queryString from "query-string";
-import axios from "axios";
 
 import SearchBar from "./SearchBar";
 

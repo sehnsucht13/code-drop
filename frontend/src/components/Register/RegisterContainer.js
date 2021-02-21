@@ -107,7 +107,6 @@ export const RegisterContainer = (props) => {
       setIsConfirmPasswordInvalid(true);
     }
 
-    const form = event.currentTarget;
     if (validateFormFields() === true) {
       setIsUsernameInvalid(false);
       setIsPasswordInvalid(false);

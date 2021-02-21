@@ -37,7 +37,7 @@ function CodeDisplayContainer() {
       .catch((err) => {
         setHasError(true);
       });
-  }, []);
+  }, [searchParams.id]);
 
   return (
     <>

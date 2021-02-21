@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { InputGroup, FormControl, Tabs, Tab } from "react-bootstrap";
+import { FormControl, Tabs, Tab } from "react-bootstrap";
 import ReactMarkdown from "react-markdown";
 
 export default function CommentEditor({ value, onChange, onBlur }) {

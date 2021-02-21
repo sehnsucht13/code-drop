@@ -82,6 +82,8 @@ export const DropEditContainer = ({
       }
     }
     getData();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryParams.id]);
 
   useEffect(() => {
@@ -98,6 +100,7 @@ export const DropEditContainer = ({
       default:
         break;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadStatus]);
 
   const handlePublish = () => {

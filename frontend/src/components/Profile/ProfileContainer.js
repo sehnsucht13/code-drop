@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Container, Col, Alert } from "react-bootstrap";
+import { Container, Alert } from "react-bootstrap";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
 import NavBar from "../NavBar/Navbar";
@@ -13,9 +13,7 @@ import SideBar from "./SideBar";
 import axios from "axios";
 
 export const ProfileContainer = ({ isAuth, user }) => {
-  const [queryParams, setQueryParams] = useState(
-    queryString.parse(useLocation().search)
-  );
+  const [queryParams] = useState(queryString.parse(useLocation().search));
   const [hasLoaded, setHasLoaded] = useState(false);
   const [profileData, setProfileData] = useState(undefined);
   const [hasError, setHasError] = useState(false);

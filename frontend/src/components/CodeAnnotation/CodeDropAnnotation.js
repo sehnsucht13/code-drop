@@ -105,6 +105,7 @@ function CodeDropAnnotation({
 
   useEffect(() => {
     validateInputIndexValues(startLineNum, endLineNum);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editorLineCount]);
 
   const handleStartLineNumChange = (ev) => {

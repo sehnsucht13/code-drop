@@ -23,7 +23,7 @@ function InlineCodeDisplay({
     setSortedAnnotations(asort);
     const chunks = createChunks(textArray, asort);
     setTextChunks(chunks);
-  }, []);
+  }, [text, annotations]);
 
   return (
     <Container id="inline-code-display" fluid>

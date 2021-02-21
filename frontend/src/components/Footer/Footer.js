@@ -18,7 +18,7 @@ function Footer() {
             <Link to="/login">Log In</Link>
             <Link to="/register">Sign Up</Link>
             <Link to="/about">About</Link>
-            <a href="#">Source Code</a>
+            <a href="https://github.com/sehnsucht13/code-drop">Source Code</a>
           </div>
         </div>
       </footer>

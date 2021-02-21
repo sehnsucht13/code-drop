@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 
 import { Controlled as CodeMirror } from "react-codemirror2";
-import { set_editor_instance } from "../../actions/editor_actions";
 import { set_drop_text } from "../../actions/new_drop_actions";
 require("codemirror");
 require("codemirror/lib/codemirror.css");

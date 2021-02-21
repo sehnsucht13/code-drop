@@ -8,7 +8,6 @@ import DropsList from "../DropListDisplay/DropsList";
 import LoadingPage from "../Loading/LoadingPage";
 
 const getNextPage = (setDropsCallback, setPageParams, currentPageParams) => {
-  console.log("getting next page");
   axios
     .get("/drop/paginate", {
       params: {
@@ -17,7 +16,6 @@ const getNextPage = (setDropsCallback, setPageParams, currentPageParams) => {
       },
     })
     .then((result) => {
-      console.log("Got a result");
       setPageParams({
         start: currentPageParams.start + currentPageParams.count,
         count: currentPageParams.count,
@@ -55,6 +53,7 @@ function HomePageContainer() {
         setDrops(result.data);
         setInitialLoadDone(true);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

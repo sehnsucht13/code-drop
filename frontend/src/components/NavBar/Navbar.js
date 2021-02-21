@@ -34,7 +34,7 @@ function NavigationBar({
         })
         .catch();
     }
-  }, []);
+  }, [set_auth, checked_auth, hasChecked]);
 
   // Change state if user logs out
   useEffect(() => {

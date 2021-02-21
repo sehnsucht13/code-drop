@@ -2,18 +2,18 @@ import React from "react";
 import { connect } from "react-redux";
 import { Col, Row, ListGroup, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-const axios = require("axios");
+// const axios = require("axios");
 
 function FilterListItem({ title, language, id, isAuth }) {
   // TODO: Handle Deleting
-  const handleDelete = () => {
-    axios
-      .delete(`/drop/${id}`)
-      .then((response) => {})
-      .catch();
-  };
-  // TODO: Handle editing
-  const handleEdit = () => {};
+  // const handleDelete = () => {
+  //   axios
+  //     .delete(`/drop/${id}`)
+  //     .then((response) => {})
+  //     .catch();
+  // };
+  // // TODO: Handle editing
+  // const handleEdit = () => {};
 
   return (
     <ListGroup.Item>

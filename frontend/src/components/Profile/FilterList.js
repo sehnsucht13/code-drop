@@ -28,7 +28,7 @@ export default function FilterList({ drops }) {
     setFilterBy(ev.target.value);
   };
 
-  const handleDelete = () => {};
+  // const handleDelete = () => {};
 
   return (
     <div style={{ paddingBottom: "2rem" }}>
