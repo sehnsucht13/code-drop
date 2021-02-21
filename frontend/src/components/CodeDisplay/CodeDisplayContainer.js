@@ -30,13 +30,11 @@ function CodeDisplayContainer() {
     axios
       .get(`/drop/${searchParams.id}`)
       .then((response) => {
-        console.log("Response from the server is", response.data);
         setCodeDrop(response.data.codeDrop);
         setcodeDropAnnotations(response.data.dropAnnotations);
         setIsLoading(false);
       })
       .catch((err) => {
-        console.log("Error encountered", err);
         setIsLoading(false);
       });
   }, []);
@@ -44,10 +42,10 @@ function CodeDisplayContainer() {
   return (
     <>
       <NavBar />
-      <Container fluid>
-        {isLoading ? (
-          <LoadingPage />
-        ) : (
+      {isLoading ? (
+        <LoadingPage />
+      ) : (
+        <Container fluid>
           <Tabs activeKey={currentTab} onSelect={handleTabClick}>
             <Tab eventKey="block" title="Block View">
               <BlockCodeDisplay
@@ -62,10 +60,10 @@ function CodeDisplayContainer() {
               />
             </Tab>
           </Tabs>
-        )}
-        <hr />
-        <CommentContainer dropId={searchParams.id} />
-      </Container>
+        </Container>
+      )}
+      <hr />
+      <CommentContainer dropId={searchParams.id} />
       <Footer />
     </>
   );

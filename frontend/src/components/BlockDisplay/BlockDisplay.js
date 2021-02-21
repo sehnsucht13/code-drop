@@ -33,8 +33,9 @@ export default function BlockCodeView({
 
   return (
     <div id="block-code-display">
-      <h1>{title}</h1>
-      <h3>{"Language: ".concat(lang)}</h3>
+      <h2>{title}</h2>
+      <h4 className="text-muted">{description}</h4>
+      <p className="text-muted">{lang}</p>
       <Highlight Prism={Prism} theme={theme} code={text} language={lang}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre className={className} style={style}>

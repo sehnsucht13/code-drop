@@ -8,8 +8,10 @@ import { Card } from "react-bootstrap";
 function InlineChunk({ lines, annotation, lang, offsetIdx, chunkNum }) {
   const joinedLines = lines.join("\n");
   return (
-    <Card>
-      <Card.Title>{"Chunk ".concat(chunkNum)}</Card.Title>
+    <Card style={{ marginBottom: "1rem" }}>
+      <Card.Title className="text-center">
+        {"Chunk ".concat(chunkNum)}
+      </Card.Title>
       <ReactMarkdown>
         {annotation === undefined ? null : annotation.annotation_text}
       </ReactMarkdown>
