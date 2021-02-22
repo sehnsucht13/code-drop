@@ -15,17 +15,12 @@ describe("Drop Create", () => {
     username: "delete_drop_user_u3",
     password: "delete_drop_user_u3",
   };
-  const u4 = {
-    username: "delete_drop_user_u4",
-    password: "delete_drop_user_u4",
-  };
 
   beforeAll(async (done) => {
     await db.sequelize.sync();
     const u1_pass = await bcrypt.hash(u1.password, 10);
     const u2_pass = await bcrypt.hash(u2.password, 10);
     const u3_pass = await bcrypt.hash(u3.password, 10);
-    const u4_pass = await bcrypt.hash(u4.password, 10);
     await db.Users.create({
       username: u1.username,
       password: u1_pass,
@@ -48,13 +43,6 @@ describe("Drop Create", () => {
       numStars: 0,
       numForks: 0,
     });
-    await db.Users.create({
-      username: u4.username,
-      password: u4_pass,
-      description: "",
-      numStars: 0,
-      numForks: 0,
-    });
     done();
   });
 
@@ -68,9 +56,6 @@ describe("Drop Create", () => {
     const u3_model = await db.Users.findOne({
       where: { username: u3.username },
     });
-    const u4_model = await db.Users.findOne({
-      where: { username: u4.username },
-    });
     const u1_dropModel = await db.Drops.findOne({
       where: { userId: u1_model.id },
     });
@@ -79,9 +64,6 @@ describe("Drop Create", () => {
     });
     const u3_dropModel = await db.Drops.findOne({
       where: { userId: u3_model.id },
-    });
-    const u4_dropModel = await db.Drops.findOne({
-      where: { userId: u4_model.id },
     });
     if (u1_model !== null) {
       await u1_model.destroy();
@@ -92,9 +74,6 @@ describe("Drop Create", () => {
     if (u3_model !== null) {
       await u3_model.destroy();
     }
-    if (u4_model !== null) {
-      await u4_model.destroy();
-    }
     if (u1_dropModel !== null) {
       await u1_dropModel.destroy();
     }
@@ -103,9 +82,6 @@ describe("Drop Create", () => {
     }
     if (u3_dropModel !== null) {
       await u3_dropModel.destroy();
-    }
-    if (u4_dropModel !== null) {
-      await u4_dropModel.destroy();
     }
 
     await db.sequelize.close();
@@ -160,7 +136,7 @@ describe("Drop Create", () => {
 
     const loginResp = await agent
       .post("/auth/login/")
-      .send({ username: u2.username, password: u2.password });
+      .send({ username: u3.username, password: u3.password });
     expect(loginResp.statusCode).toBe(200);
 
     const sessionResp = await agent.get("/auth/session/");
@@ -175,13 +151,12 @@ describe("Drop Create", () => {
       userId: sessionResp.body.uid,
     });
     const newDropId = newDrop.dataValues.id;
-    console.log("New drop id", newDropId);
     const resp = await agent.delete(`/drop/${newDropId}`);
     expect(resp.statusCode).toBe(200);
 
     const deletedDrop = await db.Drops.findByPk(newDropId);
     if (deletedDrop !== null) {
-      throw "Drop was not deleted";
+      done.fail(new Error("New Drop was not deleted!"));
     }
 
     const logout = await agent.get("/auth/logout/");

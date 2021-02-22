@@ -95,6 +95,8 @@ describe("Drop Create", () => {
     if (u4_dropModel !== null) {
       await u4_dropModel.destroy();
     }
+
+    await db.sequelize.close();
     done();
   });
 
@@ -141,8 +143,7 @@ describe("Drop Create", () => {
     if (newDropModel === null) {
       const logout = await agent.get("/auth/logout/");
       expect(logout.statusCode).toBe(200);
-      throw "New Drop model was not created.";
-      done();
+      done.fail(new Error("New Drop model was not created."));
     }
 
     const logout = await agent.get("/auth/logout/");
@@ -178,8 +179,7 @@ describe("Drop Create", () => {
     if (newDropModel !== null) {
       const logout = await agent.get("/auth/logout/");
       expect(logout.statusCode).toBe(200);
-      done();
-      throw "New Drop without title was created.";
+      done.fail(new Error("New Drop without title was created."));
     }
 
     const logout = await agent.get("/auth/logout/");
@@ -215,8 +215,7 @@ describe("Drop Create", () => {
     if (newDropModel !== null) {
       const logout = await agent.get("/auth/logout/");
       expect(logout.statusCode).toBe(200);
-      throw "New Drop without body was created.";
-      done();
+      done.fail(new Error("New Drop without body was created."));
     }
 
     const logout = await agent.get("/auth/logout/");
@@ -252,8 +251,8 @@ describe("Drop Create", () => {
     if (newDropModel !== null) {
       const logout = await agent.get("/auth/logout/");
       expect(logout.statusCode).toBe(200);
-      throw "New Drop without body or title was created.";
-      done();
+
+      done.fail(new Error("New Drop without body or title was created."));
     }
 
     const logout = await agent.get("/auth/logout/");

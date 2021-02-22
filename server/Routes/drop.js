@@ -350,7 +350,7 @@ router.delete("/:dropId", async (req, res) => {
   if (user === undefined) {
     res.status(401).end();
     return;
-  } else if (IsNaN(dropId)) {
+  } else if (isNaN(dropId)) {
     res.status(400).end();
     return;
   }
@@ -471,6 +471,7 @@ router.post("/", async (req, res) => {
     typeof title !== "string" ||
     typeof visibility !== "boolean" ||
     typeof textBody !== "string" ||
+    title.length === 0 ||
     textBody.length === 0
   ) {
     res.status(400).end();
