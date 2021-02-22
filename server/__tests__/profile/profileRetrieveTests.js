@@ -59,13 +59,12 @@ describe("Profile Tests", () => {
   });
 
   afterAll(async (done) => {
-    dropIds.forEach(async (dropId) => {
+    for (const dropId of dropIds) {
       const dropModel = await db.Drops.findOne({ where: { id: dropId } });
       if (dropModel !== null) {
         await dropModel.destroy();
       }
-    });
-
+    }
     const userModel = await db.Users.findOne({
       where: { username: "test_profile" },
     });
@@ -108,6 +107,10 @@ describe("Profile Tests", () => {
         { id: dropIds[1], title: "hidden drop", lang: "python" },
         { id: dropIds[2], title: "public drop 2", lang: "c++" },
       ],
+      counts: [
+        { count: 1, lang: "c++" },
+        { count: 2, lang: "python" },
+      ],
     });
 
     const logout = await agent.get("/auth/logout/");
@@ -135,6 +138,10 @@ describe("Profile Tests", () => {
       drops: [
         { id: dropIds[0], title: "public drop 1", lang: "python" },
         { id: dropIds[2], title: "public drop 2", lang: "c++" },
+      ],
+      counts: [
+        { count: 1, lang: "c++" },
+        { count: 1, lang: "python" },
       ],
     });
   });

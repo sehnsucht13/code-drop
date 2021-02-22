@@ -86,12 +86,12 @@ describe("Profile Delete Tests", () => {
   });
 
   afterAll(async (done) => {
-    dropIds.forEach(async (dropId) => {
+    for (const dropId of dropIds) {
       const dropModel = await db.Drops.findOne({ where: { id: dropId } });
       if (dropModel !== null) {
         await dropModel.destroy();
       }
-    });
+    }
 
     const userModel_1 = await db.Users.findOne({
       where: { username: "tdp_1" },
