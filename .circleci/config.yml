@@ -1,0 +1,37 @@
+version: 2.1
+orbs:
+  node: circleci/node@3.0.0
+jobs:
+  build:
+    docker:
+      - image: circleci/mariadb:latest
+        environment:
+          MYSQL_ROOT_PASSWORD: masterpass
+          MYSQL_USER: drop
+          MYSQL_PASSWORD: drops
+          MYSQL_DATABASE: code_drops_test
+    steps:
+      - node/install:
+          install-yarn: true
+      - run: 
+          command: node --version
+          name: Show node version
+      - node/install-packages:
+          pkg-manager: yarn
+      - run:
+          command: yarn test
+          name: Run YARN tests
+
+      
+    
+     
+
+
+      
+
+
+
+
+
+
+
