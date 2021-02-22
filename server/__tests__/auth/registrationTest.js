@@ -4,7 +4,7 @@ const supertest = require("supertest");
 describe("Registration tests", () => {
   let agent;
   beforeAll(async (done) => {
-    const dbStatus = await db.sequelize.sync();
+    await db.sequelize.sync();
     agent = supertest.agent(app);
 
     done();
