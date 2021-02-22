@@ -1,9 +1,27 @@
 require("dotenv").config();
 const Sequelize = require("sequelize");
 
+let sequelize = undefined;
+let database_name = undefined;
+
+switch (process.env.NODE_ENV) {
+  case "test":
+    database_name = process.env.DB_DATABASE_TEST;
+    break;
+  case "production":
+    database_name = process.env.DB_DATABASE_PROD;
+    break;
+  case "dev":
+    database_name = process.env.DB_DATABASE_DEV;
+    break;
+
+  default:
+    break;
+}
+
 // Initialize database connection
-const sequelize = new Sequelize(
-  process.env.DB_DATABASE,
+sequelize = new Sequelize(
+  "code_drops_test",
   process.env.DB_USER,
   process.env.DB_PASS,
   {
