@@ -36,6 +36,7 @@ describe("Drop Get", () => {
         await userDropModel.destroy();
       }
     }
+    await db.sequelize.close();
     done();
   });
 

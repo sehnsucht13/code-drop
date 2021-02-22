@@ -251,6 +251,7 @@ router.get("/:dropId", async (req, res) => {
       "userId",
     ],
   });
+  console.log("retrieved record by pk on server");
 
   if (dropRecord === null) {
     res.status(404).end();
