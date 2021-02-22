@@ -4,6 +4,7 @@ orbs:
 jobs:
   build:
     docker:
+      - image: 'cimg/base:stable'
       - image: circleci/mariadb:latest
         environment:
           MYSQL_ROOT_PASSWORD: masterpass
@@ -16,6 +17,7 @@ jobs:
       - run: 
           command: node --version
           name: Show node version
+      - checkout
       - node/install-packages:
           pkg-manager: yarn
       - run:
