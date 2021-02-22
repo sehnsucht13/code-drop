@@ -7,8 +7,8 @@ jobs:
       - image: 'cimg/base:stable'
       - image: 'circleci/mariadb:latest'
         environment:
-          MYSQL_USER: drop
-          MYSQL_PASSWORD: drops
+          MYSQL_USER: drop_db_test
+          MYSQL_PASSWORD: drop_db_test_pass 
           MYSQL_DATABASE: code_drops_test
     steps:
       - checkout
@@ -31,6 +31,16 @@ jobs:
             echo SESSION_SECRET=${SESSION_SECRET} >> .env
             cat .env
           name: Create dotenv file
+      - run:
+          name: Waiting for MariaDB to start
+          command: |
+            for i in `seq 1 20`;
+            do
+              nc -z localhost 3306 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for MariaDB && exit 1
       - run:
           command: yarn test
           name: Run YARN tests
