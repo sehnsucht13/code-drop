@@ -3,7 +3,6 @@ import { Row, Col, ListGroup, Form } from "react-bootstrap";
 import FilterListItem from "./FilterListItem";
 
 export default function FilterList({ drops, refreshCallback }) {
-  // refreshCallback(true);
   const [filteredDrops, setFilteredDrops] = useState(drops);
   const [filterInput, setFilterInput] = useState("");
   const [filterBy, setFilterBy] = useState("title");
