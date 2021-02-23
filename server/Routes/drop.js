@@ -458,7 +458,7 @@ router.post("/:dropId/stars", async (req, res) => {
 
 router.post("/", async (req, res) => {
   let title = req.body.title;
-  let lang = req.body.lang || "";
+  let lang = req.body.lang || "None";
   let visibility = req.body.visibility;
   let textBody = req.body.text;
   let description = req.body.description || "";
@@ -469,9 +469,8 @@ router.post("/", async (req, res) => {
     res.status(401).end();
     return;
   } else if (
-    typeof title !== "string" ||
-    typeof visibility !== "boolean" ||
-    typeof textBody !== "string" ||
+    typeof title === undefined ||
+    typeof textBody === undefined ||
     title.length === 0 ||
     textBody.length === 0
   ) {
