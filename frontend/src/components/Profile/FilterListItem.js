@@ -1,19 +1,36 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Col, Row, ListGroup, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
-// const axios = require("axios");
+import { Link, useHistory } from "react-router-dom";
+const axios = require("axios");
 
-function FilterListItem({ title, language, id, isAuth }) {
-  // TODO: Handle Deleting
-  // const handleDelete = () => {
-  //   axios
-  //     .delete(`/drop/${id}`)
-  //     .then((response) => {})
-  //     .catch();
-  // };
-  // // TODO: Handle editing
-  // const handleEdit = () => {};
+function FilterListItem({
+  title,
+  language,
+  id,
+  creatorId,
+  isAuth,
+  currentUser,
+  refresh,
+}) {
+  const history = useHistory();
+  const handleDelete = () => {
+    axios
+      .delete(`/drop/${id}`)
+      .then((response) => {
+        if (response.status === 200) {
+          console.log("got a 200 status code!");
+          refresh(true);
+        }
+      })
+      .catch((err) => {
+        console.log("Error deleting!", err.response);
+      });
+  };
+
+  const handleEdit = () => {
+    history.push(`/edit?id=${id}`);
+  };
 
   return (
     <ListGroup.Item>
@@ -26,11 +43,13 @@ function FilterListItem({ title, language, id, isAuth }) {
             </p>
           </Link>
         </Col>
-        {isAuth && (
+        {isAuth && currentUser && creatorId === currentUser.uid && (
           <Col xs={3}>
             <Row className="justify-content-end">
-              <Button style={{ marginRight: "1rem" }}>Edit</Button>
-              <Button>Delete</Button>
+              <Button style={{ marginRight: "1rem" }} onClick={handleEdit}>
+                Edit
+              </Button>
+              <Button onClick={handleDelete}>Delete</Button>
             </Row>
           </Col>
         )}
@@ -41,6 +60,7 @@ function FilterListItem({ title, language, id, isAuth }) {
 
 const mapStateToProps = (state) => ({
   isAuth: state.auth.isAuth,
+  currentUser: state.auth.user,
 });
 
 export default connect(mapStateToProps)(FilterListItem);

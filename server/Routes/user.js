@@ -51,7 +51,7 @@ router.get("/:userId/profile", async (req, res) => {
     if (req.user !== undefined && req.user.uid === userId) {
       userDrops = await req.app.locals.db.Drops.findAll({
         where: { userId: userId },
-        attributes: ["id", "title", "lang"],
+        attributes: ["id", "title", "lang", "userId"],
       });
 
       languageCount = await req.app.locals.db.Drops.findAll({
@@ -71,7 +71,7 @@ router.get("/:userId/profile", async (req, res) => {
     } else {
       userDrops = await req.app.locals.db.Drops.findAll({
         where: { userId: userId, visibility: true },
-        attributes: ["id", "title", "lang"],
+        attributes: ["id", "title", "lang", "userId"],
       });
 
       languageCount = await req.app.locals.db.Drops.findAll({

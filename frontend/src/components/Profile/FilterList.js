@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col, ListGroup, Form } from "react-bootstrap";
 import FilterListItem from "./FilterListItem";
 
-export default function FilterList({ drops }) {
+export default function FilterList({ drops, refreshCallback }) {
   const [filteredDrops, setFilteredDrops] = useState(drops);
   const [filterInput, setFilterInput] = useState("");
   const [filterBy, setFilterBy] = useState("title");
+
+  useEffect(() => {
+    setFilteredDrops(drops);
+  }, [drops]);
 
   const handleInput = (ev) => {
     const newFilterInput = ev.target.value;
@@ -27,8 +31,6 @@ export default function FilterList({ drops }) {
     setFilteredDrops(drops);
     setFilterBy(ev.target.value);
   };
-
-  // const handleDelete = () => {};
 
   return (
     <div style={{ paddingBottom: "2rem" }}>
@@ -68,13 +70,21 @@ export default function FilterList({ drops }) {
       <ListGroup
         style={{ minHeight: "25rem", maxHeight: "25rem", overflowY: "scroll" }}
       >
-        {filteredDrops.map((drop) => (
-          <FilterListItem
-            title={drop.title}
-            language={drop.lang}
-            id={drop.id}
-          />
-        ))}
+        {filteredDrops.length === 0 ? (
+          <p className="text-center font-weight-bold">
+            This user has no drops to display.
+          </p>
+        ) : (
+          filteredDrops.map((drop) => (
+            <FilterListItem
+              title={drop.title}
+              language={drop.lang}
+              id={drop.id}
+              creatorId={drop.userId}
+              refresh={refreshCallback}
+            />
+          ))
+        )}
       </ListGroup>
     </div>
   );

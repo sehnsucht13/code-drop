@@ -70,9 +70,9 @@ export function uploadBegin() {
 export function sendDrop() {
   return (dispatch, getState) => {
     const annotationArray = getState().annotationReducer.annotations;
-    const dropText = getState().newDrop.text;
+    const dropText = getState().newDrop.editorText;
     const dropLang = getState().newDrop.language;
-    const dropTitle = getState().newDrop.title.content.title;
+    const dropTitle = getState().newDrop.title.content;
     const dropDesc = getState().newDrop.description;
     const dropVisibility = getState().newDrop.visibility;
     console.log("About to send state", annotationArray, getState().newDrop);
