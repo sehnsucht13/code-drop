@@ -52,6 +52,10 @@ app.use("/auth", auth);
 app.use("/drop", drop);
 app.use("/user", user);
 
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "Hello world from my heroku instance!" });
+});
+
 function startServer() {
   db.sequelize
     .sync()

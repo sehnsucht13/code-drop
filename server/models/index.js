@@ -26,6 +26,7 @@ sequelize = new Sequelize(
   process.env.DB_PASS,
   {
     host: process.env.DB_HOST,
+    protocol: "mariadb",
     dialect: "mariadb",
     logging: false,
   }
