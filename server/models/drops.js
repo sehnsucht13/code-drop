@@ -14,6 +14,10 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.BOOLEAN,
       defaultValue: true,
     },
+    isForked: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
     text: {
       type: Sequelize.TEXT,
       notEmpty: true,

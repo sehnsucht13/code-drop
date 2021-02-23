@@ -41,6 +41,7 @@ const Stars = require("./stars")(sequelize, Sequelize);
 Drops.hasMany(DropAnnotations);
 Drops.hasMany(Stars);
 Drops.belongsTo(Users);
+Drops.belongsTo(Drops, { as: 'forkedFrom' });
 
 DropAnnotations.belongsTo(Users);
 DropAnnotations.belongsTo(Drops);
