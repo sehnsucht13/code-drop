@@ -6,6 +6,27 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const db = require("./models");
 
+let PORT = undefined;
+// Necessary since heroku provides its own port number
+switch (process.env.NODE_ENV) {
+  case "dev":
+    PORT = process.env.DEV_PORT;
+    break;
+  case "test":
+    PORT = process.env.DEV_PORT;
+    break;
+  case "production":
+    PORT = process.env.PORT;
+    break;
+  default:
+    PORT = process.env.DEV_PORT;
+    break;
+}
+
+if (PORT === undefined) {
+  throw new Error("PORT variable was not set!");
+}
+
 let app = express();
 app.locals.db = db;
 
@@ -31,12 +52,16 @@ app.use("/auth", auth);
 app.use("/drop", drop);
 app.use("/user", user);
 
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "Hello world from my heroku instance!" });
+});
+
 function startServer() {
   db.sequelize
     .sync()
     .then(() => {
-      app.listen(process.env.HOST_PORT, function () {
-        console.log(`Listening on port: ${process.env.HOST_PORT}`);
+      app.listen(PORT, function () {
+        console.log(`Listening on port: ${PORT}`);
       });
     })
     .catch((err) => {

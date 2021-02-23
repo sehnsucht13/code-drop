@@ -21,11 +21,12 @@ switch (process.env.NODE_ENV) {
 
 // Initialize database connection
 sequelize = new Sequelize(
-  "code_drops_test",
+  database_name,
   process.env.DB_USER,
   process.env.DB_PASS,
   {
     host: process.env.DB_HOST,
+    protocol: "mariadb",
     dialect: "mariadb",
     logging: false,
   }
