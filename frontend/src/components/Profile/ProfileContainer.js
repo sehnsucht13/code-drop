@@ -10,44 +10,79 @@ import LoadingPage from "../Loading/LoadingPage";
 import PieChart from "./PieChart";
 import StatSummary from "./StatSummary";
 import SideBar from "./SideBar";
+import ErrorPage from "../Error/ErrorContainer";
 import axios from "axios";
 
-export const ProfileContainer = ({ isAuth, user }) => {
+export const ProfileContainer = () => {
   const [queryParams] = useState(queryString.parse(useLocation().search));
-  const [hasLoaded, setHasLoaded] = useState(false);
+  const [hasLoadedProfileData, setHasLoadedProfileData] = useState(false);
   const [profileData, setProfileData] = useState(undefined);
-  const [hasError, setHasError] = useState(false);
+  const [hasError, setHasError] = useState({
+    status: false,
+    errCode: undefined,
+  });
+
+  // Passed to child component and used to refresh the list of drops if one is deleted
+  const [shouldRefresh, setShouldRefresh] = useState(false);
 
   useEffect(() => {
+    console.log(
+      "called render in profile container with refresh status",
+      shouldRefresh
+    );
+    if (shouldRefresh === true) {
+      setShouldRefresh(false);
+    }
     axios
       .get(`/user/${queryParams.id}/profile`)
       .then((response) => {
         if (response.status === 200) {
-          console.log(response.data);
           setProfileData(response.data);
-          setHasLoaded(true);
+          setHasLoadedProfileData(true);
         }
       })
       .catch((error) => {
-        console.log("error", error);
-        setHasError(true);
+        setHasError({ status: true, errCode: error.response.status });
+        setHasLoadedProfileData(true);
       });
-  }, [queryParams]);
+  }, [queryParams, shouldRefresh]);
 
-  return (
-    <div style={{ height: "100%" }}>
-      <NavBar />
-      {!hasLoaded ? (
-        hasError ? (
-          <div style={{ height: "100%" }}>
-            <Alert variant="danger">
-              Issue with loading the profiile. Please refresh the page!
-            </Alert>
-          </div>
-        ) : (
-          <LoadingPage />
-        )
-      ) : (
+  if (!hasLoadedProfileData && hasError.status === false) {
+    return (
+      <>
+        <NavBar />
+        <LoadingPage />
+        <Footer />
+      </>
+    );
+  } else if (
+    hasError.status === true &&
+    (hasError.errCode === 404 || hasError.errCode === 400)
+  ) {
+    return (
+      <>
+        <NavBar />
+        <ErrorPage type="profile" />
+        <Footer />
+      </>
+    );
+  } else if (hasError.status === true) {
+    return (
+      <>
+        <NavBar />
+        <Container fluid>
+          <Alert variant="danger">
+            There was an unknown issue with loading the profiile. Please refresh
+            the page!
+          </Alert>
+        </Container>
+        <Footer />
+      </>
+    );
+  } else {
+    return (
+      <div style={{ height: "100%" }}>
+        <NavBar />
         <Container className="d-flex flex-column" fluid>
           <SideBar
             username={profileData.profile.username}
@@ -60,17 +95,15 @@ export const ProfileContainer = ({ isAuth, user }) => {
           />
           <PieChart counts={profileData.counts} />
           <hr />
-          <FilterList drops={profileData.drops} />
+          <FilterList
+            drops={profileData.drops}
+            refreshCallback={setShouldRefresh}
+          />
         </Container>
-      )}
-      <Footer />
-    </div>
-  );
+        <Footer />
+      </div>
+    );
+  }
 };
 
-const mapStateToProps = (state) => ({
-  isAuth: state.auth.isAuth,
-  user: state.auth.user,
-});
-
-export default connect(mapStateToProps)(ProfileContainer);
+export default connect()(ProfileContainer);
