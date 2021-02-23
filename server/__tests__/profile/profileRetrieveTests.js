@@ -1,78 +1,86 @@
 const { db, app } = require("../../expressSetup");
 const supertest = require("supertest");
+const bcrypt = require("bcryptjs");
 
-describe("Profile Tests", () => {
-  let sessionId;
-  let dropIds = [];
+describe("Profile Retrieve Tests", () => {
+  const users = [
+    {
+      username: "profile_get_user_1",
+      password: "profile_get_user_1",
+    },
+    {
+      username: "profile_get_user_2",
+      password: "profile_get_user_2",
+    },
+  ];
+  // Store the profile id's
+  let dropIds = [[], []];
+  let userIds = [];
   beforeAll(async (done) => {
-    const dbStatus = await db.sequelize.sync();
-    const agent = supertest.agent(app);
+    await db.sequelize.sync();
 
-    const registerResp = await agent
-      .post("/auth/register/")
-      .send({ username: "test_profile", password: "test_profile" });
-    expect(registerResp.statusCode).toBe(200);
+    for (const [index, user] of users.entries()) {
+      const upass = await bcrypt.hash(user.password, 10);
 
-    const loginResp = await agent
-      .post("/auth/login/")
-      .send({ username: "test_profile", password: "test_profile" });
-    expect(loginResp.statusCode).toBe(200);
+      const newUser = await db.Users.create({
+        username: user.username,
+        password: upass,
+        description: "",
+        numStars: 0,
+        numForks: 0,
+      });
+      userIds.push(newUser.dataValues.id);
 
-    const sessionResp = await agent.get("/auth/session/");
-    expect(sessionResp.statusCode).toBe(200);
-    sessionId = sessionResp.body;
+      for (const idx of [1, 2]) {
+        const title = `public_drop_${user.username}_${idx}`;
+        const publicDrop = await db.Drops.create({
+          title: title,
+          lang: "python",
+          visibility: true,
+          text: "Some text here",
+          description: "Test Description",
+          userId: newUser.dataValues.id,
+        });
 
-    const logout = await agent.get("/auth/logout/");
-    expect(logout.statusCode).toBe(200);
-
-    const drop1 = await db.Drops.create({
-      title: "public drop 1",
-      lang: "python",
-      visibility: true,
-      text: "# Hello world",
-      description: "Test Description",
-      userId: sessionResp.body.uid,
-    });
-    dropIds.push(drop1.dataValues.id);
-
-    const drop2 = await db.Drops.create({
-      title: "hidden drop",
-      lang: "python",
-      visibility: false,
-      text: "# Hello world 2",
-      description: "Test Description 2",
-      userId: sessionResp.body.uid,
-    });
-    dropIds.push(drop2.dataValues.id);
-
-    const drop3 = await db.Drops.create({
-      title: "public drop 2",
-      lang: "c++",
-      visibility: true,
-      text: "# Hello world 3",
-      description: "Test Description 3",
-      userId: sessionResp.body.uid,
-    });
-    dropIds.push(drop3.dataValues.id);
-
+        dropIds[index].push(publicDrop.dataValues.id);
+      }
+      const privateDrop = await db.Drops.create({
+        title: `private_drop_${user.username}`,
+        lang: "c++",
+        visibility: false,
+        text: "Some text here",
+        description: "Test Description",
+        userId: newUser.dataValues.id,
+      });
+      dropIds[index].push(privateDrop.dataValues.id);
+    }
     done();
   });
 
   afterAll(async (done) => {
-    for (const dropId of dropIds) {
-      const dropModel = await db.Drops.findOne({ where: { id: dropId } });
-      if (dropModel !== null) {
-        await dropModel.destroy();
+    for (const user of users) {
+      const userModel = await db.Users.findOne({
+        where: { username: user.username },
+      });
+      for (const idx of [1, 2]) {
+        const publicDrop = await db.Drops.findOne({
+          where: {
+            userId: userModel.dataValues.id,
+            title: `public_drop_${user.username}_${idx}`,
+          },
+        });
+        await publicDrop.destroy();
       }
-    }
-    const userModel = await db.Users.findOne({
-      where: { username: "test_profile" },
-    });
 
-    if (userModel !== null) {
+      const privateDrop = await db.Drops.findOne({
+        where: {
+          userId: userModel.dataValues.id,
+          title: `private_drop_${user.username}`,
+        },
+      });
+      await privateDrop.destroy();
       await userModel.destroy();
     }
-
     await db.sequelize.close();
     done();
   });
@@ -80,32 +88,45 @@ describe("Profile Tests", () => {
   it("Find current user's profile while authenticated", async () => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent
-      .post("/auth/login/")
-      .send({ username: "test_profile", password: "test_profile" });
+    const loginResp = await agent.post("/auth/login/").send({ ...users[0] });
     expect(loginResp.statusCode).toBe(200);
 
     const sessionResp = await agent.get("/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
-    console.log("SERVER SESSION", sessionResp.body);
+    const sessionId = sessionResp.body.uid;
+    console.log(sessionId);
 
-    const userResp = await agent.get(`/user/${sessionId.uid}/profile`);
+    const userResp = await agent.get(`/user/${sessionId}/profile`);
     expect(userResp.statusCode).toBe(200);
-    console.log("Server response!", userResp.body);
 
     expect(userResp.body).toEqual({
       profile: {
-        id: sessionId.uid,
-        username: "test_profile",
+        id: sessionId,
+        username: users[0].username,
         description: "",
         numStars: 0,
         numForks: 0,
       },
       drops: [
-        { id: dropIds[0], title: "public drop 1", lang: "python" },
-        { id: dropIds[1], title: "hidden drop", lang: "python" },
-        { id: dropIds[2], title: "public drop 2", lang: "c++" },
+        {
+          id: dropIds[0][0],
+          title: `public_drop_${users[0].username}_1`,
+          lang: "python",
+          userId: sessionId,
+        },
+        {
+          id: dropIds[0][1],
+          title: `public_drop_${users[0].username}_2`,
+          lang: "python",
+          userId: sessionId,
+        },
+        {
+          id: dropIds[0][2],
+          title: `private_drop_${users[0].username}`,
+          lang: "c++",
+          userId: sessionId,
+        },
       ],
       counts: [
         { count: 1, lang: "c++" },
@@ -117,45 +138,48 @@ describe("Profile Tests", () => {
     expect(logout.statusCode).toBe(200);
   });
 
-  //   it("Find another user's profile while authenticated", async () => {
-  //     let userResp = await agent.get("/user/523/profile");
-  //     expect(userResp.statusCode).toBe(200);
-  //   });
+  it.todo("Find another user's profile while authenticated");
 
   it("Find existing user's profile while not authenticated", async () => {
     let agent = supertest.agent(app);
-    let userResp = await agent.get(`/user/${sessionId.uid}/profile`);
+    let userResp = await agent.get(`/user/${userIds[0]}/profile`);
     expect(userResp.statusCode).toBe(200);
-    // console.log(userResp.body);
+
     expect(userResp.body).toEqual({
       profile: {
-        id: sessionId.uid,
-        username: "test_profile",
+        id: userIds[0],
+        username: users[0].username,
         description: "",
         numStars: 0,
         numForks: 0,
       },
       drops: [
-        { id: dropIds[0], title: "public drop 1", lang: "python" },
-        { id: dropIds[2], title: "public drop 2", lang: "c++" },
+        {
+          id: dropIds[0][0],
+          title: `public_drop_${users[0].username}_1`,
+          lang: "python",
+          userId: userIds[0],
+        },
+        {
+          id: dropIds[0][1],
+          title: `public_drop_${users[0].username}_2`,
+          lang: "python",
+          userId: userIds[0],
+        },
       ],
-      counts: [
-        { count: 1, lang: "c++" },
-        { count: 1, lang: "python" },
-      ],
+      counts: [{ count: 2, lang: "python" }],
     });
   });
 
-  it("Find nonexistant profile while not authenticated", async (done) => {
+  it("Find nonexistant profile while authenticated", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent
-      .post("/auth/login/")
-      .send({ username: "test_profile", password: "test_profile" });
+    const loginResp = await agent.post("/auth/login/").send({ ...users[1] });
     expect(loginResp.statusCode).toBe(200);
 
-    let userProfileResp = await agent.get("/user/523/profile");
+    let userProfileResp = await agent.get(`/user/9999999/profile`);
     expect(userProfileResp.statusCode).toBe(404);
+    expect(userProfileResp.body).toEqual({});
 
     const logout = await agent.get("/auth/logout/");
     expect(logout.statusCode).toBe(200);
@@ -163,11 +187,12 @@ describe("Profile Tests", () => {
     done();
   });
 
-  it("Find nonexistant profile while authenticated", async (done) => {
+  it("Find nonexistant profile while not authenticated", async (done) => {
     let agent = supertest.agent(app);
 
-    let userProfileResp = await agent.get("/user/523/profile");
+    let userProfileResp = await agent.get(`/user/9999999/profile`);
     expect(userProfileResp.statusCode).toBe(404);
+    expect(userProfileResp.body).toEqual({});
 
     done();
   });
