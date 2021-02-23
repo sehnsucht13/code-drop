@@ -12,7 +12,7 @@ workflows:
             - build
           filters:
             branches: # Will only deploy on master branch
-              only: sequential-branch-filter 
+              only: master 
 jobs:
   build:
     docker:
