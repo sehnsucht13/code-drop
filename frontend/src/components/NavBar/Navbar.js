@@ -62,7 +62,7 @@ function NavigationBar({
       <Navbar.Brand as={Link} to="/">
         Code-Drop
       </Navbar.Brand>
-      <Form inline>
+      <Form inline className="d-none d-sm-block">
         <FormControl
           type="text"
           placeholder="Search..."
@@ -77,6 +77,9 @@ function NavigationBar({
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
+          <Nav.Link as={Link} to="/search" className="d-md-none">
+            Search
+          </Nav.Link>
           <Nav.Link as={Link} to="/explore">
             Explore
           </Nav.Link>
