@@ -24,9 +24,18 @@ module.exports = (sequelize, Sequelize) => {
       allowNull: false,
     },
     description: {
-      type: Sequelize.TEXT,
+      type: Sequelize.STRING(200),
       notEmpty: true,
       allowNull: false,
+    },
+    numForks: {
+      type: Sequelize.INTEGER,
+      notEmpty: true,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: 0,
+      },
     },
   });
   return Drops;
