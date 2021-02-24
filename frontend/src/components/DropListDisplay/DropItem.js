@@ -92,13 +92,14 @@ function DropItem({
               {formatDate(lastUpdate)}
             </p>
           </Col>
-          <Col sm={3} className="d-flex flex-row justify-content-end">
+          <Col sm={2} md={4} className="d-flex flex-row justify-content-end">
             <ButtonGroup
               style={{
                 paddingRight: "0.5rem",
                 paddingBottom: "0rem",
-                marginTop: "1rem",
+                marginTop: "0.5rem",
                 marginBottom: "1rem",
+                maxHeight: "2rem",
               }}
             >
               <Button
@@ -108,14 +109,14 @@ function DropItem({
                 {isStarred ? (
                   <>
                     <BsStarFill style={{ marginRight: "0.5rem" }} />
-                    Unstar
+                    <p className="d-none d-md-block">Unstar</p>
                   </>
                 ) : (
                   <>
                     <BsStar
                       style={{ marginLeft: "0", marginRight: "0.5rem" }}
                     />
-                    Star
+                    <p className="d-none d-lg-block">Star</p>
                   </>
                 )}
               </Button>
@@ -124,7 +125,7 @@ function DropItem({
               </Button>
               <Button style={{}}>
                 <BiGitRepoForked />
-                Fork
+                <p className="d-none d-lg-block">Fork</p>
               </Button>
               <Button variant="light" disabled style={{}}>
                 44
