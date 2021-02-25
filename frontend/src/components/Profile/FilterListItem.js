@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Col, Row, ListGroup, Button } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
+import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 const axios = require("axios");
 
 function FilterListItem({
@@ -35,7 +36,7 @@ function FilterListItem({
   return (
     <ListGroup.Item>
       <Row className="justify-content-between">
-        <Col xs={9}>
+        <Col xs={8}>
           <Link to={{ pathname: "/view", search: `?id=${id}` }}>
             <p className="h5">{title}</p>
             <p className="text-muted" style={{ marginBottom: "0" }}>
@@ -44,12 +45,20 @@ function FilterListItem({
           </Link>
         </Col>
         {isAuth && currentUser && creatorId === currentUser.uid && (
-          <Col xs={3}>
+          <Col xs={4}>
             <Row className="justify-content-end">
-              <Button style={{ marginRight: "1rem" }} onClick={handleEdit}>
-                Edit
+              <Button style={{ marginRight: "0.5rem" }} onClick={handleEdit}>
+                <p style={{ marginBottom: "0" }} className="d-none d-md-block">
+                  Edit
+                </p>
+                <AiFillEdit className="d-md-none" />
               </Button>
-              <Button onClick={handleDelete}>Delete</Button>
+              <Button onClick={handleDelete}>
+                <p style={{ marginBottom: "0" }} className="d-none d-md-block">
+                  Delete
+                </p>
+                <AiFillDelete className="d-md-none" />
+              </Button>
             </Row>
           </Col>
         )}

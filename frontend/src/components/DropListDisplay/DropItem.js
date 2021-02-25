@@ -1,11 +1,8 @@
-import { Card, Row, Col, Button, ButtonGroup } from "react-bootstrap";
-import { BiGitRepoForked } from "react-icons/bi";
-import { BsStar, BsStarFill } from "react-icons/bs";
-import { Link, useHistory } from "react-router-dom";
-import React, { useState } from "react";
+import { Card, Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import React from "react";
+import StarAndFork from "../StarAndFork/StarAndFork";
 import formatDate from "../../helpers/DateFormat";
-
-const axios = require("axios");
 
 function DropItem({
   id,
@@ -17,48 +14,15 @@ function DropItem({
   starCount,
   user,
 }) {
-  const [isStarred, setIsStarred] = useState(hasStar);
-  const [numStars, setNumStars] = useState(starCount);
-  const history = useHistory();
-
-  const handleStarClick = () => {
-    if (isStarred) {
-      axios
-        .delete(`drop/${id}/stars`)
-        .then((response) => {
-          if (response.status === 200) {
-            setIsStarred(false);
-            setNumStars(numStars - 1);
-          }
-        })
-        .catch((err) => {
-          if (err.response.status === 401) {
-            // Reroute to login page here
-            history.push("/login");
-          }
-        });
-    } else {
-      axios
-        .post(`drop/${id}/stars`)
-        .then((response) => {
-          if (response.status === 200) {
-            setIsStarred(true);
-            setNumStars(numStars + 1);
-          }
-        })
-        .catch((err) => {
-          console.log("got an error", err.response);
-          if (err.response.status === 401) {
-            // Reroute to login page here
-            history.push("/login");
-          }
-        });
-    }
-  };
-
   return (
     <Card key={id} style={{ marginTop: "0.5rem", paddingBottom: "0" }}>
       <Card.Body style={{ paddingTop: "0.5rem" }}>
+        <StarAndFork
+          id={id}
+          hasStar={hasStar}
+          starCount={starCount}
+          className="d-md-none"
+        />
         <Row
           className="justify-content-between"
           style={{ marginBottom: "0rem", paddingTop: "0rem" }}
@@ -69,6 +33,8 @@ function DropItem({
               marginBottom: "0",
               paddingBottom: "0",
             }}
+            xs={12}
+            md={8}
           >
             <Link
               to={{ pathname: "/profile", search: `?id=${user.id}` }}
@@ -92,44 +58,13 @@ function DropItem({
               {formatDate(lastUpdate)}
             </p>
           </Col>
-          <Col sm={3} className="d-flex flex-row justify-content-end">
-            <ButtonGroup
-              style={{
-                paddingRight: "0.5rem",
-                paddingBottom: "0rem",
-                marginTop: "1rem",
-                marginBottom: "1rem",
-              }}
-            >
-              <Button
-                onClick={handleStarClick}
-                style={{ paddingLeft: "0.5rem", paddingRight: "0.5rem" }}
-              >
-                {isStarred ? (
-                  <>
-                    <BsStarFill style={{ marginRight: "0.5rem" }} />
-                    Unstar
-                  </>
-                ) : (
-                  <>
-                    <BsStar
-                      style={{ marginLeft: "0", marginRight: "0.5rem" }}
-                    />
-                    Star
-                  </>
-                )}
-              </Button>
-              <Button variant="light" disabled style={{}}>
-                {numStars}
-              </Button>
-              <Button style={{}}>
-                <BiGitRepoForked />
-                Fork
-              </Button>
-              <Button variant="light" disabled style={{}}>
-                44
-              </Button>
-            </ButtonGroup>
+          <Col md={4} className="d-none d-md-block">
+            <StarAndFork
+              id={id}
+              hasStar={hasStar}
+              starCount={starCount}
+              className="d-none d-md-block"
+            />
           </Col>
         </Row>
         <Link

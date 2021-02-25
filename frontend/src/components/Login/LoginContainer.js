@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import NavBar from "../NavBar/Navbar";
-import { Container, Form, Button, Row } from "react-bootstrap";
+import { Container, Form, Button, Row, Alert } from "react-bootstrap";
 import { useHistory, Link } from "react-router-dom";
 
 import { set_auth, checked_auth } from "../../actions/auth_actions";
@@ -39,7 +39,6 @@ export const LoginContainer = ({
           password: password,
         })
         .then((response) => {
-          console.log("Response from server", response, response.status);
           if (response.status === 200) {
             if (isAuth) {
               axios
@@ -76,9 +75,7 @@ export const LoginContainer = ({
         style={{ height: "60%" }}
       >
         {loginError && (
-          <Row>
-            <p>Error logging in. Please try again.</p>
-          </Row>
+          <Alert variant="danger">Error logging in. Please try again.</Alert>
         )}
         <Row>
           <Form
@@ -94,6 +91,7 @@ export const LoginContainer = ({
               <Form.Control
                 type="text"
                 minLength="1"
+                maxLength="20"
                 placeholder="Username"
                 onChange={handleUsername}
                 value={userName}
