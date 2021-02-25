@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import { BsStar, BsStarFill } from "react-icons/bs";
 import { BiGitRepoForked } from "react-icons/bi";
 import { Row, Button, ButtonGroup } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 
-function StarAndFork({ id, hasStar, starCount, className }) {
+function StarAndFork({ id, hasStar, starCount, className, forkCount, isAuth }) {
   const [isStarred, setIsStarred] = useState(hasStar);
   const [numStars, setNumStars] = useState(starCount);
   const history = useHistory();
@@ -19,30 +20,38 @@ function StarAndFork({ id, hasStar, starCount, className }) {
             setNumStars(numStars - 1);
           }
         })
-        .catch((err) => {
-          if (err.response.status === 401) {
-            // Reroute to login page here
-            history.push("/login");
-          }
-        });
+        .catch((err) => {});
     } else {
-      axios
-        .post(`drop/${id}/stars`)
-        .then((response) => {
-          if (response.status === 200) {
-            setIsStarred(true);
-            setNumStars(numStars + 1);
-          }
-        })
-        .catch((err) => {
-          console.log("got an error", err.response);
-          if (err.response.status === 401) {
-            // Reroute to login page here
-            history.push("/login");
-          }
-        });
+      if (isAuth) {
+        axios
+          .post(`drop/${id}/stars`)
+          .then((response) => {
+            if (response.status === 200) {
+              setIsStarred(true);
+              setNumStars(numStars + 1);
+            }
+          })
+          .catch((err) => {
+            console.log("got an error", err.response);
+            // if (err.response.status === 401) {
+            //   // Reroute to login page here
+            //   history.push("/login");
+            // }
+          });
+      } else {
+        history.push("/login");
+      }
     }
   };
+
+  const handleFork = () => {
+    if (isAuth) {
+      history.push(`/edit?id=${id}&fork=t`);
+    } else {
+      history.push("/login");
+    }
+  };
+
   return (
     <div className={className}>
       <Row className="justify-content-end">
@@ -78,12 +87,13 @@ function StarAndFork({ id, hasStar, starCount, className }) {
           <Button
             style={{}}
             className="d-flex justify-content-center align-items-center"
+            onClick={handleFork}
           >
             <BiGitRepoForked />
             <p className="d-none d-lg-block">Fork</p>
           </Button>
           <Button variant="light" disabled style={{}}>
-            44
+            {forkCount}
           </Button>
         </ButtonGroup>
       </Row>
@@ -91,4 +101,11 @@ function StarAndFork({ id, hasStar, starCount, className }) {
   );
 }
 
-export default StarAndFork;
+// export default StarAndFork;
+const mapStateToProps = (state) => ({
+  isAuth: state.auth.isAuth,
+});
+
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(StarAndFork);

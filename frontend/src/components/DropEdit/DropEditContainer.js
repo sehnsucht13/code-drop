@@ -21,6 +21,8 @@ import {
   set_drop_text,
   set_drop_title_content,
   updateDrop,
+  forkDrop,
+  uploadEnd,
 } from "../../actions/new_drop_actions";
 import {
   delete_all_annotations,
@@ -41,6 +43,8 @@ export const DropEditContainer = ({
   set_editor_language,
   updateDrop,
   uploadStatus,
+  forkDrop,
+  uploadEnd,
 }) => {
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasUploadError, setHasUploadError] = useState(undefined);
@@ -89,6 +93,7 @@ export const DropEditContainer = ({
   useEffect(() => {
     switch (uploadStatus) {
       case SUCCESS:
+        uploadEnd();
         setTimeout(() => {
           history.push(`/view?id=${queryParams.id}`);
         }, 1000);
@@ -107,7 +112,7 @@ export const DropEditContainer = ({
     if (queryParams.fork === undefined || queryParams.fork === "f") {
       updateDrop(queryParams.id);
     } else {
-      // Handle case of fork
+      forkDrop(queryParams.id);
     }
   };
 
@@ -158,6 +163,8 @@ const mapDispatchToProps = {
   add_annotation,
   set_editor_language,
   updateDrop,
+  forkDrop,
+  uploadEnd,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DropEditContainer);

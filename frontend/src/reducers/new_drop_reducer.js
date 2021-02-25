@@ -8,6 +8,7 @@ import {
   RESET_DROP_INFO,
   UPLOAD_DROP_SUCCESS,
   UPLOAD_DROP_FAIL,
+  UPLOAD_DROP_END,
 } from "../constants/constants";
 import { SUCCESS, FAILURE } from "../constants/uploadConstants";
 
@@ -67,6 +68,11 @@ const new_drop_reducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         uploadStatus: FAILURE,
+      };
+    case UPLOAD_DROP_END:
+      return {
+        ...state,
+        uploadStatus: undefined,
       };
     default:
       return state;

@@ -14,6 +14,7 @@ function DropsList({ drops }) {
           hasStar={drop.isStarred}
           starCount={drop.starCount}
           user={drop.user}
+          forkCount={drop.numForks}
         />
       ))}
     </div>
