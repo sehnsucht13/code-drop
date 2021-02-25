@@ -33,10 +33,6 @@ function StarAndFork({ id, hasStar, starCount, className, forkCount, isAuth }) {
           })
           .catch((err) => {
             console.log("got an error", err.response);
-            // if (err.response.status === 401) {
-            //   // Reroute to login page here
-            //   history.push("/login");
-            // }
           });
       } else {
         history.push("/login");
@@ -72,12 +68,22 @@ function StarAndFork({ id, hasStar, starCount, className, forkCount, isAuth }) {
             {isStarred ? (
               <>
                 <BsStarFill />
-                <p className="d-none d-lg-block">Unstar</p>
+                <p
+                  className="d-none d-lg-block"
+                  style={{ marginBottom: "0rem" }}
+                >
+                  Unstar
+                </p>
               </>
             ) : (
               <>
                 <BsStar />
-                <p className="d-none d-lg-block">Star</p>
+                <p
+                  className="d-none d-lg-block"
+                  style={{ marginBottom: "0rem", marginLeft: "0.2rem" }}
+                >
+                  Star
+                </p>
               </>
             )}
           </Button>
@@ -90,7 +96,12 @@ function StarAndFork({ id, hasStar, starCount, className, forkCount, isAuth }) {
             onClick={handleFork}
           >
             <BiGitRepoForked />
-            <p className="d-none d-lg-block">Fork</p>
+            <p
+              className="d-none d-lg-block"
+              style={{ marginBottom: "0rem", marginLeft: "0.2rem" }}
+            >
+              Fork
+            </p>
           </Button>
           <Button variant="light" disabled style={{}}>
             {forkCount}

@@ -6,6 +6,7 @@ import { Container } from "react-bootstrap";
 import queryString from "query-string";
 
 import SearchBar from "./SearchBar";
+import Footer from "../Footer/Footer";
 
 function SearchContainer() {
   let queryParams = queryString.parse(useLocation().search);
@@ -17,6 +18,7 @@ function SearchContainer() {
         <SearchBar />
         <SearchResults searchParams={queryParams} />
       </Container>
+      <Footer />
     </div>
   );
 }

@@ -64,13 +64,15 @@ function HomePageContainer() {
       ) : (
         <Container fluid>
           <DropsList drops={drops} />
-          <Row className="justify-content-center">
+          <Row
+            className="justify-content-center"
+            style={{ marginTop: "1rem", marginBottom: "1rem" }}
+          >
             {morePagesAvailable ? (
               <Button
                 onClick={() =>
                   getNextPage(appendDrops, setQueryParams, queryParams)
                 }
-                style={{ marginTop: "1rem", marginBottom: "1rem" }}
               >
                 Show More
               </Button>
