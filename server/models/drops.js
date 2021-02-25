@@ -14,15 +14,28 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.BOOLEAN,
       defaultValue: true,
     },
+    isForked: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
     text: {
       type: Sequelize.TEXT,
       notEmpty: true,
       allowNull: false,
     },
     description: {
-      type: Sequelize.TEXT,
+      type: Sequelize.STRING(200),
       notEmpty: true,
       allowNull: false,
+    },
+    numForks: {
+      type: Sequelize.INTEGER,
+      notEmpty: true,
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        min: 0,
+      },
     },
   });
   return Drops;

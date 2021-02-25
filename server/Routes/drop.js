@@ -145,7 +145,14 @@ router.get("/paginate", async (req, res) => {
       limit: pageLimit,
       where: { visibility: 1 },
       order: [["updatedAt", "DESC"]],
-      attributes: ["id", "title", "description", "lang", "updatedAt"],
+      attributes: [
+        "id",
+        "title",
+        "description",
+        "numForks",
+        "lang",
+        "updatedAt",
+      ],
       include: [
         {
           model: req.app.locals.db.Stars,
@@ -165,7 +172,7 @@ router.get("/paginate", async (req, res) => {
       limit: pageLimit,
       where: { visibility: 1 },
       order: [["updatedAt", "DESC"]],
-      attributes: ["id", "title", "description", "lang", "updatedAt"],
+      attributes: ["id", "title", "description", "lang", "updatedAt", "numForks"],
       include: [
         {
           model: req.app.locals.db.Users,
@@ -233,14 +240,13 @@ router.get("/:dropId/comments", async (req, res) => {
 
 // Retrieve the contents of a single drop
 router.get("/:dropId", async (req, res) => {
-  //res.json("Hello from drops get");
   let dropId = parseInt(req.params.dropId);
   if (isNaN(dropId)) {
     res.status(400).end();
     return;
   }
 
-  let dropRecord = await req.app.locals.db.Drops.findByPk(dropId, {
+  const dropRecord = await req.app.locals.db.Drops.findByPk(dropId, {
     attributes: [
       "id",
       "title",
@@ -249,10 +255,10 @@ router.get("/:dropId", async (req, res) => {
       "text",
       "description",
       "userId",
+      "isForked",
+      "forkedFromId",
     ],
   });
-  console.log("retrieved record by pk on server");
-
   if (dropRecord === null) {
     res.status(404).end();
     return;
@@ -264,7 +270,7 @@ router.get("/:dropId", async (req, res) => {
     return;
   }
 
-  let annotations = await req.app.locals.db.DropAnnotations.findAll({
+  const annotations = await req.app.locals.db.DropAnnotations.findAll({
     attributes: {
       exclude: ["createdAt", "updatedAt", "dropId"],
     },
@@ -273,11 +279,76 @@ router.get("/:dropId", async (req, res) => {
     },
   });
 
-  const respObject = {
-    codeDrop: dropRecord.dataValues,
-    dropAnnotations: annotations.map((annotation) => annotation.dataValues),
-  };
-  res.json(respObject).status(200);
+  if (dropRecord.dataValues.isForked === true) {
+    const forkedFromDrop = await req.app.locals.db.Drops.findByPk(
+      dropRecord.dataValues.forkedFromId,
+      {
+        attributes: ["title", "visibility"],
+        include: [
+          {
+            model: req.app.locals.db.Users,
+            attributes: ["id", "username"],
+            required: false,
+          },
+        ],
+      }
+    );
+    if (forkedFromDrop === null) {
+      const respObject = {
+        codeDrop: {
+          ...dropRecord.dataValues,
+          forkData: null,
+        },
+        dropAnnotations: annotations.map((annotation) => annotation.dataValues),
+      };
+      res.json(respObject).status(200);
+    } else if (forkedFromDrop.dataValues.visibility === false) {
+      if (req.user.uid !== forkedFromDrop.dataValues.user.dataValues.id) {
+        const respObject = {
+          codeDrop: {
+            ...dropRecord.dataValues,
+            forkData: null,
+          },
+          dropAnnotations: annotations.map(
+            (annotation) => annotation.dataValues
+          ),
+        };
+        res.json(respObject).status(200);
+      } else {
+        const respObject = {
+          codeDrop: {
+            ...dropRecord.dataValues,
+            forkData: {
+              title: forkedFromDrop.dataValues.title,
+              user: forkedFromDrop.dataValues.user.dataValues,
+            },
+          },
+          dropAnnotations: annotations.map(
+            (annotation) => annotation.dataValues
+          ),
+        };
+        res.json(respObject).status(200);
+      }
+    } else {
+      const respObject = {
+        codeDrop: {
+          ...dropRecord.dataValues,
+          forkData: {
+            title: forkedFromDrop.dataValues.title,
+            user: forkedFromDrop.dataValues.user.dataValues,
+          },
+        },
+        dropAnnotations: annotations.map((annotation) => annotation.dataValues),
+      };
+      res.json(respObject).status(200);
+    }
+  } else {
+    const respObject = {
+      codeDrop: { ...dropRecord.dataValues, forkData: null },
+      dropAnnotations: annotations.map((annotation) => annotation.dataValues),
+    };
+    res.json(respObject).status(200);
+  }
 });
 
 // DELETE Routes
@@ -372,6 +443,19 @@ router.delete("/:dropId", async (req, res) => {
   }
 
   try {
+    if (dropModel.isForked === true && dropModel.forkedFromId !== null) {
+      const parentDropModel = await req.app.locals.db.Drops.findByPk(
+        dropModel.forkedFromId
+      );
+      parentDropModel.numForks -= 1;
+      parentDropModel.save;
+
+      const parentDropUser = await req.app.locals.db.Users.findByPk(
+        parentDropModel.userId
+      );
+      parentDropUser.numForks -= 1;
+      parentDropUser.save();
+    }
     await dropModel.destroy();
   } catch (error) {
     console.error(error);
@@ -463,6 +547,8 @@ router.post("/", async (req, res) => {
   let textBody = req.body.text;
   let description = req.body.description || "";
   let annotations = req.body.annotations || [];
+  let isForked = req.body.isForked;
+  let forkedFrom = req.body.parentId;
 
   // User is not logged in
   if (req.user === undefined) {
@@ -485,39 +571,76 @@ router.post("/", async (req, res) => {
     visibility,
     description,
     textBody,
-    annotations
+    annotations,
+    isForked,
+    typeof isForked,
+    forkedFrom
   );
   try {
-    let dropRecordInfo = await req.app.locals.db.Drops.create({
-      title: title,
-      lang: lang,
-      visibility: visibility,
-      text: textBody,
-      description: description,
-      userId: req.user.uid,
-    });
+    let newDropRecord;
+    if (isForked !== undefined && (isForked === "true" || isForked === true)) {
+      console.log("Took forked path");
+      if (isNaN(parseInt(forkedFrom))) {
+        res.status(404).end();
+        return;
+      } else {
+        const parentRecord = await req.app.locals.db.Drops.findByPk(forkedFrom);
+        if (
+          parentRecord === null ||
+          (parentRecord.visibility === false &&
+            req.user.uid !== parentRecord.userId)
+        ) {
+          res.status(404).end();
+          return;
+        }
+        const parentUser = await req.app.locals.db.Users.findByPk(
+          parentRecord.dataValues.userId
+        );
+        // Increment number of forks for the parent drop
+        parentRecord.numForks += 1;
+        await parentRecord.save();
+        // Increment number of forks for the parent user
+        parentUser.numForks += 1;
+        await parentUser.save();
 
-    annotations.forEach(async (annotation) => {
-      await req.app.locals.db.DropAnnotations.create({
-        startLine: annotation.start,
-        endLine: annotation.end,
-        annotation_text: annotation.text,
-        dropId: dropRecordInfo.dataValues.id,
+        newDropRecord = await req.app.locals.db.Drops.create({
+          title: title,
+          lang: lang,
+          visibility: visibility,
+          text: textBody,
+          description: description,
+          userId: req.user.uid,
+          isForked: true,
+          forkedFromId: parentRecord.dataValues.id,
+        });
+      }
+    } else {
+      newDropRecord = await req.app.locals.db.Drops.create({
+        title: title,
+        lang: lang,
+        visibility: visibility,
+        text: textBody,
+        description: description,
         userId: req.user.uid,
+        isForked: false,
+        forkedFromId: null,
       });
-    });
-    res.status(200).json({ id: dropRecordInfo.dataValues.id });
+    }
+
+     annotations.forEach(async (annotation) => {
+       await req.app.locals.db.DropAnnotations.create({
+         startLine: annotation.start,
+         endLine: annotation.end,
+         annotation_text: annotation.text,
+         dropId: newDropRecord.dataValues.id,
+         userId: req.user.uid,
+       });
+     });
+    res.status(200).json({ id: newDropRecord.dataValues.id });
   } catch (error) {
     console.error(error);
     res.status(500).end();
   }
-
-  // try {
-  //   res.status(200).json({ id: dropRecordInfo.dataValues.id });
-  // } catch (error) {
-  //   console.error(error);
-  //   res.status(500).end();
-  // }
 });
 
 router.put("/:dropId", async (req, res) => {

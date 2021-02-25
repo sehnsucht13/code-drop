@@ -135,6 +135,10 @@ export const DropEditor = ({
     setEditorLanguage(language);
   }, [language]);
 
+  useEffect(() => {
+    setEditorContent(editorText);
+  }, [editorText]);
+
   const handleEditorBlur = (editor, event) => {
     set_drop_text({ text: editor.getValue(), lineCount: editor.lineCount() });
   };
