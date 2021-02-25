@@ -1,12 +1,8 @@
-import { Card, Row, Col, Button, ButtonGroup } from "react-bootstrap";
-import { BiGitRepoForked } from "react-icons/bi";
-import { BsStar, BsStarFill } from "react-icons/bs";
-import { Link, useHistory } from "react-router-dom";
-import React, { useState } from "react";
+import { Card, Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import React from "react";
 import StarAndFork from "../StarAndFork/StarAndFork";
 import formatDate from "../../helpers/DateFormat";
-
-const axios = require("axios");
 
 function DropItem({
   id,
