@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import NavBar from "../NavBar/Navbar";
 import { Container, Form, Button, Row, Alert } from "react-bootstrap";
 import { useHistory, Link } from "react-router-dom";
+import Footer from "../Footer/Footer";
 
 import { set_auth, checked_auth } from "../../actions/auth_actions";
 const axios = require("axios");
@@ -72,7 +73,7 @@ export const LoginContainer = ({
       <Container
         className="d-flex flex-column justify-content-center align-items-center"
         fluid
-        style={{ height: "60%" }}
+        style={{ height: "100%", paddingBottom: "25%" }}
       >
         {loginError && (
           <Alert variant="danger">Error logging in. Please try again.</Alert>
@@ -133,6 +134,7 @@ export const LoginContainer = ({
           <Link to="/register">Click here to create one</Link>
         </Row>
       </Container>
+      <Footer />
     </>
   );
 };
