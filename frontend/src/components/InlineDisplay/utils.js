@@ -9,7 +9,7 @@ export function annotationSortFn(a, b) {
 }
 
 export function createChunks(splitTextArray, sortedAnnotations) {
-  let currLineIndex = 0;
+  let currLineIndex = 1;
   let chunks = [];
   let currChunkLines = [];
   let chunkStart = 0;
@@ -18,22 +18,24 @@ export function createChunks(splitTextArray, sortedAnnotations) {
     currChunkLines = [];
     chunkStart = currLineIndex;
     while (currLineIndex < element.startLine) {
-      currChunkLines.push(splitTextArray[currLineIndex]);
+      currChunkLines.push(splitTextArray[currLineIndex - 1]);
       currLineIndex += 1;
     }
 
-    chunks.push({
-      lines: currChunkLines,
-      annotationIdx: -1,
-      startIdx: chunkStart,
-    });
+    if (chunks.length !== 0) {
+      chunks.push({
+        lines: currChunkLines,
+        annotationIdx: -1,
+        startIdx: chunkStart,
+      });
+    }
 
     chunkStart = currLineIndex;
     currChunkLines = [];
 
     while (currLineIndex <= element.endLine) {
-      currChunkLines.push(splitTextArray[currLineIndex]);
-      currLineIndex++;
+      currChunkLines.push(splitTextArray[currLineIndex - 1]);
+      currLineIndex += 1;
     }
     chunks.push({
       lines: currChunkLines,
