@@ -80,23 +80,27 @@ function CommentContainer({ dropId, isAuth }) {
   }, [dropId]);
 
   return (
-    <div>
+    <div style={{ minHeight: "50%" }}>
       {!areCommentsLoaded ? (
         <FetchingComments />
       ) : (
         <>
-          {comments.map((comment) => (
-            <CommentDisplay
-              dropId={dropId}
-              commentId={comment.id}
-              commentText={comment.text}
-              authorUsername={comment.user.username}
-              authorId={comment.user.id}
-              lastUpdate={comment.updatedAt}
-              refreshComments={refreshComments}
-            />
-          ))}
-          <hr />
+          {comments.length === 0 ? null : (
+            <>
+              {comments.map((comment) => (
+                <CommentDisplay
+                  dropId={dropId}
+                  commentId={comment.id}
+                  commentText={comment.text}
+                  authorUsername={comment.user.username}
+                  authorId={comment.user.id}
+                  lastUpdate={comment.updatedAt}
+                  refreshComments={refreshComments}
+                />
+              ))}
+              <hr />
+            </>
+          )}
           {isAuth ? (
             <>
               {hasSubmitIssue && (
