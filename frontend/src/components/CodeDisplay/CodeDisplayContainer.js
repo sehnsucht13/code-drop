@@ -30,6 +30,7 @@ function CodeDisplayContainer() {
     axios
       .get(`/drop/${searchParams.id}`)
       .then((response) => {
+        console.log(response.data);
         setCodeDrop(response.data.codeDrop);
         setcodeDropAnnotations(response.data.dropAnnotations);
         setIsLoading(false);
@@ -48,7 +49,7 @@ function CodeDisplayContainer() {
           {hasError && <ErrorPage />}
         </>
       ) : (
-        <Container fluid>
+        <Container fluid style={{ minHeight: "50%" }}>
           <Tabs activeKey={currentTab} onSelect={handleTabClick}>
             <Tab eventKey="block" title="Block View">
               <BlockCodeDisplay
