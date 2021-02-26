@@ -1,6 +1,34 @@
 // src: https://gist.github.com/rigwild/ce6b4c6a893c3a95f75cc0aca633f037
 const codeMirrorLanguages = {
   None: null,
+  c: "text/x-csrc",
+  "c++": "text/x-c++src",
+  "objective-C": "text/x-objectivec",
+  coffeescript: "coffeescript",
+  css: "css",
+  go: "go",
+  javascript: "javascript",
+  jsx: "jsx",
+  markdown: "text/x-markdown",
+  python: "python",
+  sass: "sass",
+  shell: "shell",
+  sql: "text/x-sql",
+
+  java: "text/x-java",
+  yaml: "yaml",
+  rust: "text/x-rustsrc",
+  toml: "ext/x-toml",
+  dockerfile: "text/x-dockerfile",
+  ocaml: "text/x-ocaml",
+  latex: "text/x-stex",
+  jsx: "text/jsx",
+  julia: "text/x-julia",
+};
+
+// All code mirror languagess
+const fullCodeMirrorLanguages = {
+  None: null,
   apl: "apl",
   asciiarmor: "asciiarmor",
   "asn.1": "asn.1",

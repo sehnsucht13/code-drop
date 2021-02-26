@@ -1,0 +1,26 @@
+const PrismLanguages = {
+  None: null,
+  c: "c",
+  "c++": "cpp",
+  "objective-C": "objectivec",
+  coffeescript: "coffeescript",
+  java: "java",
+  rust: "rust",
+  css: "css",
+  go: "go",
+  javascript: "javascript",
+  jsx: "jsx",
+  markdown: "markdown",
+  python: "python",
+  sass: "sass",
+  shell: "bash",
+  sql: "sql",
+  yaml: "yaml",
+  toml: "toml",
+  dockerfile: "dockerfile",
+  ocaml: "ocaml",
+  latex: "latex",
+  julia: "julia",
+};
+
+export default PrismLanguages;
