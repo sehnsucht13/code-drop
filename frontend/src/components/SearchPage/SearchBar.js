@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Form, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-function SearchBar() {
+function SearchBar({ searchInput }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [timePeriod, setTimePeriod] = useState("all_time");
   const [searchField, setSearchField] = useState("title");
+
+  useEffect(() => {
+    setSearchTerm(searchInput || "");
+  }, [searchInput]);
 
   const handleSearchTerm = (ev) => {
     setSearchTerm(ev.target.value);

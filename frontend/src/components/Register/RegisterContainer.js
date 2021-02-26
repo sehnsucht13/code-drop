@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import NavBar from "../NavBar/Navbar";
 import { Container, Form, Button, Row } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
+import Footer from "../Footer/Footer";
 const axios = require("axios");
 
 const PASSWORD_NO_MATCH_ERR = "Passwords do not match!";
@@ -137,7 +138,7 @@ export const RegisterContainer = (props) => {
       <Container
         className="d-flex flex-column justify-content-center align-items-center"
         fluid
-        style={{ height: "75%" }}
+        style={{ height: "100%", paddingBottom: "10%" }}
       >
         <Form
           noValidate
@@ -203,6 +204,7 @@ export const RegisterContainer = (props) => {
           <Link to="/login">Click here to log in</Link>
         </Row>
       </Container>
+      <Footer />
     </>
   );
 };

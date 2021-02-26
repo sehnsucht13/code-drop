@@ -12,6 +12,18 @@ import CommentContainer from "../CommentDisplay/CommentContainer";
 import Footer from "../Footer/Footer";
 import ErrorPage from "../Error/ErrorContainer";
 
+// Add additional languages for display
+// Src: https://github.com/FormidableLabs/prism-react-renderer#faq
+import Prism from "prism-react-renderer/prism";
+(typeof global !== "undefined" ? global : window).Prism = Prism;
+require("prismjs/components/prism-java");
+require("prismjs/components/prism-rust");
+require("prismjs/components/prism-toml");
+require("prismjs/components/prism-docker");
+require("prismjs/components/prism-latex");
+require("prismjs/components/prism-julia");
+require("prismjs/components/prism-ocaml");
+
 function CodeDisplayContainer() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -30,6 +42,7 @@ function CodeDisplayContainer() {
     axios
       .get(`/drop/${searchParams.id}`)
       .then((response) => {
+        console.log(response.data);
         setCodeDrop(response.data.codeDrop);
         setcodeDropAnnotations(response.data.dropAnnotations);
         setIsLoading(false);
@@ -48,7 +61,7 @@ function CodeDisplayContainer() {
           {hasError && <ErrorPage />}
         </>
       ) : (
-        <Container fluid>
+        <Container fluid style={{ minHeight: "50%" }}>
           <Tabs activeKey={currentTab} onSelect={handleTabClick}>
             <Tab eventKey="block" title="Block View">
               <BlockCodeDisplay

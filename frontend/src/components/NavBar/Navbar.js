@@ -80,7 +80,7 @@ function NavigationBar({
           <Nav.Link as={Link} to="/search" className="d-md-none">
             Search
           </Nav.Link>
-          <Nav.Link as={Link} to="/explore">
+          <Nav.Link as={Link} to="/">
             Explore
           </Nav.Link>
           {isAuth && (

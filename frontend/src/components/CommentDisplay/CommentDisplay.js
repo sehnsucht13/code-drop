@@ -148,8 +148,12 @@ function CommentDisplay({
               </p>
             </Col>
             {isAuth && currentUser.uid === authorId && (
-              <Col xs={1} className="d-flex flex-column justify-content-end">
-                <Dropdown drop="down" style={{ paddingRight: "0.5rem" }}>
+              <Col
+                xs={1}
+                className="d-flex flex-row justify-content-end align-items-end"
+                style={{ paddingRight: "0" }}
+              >
+                <Dropdown drop="down">
                   <Dropdown.Toggle>
                     <BsThreeDotsVertical />
                   </Dropdown.Toggle>

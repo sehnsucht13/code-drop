@@ -27,11 +27,6 @@ function SearchResults({ searchParams }) {
       })
       .then((response) => {
         setDrops(response.data);
-        console.log(
-          "Got from server for params",
-          newQueryParams,
-          response.data
-        );
         if (response.data.length < newQueryParams.count) {
           setMorePagesAvailable(false);
         }
@@ -62,7 +57,7 @@ function SearchResults({ searchParams }) {
   };
 
   return (
-    <div>
+    <div style={{ minHeight: "50%" }}>
       <DropsList drops={drops} />
       <Row className="justify-content-center" style={{ paddingTop: "1rem" }}>
         {morePagesAvailable ? (

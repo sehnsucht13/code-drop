@@ -6,9 +6,9 @@ function Footer() {
   return (
     <div
       style={{
-        paddingTop: "3rem",
-        paddingBottom: "5rem",
-        backgroundColor: "lightgray",
+        paddingTop: "2rem",
+        paddingBottom: "3rem",
+        backgroundColor: "#343a40",
       }}
     >
       <footer className="navbar-fixed-bottom">
