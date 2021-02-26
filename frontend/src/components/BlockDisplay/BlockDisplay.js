@@ -3,6 +3,7 @@ import Highlight, { Prism } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/github";
 import { Link } from "react-router-dom";
 import CodeLine from "./CodeLine";
+import PrismLanguages from "../../helpers/prismLanguages";
 
 const generateMap = (annotations) => {
   let indexMap = {};
@@ -56,7 +57,12 @@ export default function BlockCodeView({
       ) : null}
       <h4 className="text-muted">{description}</h4>
       <p className="text-muted">{lang}</p>
-      <Highlight Prism={Prism} theme={theme} code={text} language={lang}>
+      <Highlight
+        Prism={Prism}
+        theme={theme}
+        code={text}
+        language={PrismLanguages[lang] || null}
+      >
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre className={className} style={style}>
             {tokens.map((line, i) => {

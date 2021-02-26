@@ -4,6 +4,7 @@ import theme from "prism-react-renderer/themes/github";
 import CodeLine from "../BlockDisplay/CodeLine";
 import ReactMarkdown from "react-markdown";
 import { Card } from "react-bootstrap";
+import PrismLanguages from "../../helpers/prismLanguages";
 
 function InlineChunk({
   lines,
@@ -43,7 +44,7 @@ function InlineChunk({
           Prism={Prism}
           theme={theme}
           code={joinedLines}
-          language={lang}
+          language={PrismLanguages[lang] || null}
         >
           {({ className, style, tokens, getLineProps, getTokenProps }) => (
             <pre className={className} style={style}>
