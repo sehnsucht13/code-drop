@@ -34,8 +34,7 @@
     "dev": "NODE_ENV=dev concurrently -k \"yarn start-server\" \"yarn start-client\"",
     "test": "NODE_ENV=test jest",
     "setup-env": "bash -e ./heroku-env-setup.sh",
-	"heroku-prebuild": "yarn run setup-env",
-    "heroku-postbuild": "cd frontend && yarn && yarn run build"
+	"heroku-prebuild": "yarn run setup-env && cd frontend && yarn && yarn run build"
   },
   "nodemonConfig": {
     "ignore": [
