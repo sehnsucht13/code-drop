@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const passport = require("passport");
-const cookieParser = require("cookie-parser");
+//const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const db = require("./models");
 
@@ -30,6 +30,7 @@ if (PORT === undefined) {
 let app = express();
 app.locals.db = db;
 
+app.set('trust proxy', 1);
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -38,9 +39,15 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
+   	cookie:{
+		httpOnly: true, 
+		secure: true, 
+		maxAge: 1000 * 60 * 60 * 48, 
+		sameSite: 'none'
+   	},
   })
 );
-app.use(cookieParser(process.env.SESSION_SECRET));
+//app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(passport.initialize());
 app.use(passport.session());
 require("./passportConfig")(passport);
