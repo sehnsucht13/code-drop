@@ -33,6 +33,7 @@
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build-local": "yarn build && serve -s ./build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -56,6 +57,7 @@
     ]
   },
   "devDependencies": {
+    "serve": "^11.3.2",
     "source-map-explorer": "^2.5.2"
   }
 }
