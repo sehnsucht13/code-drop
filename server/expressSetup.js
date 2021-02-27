@@ -32,7 +32,7 @@ app.locals.db = db;
 
 app.set('trust proxy', 1);
 const corsConfig = {
-		origin:["http://localhost:3000", "http://localhost:5000", "https://code-drop.netlify.app"],
+		origin:["http://localhost:3000", "http://localhost:5000", "https://code-drop.netlify.app", 'http://192.168.1.75:5000'],
 		methods:['GET', 'POST', 'PUT', 'DELETE'],
 		credentials:true,
 }
