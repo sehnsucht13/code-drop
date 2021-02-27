@@ -31,7 +31,12 @@ let app = express();
 app.locals.db = db;
 
 app.set('trust proxy', 1);
-app.use(cors());
+const corsConfig = {
+		origin:["http://localhost:3000", "http://localhost:5000", "https://code-drop.netlify.app"],
+		methods:['GET', 'POST', 'PUT', 'DELETE'],
+		credentials:true,
+}
+app.use(cors(corsConfig));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
