@@ -6,9 +6,12 @@ import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import store from "./store";
 import App from "./App";
-import axios from 'axios';
+import axios from "axios";
 
-axios.defaults.baseURL = process.env.NODE_ENV === 'production'? 'https://code-drop.herokuapp.com/api': 'http://localhost:3000';
+axios.defaults.baseURL =
+  process.env.NODE_ENV === "production"
+    ? "https://code-drop.herokuapp.com/api"
+    : "http://localhost:3000/api";
 
 ReactDOM.render(
   <React.StrictMode>

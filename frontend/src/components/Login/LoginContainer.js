@@ -33,6 +33,7 @@ export const LoginContainer = ({
     setIsValidated(true);
 
     const form = event.currentTarget;
+    console.log("Submitting from login");
     if (form.checkValidity() === true) {
       axios
         .post("/auth/login", {
@@ -40,6 +41,7 @@ export const LoginContainer = ({
           password: password,
         })
         .then((response) => {
+          console.log("LOGIN PAGE response", response);
           if (response.status === 200) {
             if (isAuth) {
               axios

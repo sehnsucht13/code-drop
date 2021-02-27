@@ -66,9 +66,9 @@ app.use(express.static(path.join("frontend/build")));
 const auth = require("./Routes/auth")(passport);
 const drop = require("./Routes/drop");
 const user = require("./Routes/user");
-app.use("api/auth", auth);
-app.use("api/drop", drop);
-app.use("api/user", user);
+app.use("/api/auth", auth);
+app.use("/api/drop", drop);
+app.use("/api/user", user);
 
 app.get("/", (req, res) => {
   // res.status(200).json({ message: "Hello world from my heroku instance!" });
