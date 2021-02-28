@@ -3,16 +3,15 @@ const { isInt } = require("./helpers");
 const deleteStar = async (req, res) => {
   if (!isInt(req.params.dropId)) {
     res.status(400).end();
-    return;
   } else if (req.user === undefined) {
     res.status(401).end();
     return;
   }
 
-  const dropId = parseInt(req.params.dropId);
+  const dropId = parseInt(req.params.dropId, 10);
 
   const starInstance = await req.app.locals.db.Stars.findOne({
-    where: { userId: req.user.uid, dropId: dropId },
+    where: { userId: req.user.uid, dropId },
   });
 
   if (starInstance === null) {
@@ -32,11 +31,12 @@ const createStar = async (req, res) => {
   if (req.user === undefined) {
     res.status(401).end();
     return;
-  } else if (!isInt(dropId)) {
+  }
+  if (!isInt(req.params.dropId)) {
     res.status(400).end();
     return;
   }
-  const dropId = parseInt(req.params.dropId);
+  const dropId = parseInt(req.params.dropId, 10);
 
   try {
     const dropRecordInstance = await req.app.locals.db.Drops.findByPk(dropId);
@@ -53,7 +53,7 @@ const createStar = async (req, res) => {
     }
 
     const newStarInstance = await req.app.locals.db.Stars.create({
-      dropId: dropId,
+      dropId,
       userId: req.user.uid,
     });
     if (newStarInstance === null) {
