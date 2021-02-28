@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Row, Button, Container, Alert } from "react-bootstrap";
+
+import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+
 import queryString from "query-string";
 import { useLocation, useHistory } from "react-router-dom";
 import axios from "axios";
@@ -12,6 +16,8 @@ import AnnotationContainer from "../CodeAnnotation/AnnotationContainer";
 import Navbar from "../NavBar/Navbar";
 import LoadingPage from "../Loading/LoadingPage";
 import Footer from "../Footer/Footer";
+import UploadAlert from "../Alerts/UploadAlert";
+import ErrorContainer from "../Error/ErrorContainer";
 
 import {
   reset_drop_info,
@@ -29,7 +35,7 @@ import {
   add_annotation,
 } from "../../actions/annotation_actions";
 import { set_editor_language } from "../../actions/editor_actions";
-import { SUCCESS, FAILURE } from "../../constants/uploadConstants";
+import { SUCCESS, FETCH_FAIL } from "../../constants/uploadConstants";
 
 export const DropEditContainer = ({
   reset_drop_info,
@@ -47,18 +53,24 @@ export const DropEditContainer = ({
   uploadEnd,
 }) => {
   const [hasLoaded, setHasLoaded] = useState(false);
-  const [hasUploadError, setHasUploadError] = useState(undefined);
   const queryParams = queryString.parse(useLocation().search);
+  const [uploadStatusDisplay, setUploadStatusDisplay] = useState(undefined);
+  const [hasViewPerm, setHasViewPerm] = useState(true);
   const history = useHistory();
+
+  const handleDiscard = () => {
+    reset_drop_info();
+    delete_all_annotations();
+  };
 
   useEffect(() => {
     async function getData() {
       try {
         const response = await axios.get(`/drop/${queryParams.id}`);
-        console.log("Got a response with data", response);
+
+        reset_drop_info();
 
         // Set the editor data with the data of the drop
-        reset_drop_info();
         set_drop_language(response.data.codeDrop.lang);
         set_drop_text({
           text: response.data.codeDrop.text,
@@ -80,9 +92,20 @@ export const DropEditContainer = ({
           );
         });
         setHasLoaded(true);
-      } catch {
-        // TODO: Error handling if there is an issue
-        console.log("Error retrieving data.");
+      } catch (err) {
+        if (err.response) {
+          switch (err.response.status) {
+            case 404:
+            case 401:
+              setHasViewPerm(false);
+              break;
+            case 500:
+              setUploadStatusDisplay(FETCH_FAIL);
+              break;
+            default:
+              break;
+          }
+        }
       }
     }
     getData();
@@ -91,16 +114,13 @@ export const DropEditContainer = ({
   }, [queryParams.id]);
 
   useEffect(() => {
+    setUploadStatusDisplay(uploadStatus);
     switch (uploadStatus) {
       case SUCCESS:
-        uploadEnd();
         setTimeout(() => {
+          uploadEnd();
           history.push(`/view?id=${queryParams.id}`);
         }, 1000);
-        setHasUploadError(false);
-        break;
-      case FAILURE:
-        setHasUploadError(true);
         break;
       default:
         break;
@@ -115,6 +135,15 @@ export const DropEditContainer = ({
       forkDrop(queryParams.id);
     }
   };
+  if (!hasViewPerm) {
+    return (
+      <div style={{ height: "100%" }}>
+        <Navbar />
+        <ErrorContainer />
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div style={{ height: "100%" }}>
@@ -123,19 +152,16 @@ export const DropEditContainer = ({
         <LoadingPage />
       ) : (
         <Container style={{ paddingTop: "1rem", paddingBottom: "1rem" }}>
-          {hasUploadError === true && (
-            <Alert variant="danger">
-              There was an issue with uploading. Please try submitting again
-            </Alert>
+          {uploadStatusDisplay !== undefined && (
+            <UploadAlert type={uploadStatusDisplay} />
           )}
-          {hasUploadError === false && (
-            <Alert variant="success">Success! Redirecting...</Alert>
-          )}
-          <Row className="justify-content-end">
-            <Button onClick={handlePublish}>Publish</Button>
-            <Button>Discard</Button>
+          <Row className="justify-content-end" style={{ paddingRight: "1rem" }}>
+            <Button onClick={handlePublish} style={{ marginRight: "0.5rem" }}>
+              Publish
+            </Button>
+            <Button onClick={handleDiscard}>Discard</Button>
           </Row>
-          <hr style={{ height: 2 }} />
+          <hr style={{ height: 2, marginTop: "0.5rem" }} />
           <DropInput />
           <hr style={{ height: 2 }} />
           <DropEditor />

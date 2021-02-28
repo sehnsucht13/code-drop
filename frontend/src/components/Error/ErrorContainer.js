@@ -1,5 +1,8 @@
 import React from "react";
-import { Row, Jumbotron, Container, Button } from "react-bootstrap";
+import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Jumbotron from "react-bootstrap/Jumbotron";
+import Container from "react-bootstrap/Container";
 import { Link } from "react-router-dom";
 
 function ErrorContainer({ type }) {

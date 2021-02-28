@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, ListGroup, Form } from "react-bootstrap";
+
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import ListGroup from "react-bootstrap/ListGroup";
+import Form from "react-bootstrap/Form";
+
 import FilterListItem from "./FilterListItem";
 
 export default function FilterList({ drops, refreshCallback }) {

@@ -52,7 +52,6 @@ describe("Drop Get", () => {
     const loginResp = await agent
       .post("/api/auth/login/")
       .send({ ...users[0] });
-    console.log("LOGIN RESPONSE", loginResp);
     expect(loginResp.statusCode).toBe(200);
 
     const sessionResp = await agent.get("/api/auth/session/");
@@ -81,7 +80,10 @@ describe("Drop Get", () => {
         text: "# Hello world",
         forkedFromId: null,
         forkData: null,
+        numForks: 0,
         isForked: false,
+        isStarred: false,
+        starCount: 0,
       },
       dropAnnotations: [],
     });
@@ -137,6 +139,9 @@ describe("Drop Get", () => {
         visibility: false,
         text: "# Hello world",
         isForked: true,
+        numForks: 0,
+        isStarred: false,
+        starCount: 0,
         forkedFromId: parentDropModel.id,
         forkData: {
           title: parentDropData.title,
@@ -200,6 +205,9 @@ describe("Drop Get", () => {
         visibility: true,
         text: "# Hello world",
         isForked: true,
+        numForks: 0,
+        isStarred: false,
+        starCount: 0,
         forkedFromId: parentDropModel.id,
         forkData: {
           title: parentDropData.title,

@@ -1,6 +1,7 @@
 import React from "react";
-import { Button, Row } from "react-bootstrap";
 import { connect } from "react-redux";
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
 import { add_annotation } from "../../actions/annotation_actions";
 import DropAnnotation from "./CodeDropAnnotation";
 

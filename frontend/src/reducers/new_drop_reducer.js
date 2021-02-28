@@ -5,12 +5,13 @@ import {
   SET_DROP_TITLE_ERROR,
   SET_DROP_VISIBLITY,
   SET_DROP_TEXT,
+  SET_NEW_DROP_ID,
   RESET_DROP_INFO,
   UPLOAD_DROP_SUCCESS,
+  UPLOAD_DROP_BEGIN,
   UPLOAD_DROP_FAIL,
   UPLOAD_DROP_END,
 } from "../constants/constants";
-import { SUCCESS, FAILURE } from "../constants/uploadConstants";
 
 const initialState = {
   title: {
@@ -23,6 +24,7 @@ const initialState = {
   editorText: "", // Contents of the editor
   editorLineCount: 0, // Number of lines in the editor. Used by annotations to find errors
   uploadStatus: undefined,
+  newDropId: undefined,
 };
 
 const new_drop_reducer = (state = initialState, { type, payload }) => {
@@ -62,17 +64,27 @@ const new_drop_reducer = (state = initialState, { type, payload }) => {
     case UPLOAD_DROP_SUCCESS:
       return {
         ...state,
-        uploadStatus: SUCCESS,
+        uploadStatus: payload,
       };
     case UPLOAD_DROP_FAIL:
       return {
         ...state,
-        uploadStatus: FAILURE,
+        uploadStatus: payload,
       };
     case UPLOAD_DROP_END:
       return {
         ...state,
         uploadStatus: undefined,
+      };
+    case UPLOAD_DROP_BEGIN:
+      return {
+        ...state,
+        uploadStatus: payload,
+      };
+    case SET_NEW_DROP_ID:
+      return {
+        ...state,
+        newDropId: payload,
       };
     default:
       return state;

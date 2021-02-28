@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Navbar, Form, Button, FormControl, Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import axios from "axios";
 
+import Navbar from "react-bootstrap/Navbar";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import FormControl from "react-bootstrap/FormControl";
+import Nav from "react-bootstrap/Nav";
 import { set_auth, checked_auth, logout } from "../../actions/auth_actions";
-const axios = require("axios");
 
 // Source for combining react-router-dom with react-bootstrap
 // https://stackoverflow.com/questions/54843302/reactjs-bootstrap-navbar-and-routing-not-working-together
@@ -19,17 +23,11 @@ function NavigationBar({
 }) {
   const [searchInput, setSearchInput] = useState("");
 
-  // Run before mounting
   useEffect(() => {
     if (!hasChecked) {
       axios
         .get("/auth/session")
         .then((response) => {
-          console.log(
-            "Got a response for auth",
-            response,
-            axios.defaults.baseURL
-          );
           checked_auth(true);
           if (response.data === "") {
             set_auth(false, undefined);
@@ -38,35 +36,9 @@ function NavigationBar({
           }
         })
         .catch((err) => {
-          console.log("AUTH ERROR", err);
-          // set_auth(false, undefined);
-          // checked_auth(true);
-        });
-    }
-  }, [set_auth, checked_auth, hasChecked]);
-
-  // Change state if user logs out
-  useEffect(() => {
-    if (!hasChecked) {
-      axios
-        .get("/auth/session")
-        .then((response) => {
-          console.log(
-            "Got a response for auth",
-            response,
-            axios.defaults.baseURL
-          );
+          console.debug("auth error from nav", err);
           checked_auth(true);
-          if (response.data === "") {
-            set_auth(false, undefined);
-          } else {
-            set_auth(true, response.data);
-          }
-        })
-        .catch((err) => {
-          console.log("AUTH ERROR", err);
-          // set_auth(false, undefined);
-          // checked_auth(true);
+          set_auth(false, undefined);
         });
     }
   }, [isAuth, hasChecked, set_auth, checked_auth]);
@@ -89,7 +61,7 @@ function NavigationBar({
           onChange={handleSearchInput}
         />
         <Link to={{ pathname: "/search", search: `?contains=${searchInput}` }}>
-          <Button>Search</Button>
+          <Button name="search-button">Search</Button>
         </Link>
       </Form>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
@@ -142,7 +114,6 @@ function NavigationBar({
 }
 
 const mapStateToProps = (state) => {
-  console.log("State from navbar", state);
   return {
     isAuth: state.auth.isAuth,
     user: state.auth.user,

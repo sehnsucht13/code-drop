@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import NavBar from "../NavBar/Navbar";
-import { Container, Form, Button, Row } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
+import axios from "axios";
+
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
+
 import Footer from "../Footer/Footer";
-const axios = require("axios");
+import NavBar from "../NavBar/Navbar";
 
 const PASSWORD_NO_MATCH_ERR = "Passwords do not match!";
 const PASSWORD_EMPTY_ERR = "Please enter a password!";

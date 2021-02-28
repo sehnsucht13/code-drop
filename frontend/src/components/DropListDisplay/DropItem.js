@@ -1,6 +1,8 @@
-import { Card, Row, Col } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import React from "react";
+import Card from "react-bootstrap/Card";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { Link } from "react-router-dom";
 import StarAndFork from "../StarAndFork/StarAndFork";
 import formatDate from "../../helpers/DateFormat";
 
@@ -24,6 +26,7 @@ function DropItem({
           starCount={starCount}
           forkCount={forkCount}
           className="d-md-none"
+          removeMargin={true}
         />
         <Row
           className="justify-content-between"

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { Button, Alert, Row } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Alert from "react-bootstrap/Alert";
+import Row from "react-bootstrap/Row";
 import axios from "axios";
 import CommentDisplay from "./CommentDisplay";
 import CommentEditor from "../CommentEditor/CommentEditor";
