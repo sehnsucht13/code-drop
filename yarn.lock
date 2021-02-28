@@ -1666,6 +1666,11 @@ expect@^26.6.2:
     jest-message-util "^26.6.2"
     jest-regex-util "^26.0.0"
 
+express-session-sequelize@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/express-session-sequelize/-/express-session-sequelize-2.3.0.tgz#19cdd65670a09c9e9603acb2be4b50d3f3452be1"
+  integrity sha512-jwYfB5XueswXKXPstN+vNdU+lbu0oztcrPW5NVV0hgtB0GMm6AQPzrpWLAshvzSBnttXqfkiW1ur8W67k0FMdg==
+
 express-session@^1.17.1:
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/express-session/-/express-session-1.17.1.tgz#36ecbc7034566d38c8509885c044d461c11bf357"

@@ -3,8 +3,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const passport = require("passport");
 const path = require("path");
-//const cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const SessionStore = require("express-session-sequelize")(session.Store);
 const db = require("./models");
 
 let PORT = undefined;
@@ -28,36 +29,38 @@ if (PORT === undefined) {
   throw new Error("PORT variable was not set!");
 }
 
-let app = express();
+const app = express();
 app.locals.db = db;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const corsConfig = {
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:5000",
-    "https://code-drop.netlify.app",
-    "http://192.168.1.75:5000",
-  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
 app.use(cors(corsConfig));
 
-app.set("trust proxy", 1);
+// Init session storage
+const sequelizeSessionStore = new SessionStore({
+  db: db.sequelize,
+});
+// app.set("trust proxy", 1);
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    proxy: true,
+    // proxy: true,
+    saveUninitialized: true,
+    resave: false,
+    store: sequelizeSessionStore,
     cookie: {
-      secure: true,
+      secure: process.env.NODE_ENV === "production" ? true : false,
       maxAge: 1000 * 60 * 60 * 48,
     },
   })
 );
-//app.use(cookieParser(process.env.SESSION_SECRET));
+// console.log(sequelizeSessionStore);
+app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(passport.initialize());
 app.use(passport.session());
 require("./passportConfig")(passport);
@@ -70,11 +73,14 @@ app.use("/api/auth", auth);
 app.use("/api/drop", drop);
 app.use("/api/user", user);
 
-app.get("/", (req, res) => {
-  // res.status(200).json({ message: "Hello world from my heroku instance!" });
-  console.debug(path.join(__dirname + "/frontend/build/index.html"));
-  res.status(200).sendFile(path.join("/frontend/build/index.html"));
-});
+if (process.env.NODE_ENV === "production") {
+  app.get("/", (req, res) => {
+    // res.status(200).json({ message: "Hello world from my heroku instance!" });
+    console.log("SERVING");
+    console.debug(path.join(__dirname + "/frontend/build/index.html"));
+    res.status(200).sendFile(path.join("/frontend/build/index.html"));
+  });
+}
 
 function startServer() {
   db.sequelize
