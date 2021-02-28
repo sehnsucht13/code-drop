@@ -1,9 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Col, Row, ListGroup, Button } from "react-bootstrap";
+import axios from "axios";
+
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import ListGroup from "react-bootstrap/ListGroup";
+import Button from "react-bootstrap/Button";
+
 import { Link, useHistory } from "react-router-dom";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
-const axios = require("axios");
 
 function FilterListItem({
   title,

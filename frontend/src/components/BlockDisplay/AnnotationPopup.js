@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { BsFillCaretRightFill, BsX } from "react-icons/bs";
 import { IconContext } from "react-icons";
-import { OverlayTrigger, Popover } from "react-bootstrap";
 import ReactMarkdown from "react-markdown";
+
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
 
 export default function AnnotationPopup({ index, showIcon, annotationText }) {
   const [show, setShow] = useState(false);
-  // console.log(annotationText);
   const popover = (
     <Popover
       id={index}
@@ -29,7 +30,7 @@ export default function AnnotationPopup({ index, showIcon, annotationText }) {
 
   if (showIcon) {
     return (
-      <IconContext.Provider value={{ color: "blue", size: "15px" }}>
+      <IconContext.Provider value={{ color: "blue", size: "1.5rem" }}>
         <OverlayTrigger placement="right" overlay={popover} show={show}>
           <BsFillCaretRightFill
             onClick={() => {

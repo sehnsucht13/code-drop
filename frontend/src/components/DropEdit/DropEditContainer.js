@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Row, Button, Container, Alert } from "react-bootstrap";
+
+import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+import Alert from "react-bootstrap/Alert";
+
 import queryString from "query-string";
 import { useLocation, useHistory } from "react-router-dom";
 import axios from "axios";

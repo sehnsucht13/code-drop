@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Tabs, Tab, Container } from "react-bootstrap";
+import Tab from "react-bootstrap/Tab";
+import Tabs from "react-bootstrap/Tabs";
+
+import Container from "react-bootstrap/Container";
 import axios from "axios";
 import queryString from "query-string";
 

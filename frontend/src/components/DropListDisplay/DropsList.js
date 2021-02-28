@@ -3,9 +3,10 @@ import DropItem from "./DropItem";
 
 function DropsList({ drops }) {
   return (
-    <div className="code-drops-display">
+    <div id="code-drops-display" className="min-vh-100">
       {drops.map((drop) => (
         <DropItem
+          key={drop.id}
           title={drop.title}
           lastUpdate={drop.updatedAt}
           description={drop.description}

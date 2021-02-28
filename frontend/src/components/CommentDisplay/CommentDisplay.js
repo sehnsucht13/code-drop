@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Row, Button, Dropdown, Alert, Card, Col } from "react-bootstrap";
+
+import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Dropdown from "react-bootstrap/Dropdown";
+import Alert from "react-bootstrap/Alert";
+import Card from "react-bootstrap/Card";
+import Col from "react-bootstrap/Col";
 import { BsThreeDotsVertical } from "react-icons/bs";
+
 import ReactMarkdown from "react-markdown";
 import axios from "axios";
 

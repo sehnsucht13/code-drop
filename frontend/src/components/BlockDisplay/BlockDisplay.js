@@ -12,7 +12,6 @@ const generateMap = (annotations) => {
       indexMap[i - 1] = annotation;
     }
   });
-  // console.log("The generated map is:", indexMap);
   return indexMap;
 };
 

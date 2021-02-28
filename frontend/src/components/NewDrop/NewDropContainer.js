@@ -1,6 +1,9 @@
 import React from "react";
-import { Row, Button, Container } from "react-bootstrap";
 import { connect } from "react-redux";
+
+import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
 
 import DropEditor from "../DropEditor/DropEditor";
 import DropInput from "../DropEditor/DropInput";

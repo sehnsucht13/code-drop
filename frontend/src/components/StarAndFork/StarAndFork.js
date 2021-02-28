@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { BsStar, BsStarFill } from "react-icons/bs";
-import { BiGitRepoForked } from "react-icons/bi";
-import { Row, Button, ButtonGroup } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+
+import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import { BsStar, BsStarFill } from "react-icons/bs";
+import { BiGitRepoForked } from "react-icons/bi";
 
 function StarAndFork({ id, hasStar, starCount, className, forkCount, isAuth }) {
   const [isStarred, setIsStarred] = useState(hasStar);

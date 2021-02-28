@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Form, Row, FormControl, Col, Button } from "react-bootstrap";
 import { connect } from "react-redux";
+
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
+import FormControl from "react-bootstrap/FormControl";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 import CommentEditor from "../CommentEditor/CommentEditor";
 import {
   delete_annotation,
