@@ -32,11 +32,11 @@ module.exports = function (passport) {
   );
 
   passport.serializeUser((user, cb) => {
-    // console.log("Serializing user", user.dataValues.id);
+    console.log("Serializing user", user.dataValues.id);
     cb(null, user.dataValues.id);
   });
   passport.deserializeUser(async (id, cb) => {
-    // console.log("Deserializing", id);
+    console.log("Deserializing", id);
     try {
       let user = await db.Users.findOne({ where: { id: id } });
       const userInformation = {

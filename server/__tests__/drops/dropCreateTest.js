@@ -47,7 +47,7 @@ describe("Drop Create", () => {
 
   it("rejects drop creation if not logged in", async (done) => {
     let agent = supertest.agent(app);
-    const resp = await agent.post("/drop").send({
+    const resp = await agent.post("/api/drop").send({
       title: "Hello",
       lang: "python",
       visibility: true,
@@ -62,14 +62,16 @@ describe("Drop Create", () => {
   it("should create drop when logged in", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[0] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[0] });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
 
-    const resp = await agent.post("/drop").send({
+    const resp = await agent.post("/api/drop").send({
       title: "new_create_drop_u1",
       lang: "python",
       visibility: true,
@@ -84,12 +86,12 @@ describe("Drop Create", () => {
     });
 
     if (newDropModel === null) {
-      const logout = await agent.get("/auth/logout/");
+      const logout = await agent.get("/api/auth/logout/");
       expect(logout.statusCode).toBe(200);
       done.fail(new Error("New Drop model was not created."));
     }
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
     done();
   });
@@ -97,14 +99,16 @@ describe("Drop Create", () => {
   it("should reject drop missing a title", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[1] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[1] });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
 
-    const resp = await agent.post("/drop").send({
+    const resp = await agent.post("/api/drop").send({
       title: "",
       lang: "python",
       visibility: true,
@@ -118,12 +122,12 @@ describe("Drop Create", () => {
       where: { text: "missing title body" },
     });
     if (newDropModel !== null) {
-      const logout = await agent.get("/auth/logout/");
+      const logout = await agent.get("/api/auth/logout/");
       expect(logout.statusCode).toBe(200);
       done.fail(new Error("New Drop without title was created."));
     }
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
     done();
   });
@@ -131,14 +135,16 @@ describe("Drop Create", () => {
   it("should reject drop with missing body", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[2] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[2] });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
 
-    const resp = await agent.post("/drop").send({
+    const resp = await agent.post("/api/drop").send({
       title: "drop_with_missing_body",
       lang: "python",
       visibility: true,
@@ -152,12 +158,12 @@ describe("Drop Create", () => {
       where: { title: "drop_with_missing_body" },
     });
     if (newDropModel !== null) {
-      const logout = await agent.get("/auth/logout/");
+      const logout = await agent.get("/api/auth/logout/");
       expect(logout.statusCode).toBe(200);
       done.fail(new Error("New Drop without body was created."));
     }
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
     done();
   });
@@ -165,14 +171,16 @@ describe("Drop Create", () => {
   it("should reject drop with missing body and title", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[3] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[3] });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
 
-    const resp = await agent.post("/drop").send({
+    const resp = await agent.post("/api/drop").send({
       title: "",
       lang: "python",
       visibility: true,
@@ -186,13 +194,13 @@ describe("Drop Create", () => {
       where: { userId: sessionResp.body.uid },
     });
     if (newDropModel !== null) {
-      const logout = await agent.get("/auth/logout/");
+      const logout = await agent.get("/api/auth/logout/");
       expect(logout.statusCode).toBe(200);
 
       done.fail(new Error("New Drop without body or title was created."));
     }
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
     done();
   });

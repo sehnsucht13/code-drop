@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const passport = require("passport");
 
 module.exports = (passportInstance) => {
   router.post("/register", async (req, res) => {
@@ -30,19 +31,30 @@ module.exports = (passportInstance) => {
     res.status(200).json({ status: "OK" });
   });
 
-  router.post("/login", passportInstance.authenticate("local"), (req, res) => {
+  router.post("/login", passport.authenticate("local"), (req, res) => {
+    console.log("LOGIN", req.user, req.session);
     res.status(200).end();
   });
 
   router.get("/session", function (req, res) {
+    console.log("SESSION ROUTE HIT", req.session.passport, req.session.cookie);
     res.status(200).send(req.user);
   });
 
   router.get("/logout", function (req, res) {
     if (req.user !== undefined) {
-      req.logout();
+      req.session.destroy((err) => {
+        if (err === undefined || err === null) {
+          req.logout();
+          res.status(200).end();
+        } else {
+          console.log("Error destroyign session", err);
+          res.status(500).end();
+        }
+      });
+    } else {
+      res.status(200).end();
     }
-    res.status(200).end();
   });
 
   return router;

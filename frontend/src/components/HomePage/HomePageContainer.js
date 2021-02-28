@@ -52,6 +52,9 @@ function HomePageContainer() {
         }
         setDrops(result.data);
         setInitialLoadDone(true);
+      })
+      .catch((err) => {
+        console.log("Error fetching drops from paginate", err);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

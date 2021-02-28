@@ -47,10 +47,10 @@ describe("Registration tests", () => {
 
   it("Should return session info successfully", async (done) => {
     let agent = supertest.agent(app);
-    const login = await agent.post("/auth/login/").send({ ...users[0] });
+    const login = await agent.post("/api/auth/login/").send({ ...users[0] });
     expect(login.statusCode).toBe(200);
 
-    const session = await agent.get("/auth/session/");
+    const session = await agent.get("/api/auth/session/");
 
     expect(session.statusCode).toBe(200);
     expect(session.body).toEqual({
@@ -63,11 +63,11 @@ describe("Registration tests", () => {
   it("Test session info with bad login", async (done) => {
     let agent = supertest.agent(app);
     const login = await agent
-      .post("/auth/login/")
+      .post("/api/auth/login/")
       .send({ username: users[0].username, password: "WRONG" });
     expect(login.statusCode).toBe(401);
 
-    const session = await agent.get("/auth/session/");
+    const session = await agent.get("/api/auth/session/");
 
     expect(session.statusCode).toBe(200);
     expect(session.body).toEqual({});
@@ -76,20 +76,20 @@ describe("Registration tests", () => {
 
   it("Test session info after logout", async (done) => {
     let agent = supertest.agent(app);
-    const login = await agent.post("/auth/login/").send({ ...users[1] });
+    const login = await agent.post("/api/auth/login/").send({ ...users[1] });
     expect(login.statusCode).toBe(200);
 
-    const sessionBeforLogout = await agent.get("/auth/session/");
+    const sessionBeforLogout = await agent.get("/api/auth/session/");
     expect(sessionBeforLogout.statusCode).toBe(200);
     expect(sessionBeforLogout.body).toEqual({
       username: users[1].username,
       uid: user_ids[1],
     });
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
 
-    const sessionLogin = await agent.get("/auth/session/");
+    const sessionLogin = await agent.get("/api/auth/session/");
 
     expect(sessionLogin.statusCode).toBe(200);
     expect(sessionLogin.body).toEqual({});

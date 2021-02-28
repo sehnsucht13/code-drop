@@ -10,45 +10,45 @@ describe("Profile Delete Tests", () => {
     // Create user one
     const agent = supertest.agent(app);
 
-    const registerResp = await agent.post("/auth/register/").send({
+    const registerResp = await agent.post("/api/auth/register/").send({
       username: "tdp_1",
       password: "tdp_1",
     });
     expect(registerResp.statusCode).toBe(200);
 
-    const loginResp = await agent.post("/auth/login/").send({
+    const loginResp = await agent.post("/api/auth/login/").send({
       username: "tdp_1",
       password: "tdp_1",
     });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     sessionId_1 = sessionResp.body;
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
 
     // Create user two
     const agent_2 = supertest.agent(app);
 
-    const registerResp_2 = await agent_2.post("/auth/register/").send({
+    const registerResp_2 = await agent_2.post("/api/auth/register/").send({
       username: "tdp_2",
       password: "tdp_2",
     });
     expect(registerResp_2.statusCode).toBe(200);
 
-    const loginResp_2 = await agent_2.post("/auth/login/").send({
+    const loginResp_2 = await agent_2.post("/api/auth/login/").send({
       username: "tdp_2",
       password: "tdp_2",
     });
     expect(loginResp_2.statusCode).toBe(200);
 
-    const sessionResp_2 = await agent_2.get("/auth/session/");
+    const sessionResp_2 = await agent_2.get("/api/auth/session/");
     expect(sessionResp_2.statusCode).toBe(200);
     sessionId_2 = sessionResp_2.body;
 
-    const logout_2 = await agent_2.get("/auth/logout/");
+    const logout_2 = await agent_2.get("/api/auth/logout/");
     expect(logout_2.statusCode).toBe(200);
 
     // Create drops for user one
@@ -114,7 +114,7 @@ describe("Profile Delete Tests", () => {
 
   it("should not delete profile of a user while not logged in", async (done) => {
     const agent = supertest.agent(app);
-    const deleteResp = await agent.delete(`/user/${sessionId_1.uid}`);
+    const deleteResp = await agent.delete(`/api/user/${sessionId_1.uid}`);
     expect(deleteResp.statusCode).toBe(401);
 
     done();
@@ -123,21 +123,21 @@ describe("Profile Delete Tests", () => {
     const agent = supertest.agent(app);
     const agent_2 = supertest.agent(app);
 
-    const loginResp_2 = await agent_2.post("/auth/login/").send({
+    const loginResp_2 = await agent_2.post("/api/auth/login/").send({
       username: "tdp_2",
       password: "tdp_2",
     });
     expect(loginResp_2.statusCode).toBe(200);
 
-    const sessionResp_2 = await agent_2.get("/auth/session/");
+    const sessionResp_2 = await agent_2.get("/api/auth/session/");
     expect(sessionResp_2.statusCode).toBe(200);
     expect(sessionResp_2.body).toEqual(sessionId_2);
 
-    const deleteResp = await agent.delete(`/user/${sessionId_1.uid}`);
+    const deleteResp = await agent.delete(`/api/user/${sessionId_1.uid}`);
     expect(deleteResp.statusCode).toBe(401);
     expect(deleteResp.body).toEqual({});
 
-    const logout_2 = await agent_2.get("/auth/logout/");
+    const logout_2 = await agent_2.get("/api/auth/logout/");
     expect(logout_2.statusCode).toBe(200);
 
     done();
@@ -145,17 +145,19 @@ describe("Profile Delete Tests", () => {
   it("should delete profile of logged in user without drops and log them out", async (done) => {
     const agent_2 = supertest.agent(app);
 
-    const loginResp_2 = await agent_2.post("/auth/login/").send({
+    const loginResp_2 = await agent_2.post("/api/auth/login/").send({
       username: "tdp_2",
       password: "tdp_2",
     });
     expect(loginResp_2.statusCode).toBe(200);
 
-    const sessionResp_1 = await agent_2.get("/auth/session/");
+    const sessionResp_1 = await agent_2.get("/api/auth/session/");
     expect(sessionResp_1.statusCode).toBe(200);
     expect(sessionResp_1.body).toEqual(sessionId_2);
 
-    const deleteResp = await agent_2.delete(`/user/${sessionResp_1.body.uid}`);
+    const deleteResp = await agent_2.delete(
+      `/api/user/${sessionResp_1.body.uid}`
+    );
     expect(deleteResp.statusCode).toBe(200);
     expect(deleteResp.body).toEqual({});
 
@@ -164,7 +166,7 @@ describe("Profile Delete Tests", () => {
     });
     expect(userModel).toBe(null);
 
-    const sessionResp_2 = await agent_2.get("/auth/session/");
+    const sessionResp_2 = await agent_2.get("/api/auth/session/");
     expect(sessionResp_2.statusCode).toBe(200);
     expect(sessionResp_2.body).toEqual({});
     done();
@@ -173,17 +175,17 @@ describe("Profile Delete Tests", () => {
   // it("should delete profile of logged in user with drops and log them out", async (done) => {
   // const agent_2 = supertest.agent(app);
 
-  // const loginResp_2 = await agent_2.post("/auth/login/").send({
+  // const loginResp_2 = await agent_2.post("/api/auth/login/").send({
   //   username: "tdp_1",
   //   password: "tdp_1",
   // });
   // expect(loginResp_2.statusCode).toBe(200);
 
-  // const sessionResp_1 = await agent_2.get("/auth/session/");
+  // const sessionResp_1 = await agent_2.get("/api/auth/session/");
   // expect(sessionResp_1.statusCode).toBe(200);
   // expect(sessionResp_1.body).toEqual(sessionId_2);
 
-  // const deleteResp = await agent_2.delete(`/user/${sessionResp_1.body.uid}`);
+  // const deleteResp = await agent_2.delete(`/api/user/${sessionResp_1.body.uid}`);
   // expect(deleteResp.statusCode).toBe(200);
   // expect(deleteResp.body).toEqual({});
 
@@ -192,7 +194,7 @@ describe("Profile Delete Tests", () => {
   // });
   // expect(userModel).toBe(null);
 
-  // const sessionResp_2 = await agent_2.get("/auth/session/");
+  // const sessionResp_2 = await agent_2.get("/api/auth/session/");
   // expect(sessionResp_2.statusCode).toBe(200);
   // expect(sessionResp_2.body).toEqual({});
   // done();

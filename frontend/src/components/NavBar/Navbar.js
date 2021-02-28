@@ -25,6 +25,11 @@ function NavigationBar({
       axios
         .get("/auth/session")
         .then((response) => {
+          console.log(
+            "Got a response for auth",
+            response,
+            axios.defaults.baseURL
+          );
           checked_auth(true);
           if (response.data === "") {
             set_auth(false, undefined);
@@ -32,7 +37,11 @@ function NavigationBar({
             set_auth(true, response.data);
           }
         })
-        .catch();
+        .catch((err) => {
+          console.log("AUTH ERROR", err);
+          // set_auth(false, undefined);
+          // checked_auth(true);
+        });
     }
   }, [set_auth, checked_auth, hasChecked]);
 
@@ -42,6 +51,11 @@ function NavigationBar({
       axios
         .get("/auth/session")
         .then((response) => {
+          console.log(
+            "Got a response for auth",
+            response,
+            axios.defaults.baseURL
+          );
           checked_auth(true);
           if (response.data === "") {
             set_auth(false, undefined);
@@ -49,7 +63,11 @@ function NavigationBar({
             set_auth(true, response.data);
           }
         })
-        .catch();
+        .catch((err) => {
+          console.log("AUTH ERROR", err);
+          // set_auth(false, undefined);
+          // checked_auth(true);
+        });
     }
   }, [isAuth, hasChecked, set_auth, checked_auth]);
 
@@ -124,6 +142,7 @@ function NavigationBar({
 }
 
 const mapStateToProps = (state) => {
+  console.log("State from navbar", state);
   return {
     isAuth: state.auth.isAuth,
     user: state.auth.user,

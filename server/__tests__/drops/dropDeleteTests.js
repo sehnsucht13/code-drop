@@ -47,39 +47,43 @@ describe("Drop Create", () => {
 
   it("return 401 if not logged in", async (done) => {
     let agent = supertest.agent(app);
-    const resp = await agent.delete("/drop/423");
+    const resp = await agent.delete("/api/drop/423");
     expect(resp.statusCode).toBe(401);
     done();
   });
   it("should return 400 if drop id is not a number while user logged in", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[0] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[0] });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
-    const resp = await agent.delete("/drop/asf");
+    const resp = await agent.delete("/api/drop/asf");
     expect(resp.statusCode).toBe(400);
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
     done();
   });
   it("should return 404 if user logged in and drop does not exist", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[1] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[1] });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
-    const resp = await agent.delete("/drop/12345678888");
+    const resp = await agent.delete("/api/drop/12345678888");
     expect(resp.statusCode).toBe(404);
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
     done();
   });
@@ -87,10 +91,12 @@ describe("Drop Create", () => {
   it("should delete existing drop if user logged in", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[2] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[2] });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
     const newDrop = await db.Drops.create({
@@ -102,7 +108,7 @@ describe("Drop Create", () => {
       userId: sessionResp.body.uid,
     });
     const newDropId = newDrop.dataValues.id;
-    const resp = await agent.delete(`/drop/${newDropId}`);
+    const resp = await agent.delete(`/api/drop/${newDropId}`);
     expect(resp.statusCode).toBe(200);
 
     const deletedDrop = await db.Drops.findByPk(newDropId);
@@ -110,7 +116,7 @@ describe("Drop Create", () => {
       done.fail(new Error("New Drop was not deleted!"));
     }
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
     done();
   });

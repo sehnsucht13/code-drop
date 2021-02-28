@@ -15,7 +15,6 @@ function DropItem({
   user,
   forkCount,
 }) {
-  console.log("Number of forks", forkCount);
   return (
     <Card key={id} style={{ marginTop: "0.5rem", paddingBottom: "0" }}>
       <Card.Body style={{ paddingTop: "0.5rem" }}>

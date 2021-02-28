@@ -49,10 +49,13 @@ describe("Drop Get", () => {
   it("should return 200 and all data for a drop that is not forked", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[0] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[0] });
+    console.log("LOGIN RESPONSE", loginResp);
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
     const dropData = {
@@ -65,7 +68,7 @@ describe("Drop Get", () => {
       userId: sessionResp.body.uid,
     };
     const newDropModel = await db.Drops.create(dropData);
-    const resp = await agent.get(`/drop/${newDropModel.dataValues.id}`);
+    const resp = await agent.get(`/api/drop/${newDropModel.dataValues.id}`);
     expect(resp.statusCode).toBe(200);
     expect(resp.body).toEqual({
       codeDrop: {
@@ -88,10 +91,12 @@ describe("Drop Get", () => {
   it("should return 200 and all data for a private drop forked from another private drop created by the current user", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[2] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[2] });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
     const parentDropData = {
@@ -120,7 +125,7 @@ describe("Drop Get", () => {
     };
     const forkedDropModel = await db.Drops.create(forkedDropData);
 
-    const resp = await agent.get(`/drop/${forkedDropModel.dataValues.id}`);
+    const resp = await agent.get(`/api/drop/${forkedDropModel.dataValues.id}`);
     expect(resp.statusCode).toBe(200);
     expect(resp.body).toEqual({
       codeDrop: {
@@ -149,10 +154,12 @@ describe("Drop Get", () => {
   it("should return 200 and all data for a public drop forked from another public drop", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[1] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[1] });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
     const parentDropData = {
@@ -181,7 +188,7 @@ describe("Drop Get", () => {
     };
     const forkedDropModel = await db.Drops.create(forkedDropData);
 
-    const resp = await agent.get(`/drop/${forkedDropModel.dataValues.id}`);
+    const resp = await agent.get(`/api/drop/${forkedDropModel.dataValues.id}`);
     expect(resp.statusCode).toBe(200);
     expect(resp.body).toEqual({
       codeDrop: {
@@ -209,13 +216,13 @@ describe("Drop Get", () => {
 
   it("should return 400 if drop id is not a number", async (done) => {
     let agent = supertest.agent(app);
-    const resp = await agent.get("/drop/ab323a");
+    const resp = await agent.get("/api/drop/ab323a");
     expect(resp.statusCode).toBe(400);
     done();
   });
   it("should return 404 if drop does not exist", async (done) => {
     let agent = supertest.agent(app);
-    const resp = await agent.get("/drop/88888888");
+    const resp = await agent.get("/api/drop/88888888");
     expect(resp.statusCode).toBe(404);
     done();
   });
