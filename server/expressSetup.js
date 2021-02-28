@@ -8,7 +8,7 @@ const session = require("express-session");
 const SessionStore = require("express-session-sequelize")(session.Store);
 const db = require("./models");
 
-let PORT = undefined;
+let PORT;
 // Necessary since heroku provides its own port number
 switch (process.env.NODE_ENV) {
   case "dev":
@@ -54,7 +54,7 @@ app.use(
     resave: false,
     store: sequelizeSessionStore,
     cookie: {
-      secure: process.env.NODE_ENV === "production" ? true : false,
+      secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 48,
     },
   })
@@ -63,11 +63,13 @@ app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(passport.initialize());
 app.use(passport.session());
 require("./passportConfig")(passport);
+
 app.use(express.static(path.join("frontend/build")));
 
-const auth = require("./Routes/auth")(passport);
+const auth = require("./Routes/auth");
 const drop = require("./Routes/drop");
 const user = require("./Routes/user");
+
 app.use("/api/auth", auth);
 app.use("/api/drop", drop);
 app.use("/api/user", user);
@@ -75,8 +77,6 @@ app.use("/api/user", user);
 if (process.env.NODE_ENV === "production") {
   app.get("/", (req, res) => {
     // res.status(200).json({ message: "Hello world from my heroku instance!" });
-    console.log("SERVING");
-    console.debug(path.join(__dirname + "/frontend/build/index.html"));
     res.status(200).sendFile(path.join("/frontend/build/index.html"));
   });
 }
@@ -85,7 +85,7 @@ function startServer() {
   db.sequelize
     .sync()
     .then(() => {
-      app.listen(PORT, function () {
+      app.listen(PORT, () => {
         console.log(`Listening on port: ${PORT}`);
       });
     })
@@ -94,4 +94,4 @@ function startServer() {
     });
 }
 
-module.exports = { app: app, db: db, startServer: startServer };
+module.exports = { app, db, startServer };

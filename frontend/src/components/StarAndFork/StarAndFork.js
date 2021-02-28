@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
@@ -20,9 +20,16 @@ function StarAndFork({
 }) {
   const [isStarred, setIsStarred] = useState(hasStar);
   const [numStars, setNumStars] = useState(starCount);
+  const [isUserAuth, setIsUserAuth] = useState(isAuth);
+
   const history = useHistory();
+
+  useEffect(() => {
+    setIsUserAuth(isAuth);
+  }, [isAuth]);
+
   const handleStarClick = () => {
-    if (isStarred) {
+    if (isStarred && isUserAuth) {
       axios
         .delete(`drop/${id}/stars`)
         .then((response) => {
@@ -31,9 +38,11 @@ function StarAndFork({
             setNumStars(numStars - 1);
           }
         })
-        .catch((err) => {});
+        .catch((err) => {
+          console.log("got an error", err);
+        });
     } else {
-      if (isAuth) {
+      if (isUserAuth) {
         axios
           .post(`drop/${id}/stars`)
           .then((response) => {
@@ -52,7 +61,7 @@ function StarAndFork({
   };
 
   const handleFork = () => {
-    if (isAuth) {
+    if (isUserAuth) {
       history.push(`/edit?id=${id}&fork=t`);
     } else {
       history.push("/login");
@@ -76,7 +85,7 @@ function StarAndFork({
             style={{ paddingLeft: "0.5rem", paddingRight: "0.5rem" }}
             className="d-flex justify-content-center align-items-center"
           >
-            {isStarred ? (
+            {isStarred && isUserAuth ? (
               <>
                 <BsStarFill />
                 <p

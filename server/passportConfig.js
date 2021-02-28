@@ -1,17 +1,15 @@
 // const User = require("./user");
-const db = require("./models");
 const bcrypt = require("bcryptjs");
-const localStrategy = require("passport-local").Strategy;
+const LocalStrategy = require("passport-local").Strategy;
+const db = require("./models");
 
 module.exports = function (passport) {
   passport.use(
-    new localStrategy(async function (username, password, done) {
-      // console.log("CALLED THE LOCAL STRAT");
-      let user = await db.Users.findOne({ where: { username: username } });
-      // console.log("LOCAL START USER", user);
+    // eslint-disable-line consistent-return
+    new LocalStrategy(async (username, password, done) => {
+      const user = await db.Users.findOne({ where: { username } });
 
       if (user === null) {
-        // console.log("User not found");
         return done(null, false);
       }
 
@@ -21,13 +19,11 @@ module.exports = function (passport) {
           return done(null, false);
         }
         if (result === true) {
-          // console.log("Bcrypt compare is true");
           return done(null, user);
-        } else {
-          // console.log("Bcrypt compare is false");
-          return done(null, false);
         }
+        return done(null, false);
       });
+      return undefined;
     })
   );
 
@@ -36,7 +32,7 @@ module.exports = function (passport) {
   });
   passport.deserializeUser(async (id, cb) => {
     try {
-      let user = await db.Users.findOne({ where: { id: id } });
+      const user = await db.Users.findOne({ where: { id } });
       const userInformation = {
         username: user && user.username,
         uid: user && user.id,

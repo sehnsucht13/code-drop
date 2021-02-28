@@ -5,14 +5,14 @@ const search = async (req, res) => {
   if (
     !helper.isInt(req.query.start) ||
     !helper.isInt(req.query.count) ||
-    searchTerm.length === 0
+    req.query.contains.length === 0
   ) {
     res.status(400).end();
     return;
   }
 
-  const pageStart = parseInt(req.query.start || 0);
-  const pageLimit = parseInt(req.query.count || 15);
+  const pageStart = parseInt(req.query.start || 0, 10);
+  const pageLimit = parseInt(req.query.count || 15, 10);
   const timeWindow = req.query.t || "all_time";
   const searchField = req.query.field || "title";
   const searchTerm = req.query.contains || "";
@@ -20,7 +20,7 @@ const search = async (req, res) => {
   const now = new Date();
   const gteOp = req.app.locals.db.Sequelize.Op.gte;
   const containsOp = req.app.locals.db.Sequelize.Op.substring;
-  let searchParams = {};
+  const searchParams = {};
   let minDate;
 
   switch (timeWindow) {
@@ -83,7 +83,7 @@ const search = async (req, res) => {
               searchField === "user"
                 ? { username: { [containsOp]: searchTerm } }
                 : {},
-            required: searchField === "user" ? true : false,
+            required: searchField === "user",
           },
         ],
       });
@@ -102,7 +102,7 @@ const search = async (req, res) => {
               searchField === "user"
                 ? { username: { [containsOp]: searchTerm } }
                 : {},
-            required: searchField === "user" ? true : false,
+            required: searchField === "user",
           },
         ],
       });
@@ -112,7 +112,7 @@ const search = async (req, res) => {
       rows.map(async (row) => {
         if (req.user !== undefined) {
           const rowData = { ...row.dataValues };
-          rowData.isStarred = row.dataValues.stars.length === 0 ? false : true;
+          rowData.isStarred = row.dataValues.stars.length !== 0;
           delete rowData.stars;
 
           const starCount = await req.app.locals.db.Stars.count({
@@ -120,12 +120,11 @@ const search = async (req, res) => {
           });
           rowData.starCount = starCount;
           return rowData;
-        } else {
-          const starCount = await req.app.locals.db.Stars.count({
-            where: { dropId: row.dataValues.id },
-          });
-          return { ...row.dataValues, isStarred: false, starCount: starCount };
         }
+        const starCount = await req.app.locals.db.Stars.count({
+          where: { dropId: row.dataValues.id },
+        });
+        return { ...row.dataValues, isStarred: false, starCount };
       })
     );
 
@@ -140,8 +139,8 @@ const paginate = async (req, res) => {
     res.status(400).end();
     return;
   }
-  const pageStart = parseInt(req.query.start || 0);
-  const pageLimit = parseInt(req.query.count || 15);
+  const pageStart = parseInt(req.query.start || 0, 10);
+  const pageLimit = parseInt(req.query.count || 15, 10);
 
   try {
     let rows;
@@ -199,7 +198,7 @@ const paginate = async (req, res) => {
       rows.map(async (row) => {
         if (req.user !== undefined) {
           const rowData = { ...row.dataValues };
-          rowData.isStarred = row.dataValues.stars.length === 0 ? false : true;
+          rowData.isStarred = row.dataValues.stars.length !== 0;
           delete rowData.stars;
 
           const starCount = await req.app.locals.db.Stars.count({
@@ -207,12 +206,11 @@ const paginate = async (req, res) => {
           });
           rowData.starCount = starCount;
           return rowData;
-        } else {
-          const starCount = await req.app.locals.db.Stars.count({
-            where: { dropId: row.dataValues.id },
-          });
-          return { ...row.dataValues, isStarred: false, starCount: starCount };
         }
+        const starCount = await req.app.locals.db.Stars.count({
+          where: { dropId: row.dataValues.id },
+        });
+        return { ...row.dataValues, isStarred: false, starCount };
       })
     );
 
@@ -228,7 +226,7 @@ const getDrop = async (req, res) => {
     return;
   }
 
-  const dropId = parseInt(req.params.dropId);
+  const dropId = parseInt(req.params.dropId, 10);
   try {
     const dropInstance = await req.app.locals.db.Drops.findByPk(dropId, {
       attributes: [
@@ -247,7 +245,8 @@ const getDrop = async (req, res) => {
     if (dropInstance === null) {
       res.status(404).end();
       return;
-    } else if (
+    }
+    if (
       dropInstance.visibility === false &&
       (req.user === undefined ||
         req.user.uid !== dropInstance.dataValues.userId)
@@ -297,8 +296,8 @@ const getDrop = async (req, res) => {
         const respObject = {
           codeDrop: {
             ...dropInstance.dataValues,
-            isStarred: isStarred,
-            starCount: starCount,
+            isStarred,
+            starCount,
             forkData: null,
           },
           dropAnnotations: annotations.map(
@@ -311,8 +310,8 @@ const getDrop = async (req, res) => {
           const respObject = {
             codeDrop: {
               ...dropInstance.dataValues,
-              isStarred: isStarred,
-              starCount: starCount,
+              isStarred,
+              starCount,
               forkData: null,
             },
             dropAnnotations: annotations.map(
@@ -324,8 +323,8 @@ const getDrop = async (req, res) => {
           const respObject = {
             codeDrop: {
               ...dropInstance.dataValues,
-              isStarred: isStarred,
-              starCount: starCount,
+              isStarred,
+              starCount,
               forkData: {
                 title: forkedFromDrop.dataValues.title,
                 user: forkedFromDrop.dataValues.user.dataValues,
@@ -341,8 +340,8 @@ const getDrop = async (req, res) => {
         const respObject = {
           codeDrop: {
             ...dropInstance.dataValues,
-            isStarred: isStarred,
-            starCount: starCount,
+            isStarred,
+            starCount,
             forkData: {
               title: forkedFromDrop.dataValues.title,
               user: forkedFromDrop.dataValues.user.dataValues,
@@ -358,8 +357,8 @@ const getDrop = async (req, res) => {
       const respObject = {
         codeDrop: {
           ...dropInstance.dataValues,
-          isStarred: isStarred,
-          starCount: starCount,
+          isStarred,
+          starCount,
           forkData: null,
         },
         dropAnnotations: annotations.map((annotation) => annotation.dataValues),
@@ -375,11 +374,12 @@ const deleteDrop = async (req, res) => {
   if (req.user === undefined) {
     res.status(401).end();
     return;
-  } else if (!helper.isInt(req.params.dropId)) {
+  }
+  if (!helper.isInt(req.params.dropId)) {
     res.status(400).end();
     return;
   }
-  const dropId = parseInt(req.params.dropId);
+  const dropId = parseInt(req.params.dropId, 10);
   const currUser = req.user;
 
   try {
@@ -396,7 +396,7 @@ const deleteDrop = async (req, res) => {
         dropInstance.forkedFromId
       );
       parentDropInstance.numForks -= 1;
-      parentDropInstance.save;
+      await parentDropInstance.save();
 
       const parentDropUserInstance = await req.app.locals.db.Users.findByPk(
         parentDropInstance.userId
@@ -407,27 +407,27 @@ const deleteDrop = async (req, res) => {
     await dropInstance.destroy();
     res.status(200).end();
   } catch (error) {
-    console.error(error);
     res.status(500).end();
   }
 };
 
 const createDrop = async (req, res) => {
-  let title = req.body.title;
-  let lang = req.body.lang || "None";
-  let visibility = req.body.visibility;
-  let textBody = req.body.text;
-  let description = req.body.description || "";
-  let annotations = req.body.annotations || [];
-  let isForked = req.body.isForked;
-  let forkedFrom = req.body.parentId;
+  const { title } = req.body;
+  const lang = req.body.lang || "None";
+  const { visibility } = req.body;
+  const textBody = req.body.text;
+  const description = req.body.description || "";
+  const annotations = req.body.annotations || [];
+  const { isForked } = req.body;
+  const forkedFrom = req.body.parentId;
 
   if (req.user === undefined) {
     res.status(401).end();
     return;
-  } else if (
-    typeof title === undefined ||
-    typeof textBody === undefined ||
+  }
+  if (
+    typeof title === "undefined" ||
+    typeof textBody === "undefined" ||
     title.length === 0 ||
     textBody.length === 0
   ) {
@@ -438,49 +438,48 @@ const createDrop = async (req, res) => {
   try {
     let newDropRecordInstance;
     if (isForked !== undefined && (isForked === "true" || isForked === true)) {
-      if (isNaN(parseInt(forkedFrom))) {
+      if (helper.isInt(forkedFrom)) {
         res.status(404).end();
         return;
-      } else {
-        const parentRecordInstance = await req.app.locals.db.Drops.findByPk(
-          forkedFrom
-        );
-        if (
-          parentRecordInstance === null ||
-          (parentRecordInstance.visibility === false &&
-            req.user.uid !== parentRecordInstance.userId)
-        ) {
-          res.status(404).end();
-          return;
-        }
-        const parentUserInstance = await req.app.locals.db.Users.findByPk(
-          parentRecordInstance.dataValues.userId
-        );
-        // Increment number of forks for the parent drop
-        parentRecordInstance.numForks += 1;
-        await parentRecordInstance.save();
-        // Increment number of forks for the parent user
-        parentUserInstance.numForks += 1;
-        await parentUserInstance.save();
-
-        newDropRecordInstance = await req.app.locals.db.Drops.create({
-          title: title,
-          lang: lang,
-          visibility: visibility,
-          text: textBody,
-          description: description,
-          userId: req.user.uid,
-          isForked: true,
-          forkedFromId: parentRecordInstance.dataValues.id,
-        });
       }
+      const parentRecordInstance = await req.app.locals.db.Drops.findByPk(
+        forkedFrom
+      );
+      if (
+        parentRecordInstance === null ||
+        (parentRecordInstance.visibility === false &&
+          req.user.uid !== parentRecordInstance.userId)
+      ) {
+        res.status(404).end();
+        return;
+      }
+      const parentUserInstance = await req.app.locals.db.Users.findByPk(
+        parentRecordInstance.dataValues.userId
+      );
+      // Increment number of forks for the parent drop
+      parentRecordInstance.numForks += 1;
+      await parentRecordInstance.save();
+      // Increment number of forks for the parent user
+      parentUserInstance.numForks += 1;
+      await parentUserInstance.save();
+
+      newDropRecordInstance = await req.app.locals.db.Drops.create({
+        title,
+        lang,
+        visibility,
+        text: textBody,
+        description,
+        userId: req.user.uid,
+        isForked: true,
+        forkedFromId: parentRecordInstance.dataValues.id,
+      });
     } else {
       newDropRecordInstance = await req.app.locals.db.Drops.create({
-        title: title,
-        lang: lang,
-        visibility: visibility,
+        title,
+        lang,
+        visibility,
         text: textBody,
-        description: description,
+        description,
         userId: req.user.uid,
         isForked: false,
         forkedFromId: null,
@@ -498,7 +497,6 @@ const createDrop = async (req, res) => {
     });
     res.status(200).json({ id: newDropRecordInstance.dataValues.id });
   } catch (error) {
-    console.error(error);
     res.status(500).end();
   }
 };
@@ -507,29 +505,31 @@ const updateDrop = async (req, res) => {
   if (!helper.isInt(req.params.dropId)) {
     res.status(400).end();
     return;
-  } else if (req.user === undefined) {
+  }
+  if (req.user === undefined) {
     res.status(401).end();
     return;
-  } else if (
-    text === undefined ||
-    text.length === 0 ||
-    title === undefined ||
-    title.length === 0
+  }
+  if (
+    req.body.text === undefined ||
+    req.body.length === 0 ||
+    req.body.title === undefined ||
+    req.body.title.length === 0
   ) {
     res.status(400).end();
     return;
   }
 
-  const dropId = parseInt(req.params.dropId);
-  const title = req.body.title;
+  const dropId = parseInt(req.params.dropId, 10);
+  // const title = req.body.title;
+  const { text, title } = req.body;
   const lang = req.body.lang || "None";
   const visibility = req.body.visibility || true;
-  const text = req.body.text;
   const description = req.body.description || "";
   const annotations = req.body.annotations || [];
 
-  let newAnnotations = [];
-  let updatedAnnotations = {};
+  const newAnnotations = [];
+  const updatedAnnotations = {};
   annotations.forEach((annotation) => {
     if (annotation.dbId !== undefined) {
       updatedAnnotations[annotation.dbId] = annotation;
@@ -549,19 +549,18 @@ const updateDrop = async (req, res) => {
     if (dropRecordInstance === null) {
       res.status(404).end();
       return;
-    } else {
-      dropRecordInstance.title = title;
-      dropRecordInstance.lang = lang;
-      dropRecordInstance.visibility = visibility;
-      dropRecordInstance.text = text;
-      dropRecordInstance.description = description;
-      await dropRecordInstance.save();
     }
+    dropRecordInstance.title = title;
+    dropRecordInstance.lang = lang;
+    dropRecordInstance.visibility = visibility;
+    dropRecordInstance.text = text;
+    dropRecordInstance.description = description;
+    await dropRecordInstance.save();
 
     const dropAnnotationInstances = await req.app.locals.db.DropAnnotations.findAll(
       {
         where: {
-          dropId: dropId,
+          dropId,
         },
         raw: false,
       }
@@ -591,7 +590,6 @@ const updateDrop = async (req, res) => {
     }
     res.status(200).end();
   } catch (err) {
-    console.log("Error in put", err);
     res.status(500).end();
   }
 };

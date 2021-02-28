@@ -71,7 +71,7 @@ function NavigationBar({
             Search
           </Nav.Link>
           <Nav.Link as={Link} to="/">
-            Explore
+            Home
           </Nav.Link>
           {isAuth && (
             <Nav.Link as={Link} to="/create">

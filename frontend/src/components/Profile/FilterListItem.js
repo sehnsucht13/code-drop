@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
 
@@ -19,7 +19,13 @@ function FilterListItem({
   currentUser,
   refresh,
 }) {
+  const [isUserAuth, setIsUserAuth] = useState(isAuth);
   const history = useHistory();
+
+  useEffect(() => {
+    setIsUserAuth(isAuth);
+  }, [isAuth]);
+
   const handleDelete = () => {
     axios
       .delete(`/drop/${id}`)
@@ -49,7 +55,7 @@ function FilterListItem({
             </p>
           </Link>
         </Col>
-        {isAuth && currentUser && creatorId === currentUser.uid && (
+        {isUserAuth && currentUser && creatorId === currentUser.uid && (
           <Col xs={4}>
             <Row className="justify-content-end">
               <Button style={{ marginRight: "0.5rem" }} onClick={handleEdit}>

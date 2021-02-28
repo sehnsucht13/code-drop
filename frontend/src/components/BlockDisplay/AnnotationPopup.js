@@ -30,7 +30,7 @@ export default function AnnotationPopup({ index, showIcon, annotationText }) {
 
   if (showIcon) {
     return (
-      <IconContext.Provider value={{ color: "blue", size: "1.5rem" }}>
+      <IconContext.Provider value={{ color: "blue", size: "1rem" }}>
         <OverlayTrigger placement="right" overlay={popover} show={show}>
           <BsFillCaretRightFill
             onClick={() => {
