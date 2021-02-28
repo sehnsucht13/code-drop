@@ -10,20 +10,26 @@ const deleteStar = async (req, res) => {
 
   const dropId = parseInt(req.params.dropId, 10);
 
-  const starInstance = await req.app.locals.db.Stars.findOne({
-    where: { userId: req.user.uid, dropId },
-  });
+  try {
+    const starInstance = await req.app.locals.db.Stars.findOne({
+      where: { userId: req.user.uid, dropId },
+    });
+    console.log("Star instance", starInstance);
+    if (starInstance === null) {
+      res.status(404).end();
+      return;
+    }
+    await starInstance.destroy();
 
-  if (starInstance === null) {
-    res.status(404).end();
-    return;
-  }
-  await starInstance.destroy();
-
-  const userInstance = await req.app.locals.db.Users.findByPk(dropId);
-  if (userInstance !== null) {
-    userInstance.numStars -= 1;
-    await userInstance.save();
+    const userInstance = await req.app.locals.db.Users.findByPk(dropId);
+    if (userInstance !== null) {
+      userInstance.numStars -= 1;
+      await userInstance.save();
+    }
+    res.status(200).end();
+  } catch (err) {
+    console.error("Have an unexpected error deleting a star", err);
+    res.status(500).end();
   }
 };
 
@@ -62,6 +68,7 @@ const createStar = async (req, res) => {
     }
     res.status(200).end();
   } catch (err) {
+    console.error("Have an unexpected error creating a star", err);
     res.status(500).end();
   }
 };

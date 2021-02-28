@@ -20,7 +20,9 @@ function StarAndFork({
 }) {
   const [isStarred, setIsStarred] = useState(hasStar);
   const [numStars, setNumStars] = useState(starCount);
+
   const history = useHistory();
+
   const handleStarClick = () => {
     if (isStarred) {
       axios
@@ -31,7 +33,9 @@ function StarAndFork({
             setNumStars(numStars - 1);
           }
         })
-        .catch((err) => {});
+        .catch((err) => {
+          console.log("got an error", err);
+        });
     } else {
       if (isAuth) {
         axios
