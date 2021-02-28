@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Form, FormControl, Row, Col, Button } from "react-bootstrap";
+
+import Form from "react-bootstrap/Form";
+import FormControl from "react-bootstrap/FormControl";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/Button";
 import { BsGear } from "react-icons/bs";
+
 import CodeMirrorLanguages from "../../helpers/CodeMirrorLanguages";
 import EditorSettingsModal from "./EditorSettingsModal";
 import {

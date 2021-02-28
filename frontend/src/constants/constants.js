@@ -24,6 +24,7 @@ export const SET_DROP_VISIBLITY = "SET_DROP_VISIBILITY";
 export const SET_DROP_DESC = "SET_DROP_DESC";
 export const SET_DROP_LANG = "SET_DROP_LANG";
 export const SET_DROP_TEXT = "SET_DROP_TEXT";
+export const SET_NEW_DROP_ID = "SET_NEW_DROP_ID";
 export const RESET_DROP_INFO = "RESET_DROP_INFO";
 
 export const SET_AUTH = "SET_AUTH";

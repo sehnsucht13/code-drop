@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
+import Card from "react-bootstrap/Card";
+
 import Highlight, { Prism } from "prism-react-renderer";
 import theme from "prism-react-renderer/themes/github";
-import CodeLine from "../BlockDisplay/CodeLine";
-import ReactMarkdown from "react-markdown";
-import { Card } from "react-bootstrap";
 import PrismLanguages from "../../helpers/prismLanguages";
+import ReactMarkdown from "react-markdown";
+
+import CodeLine from "../BlockDisplay/CodeLine";
 
 function InlineChunk({
   lines,

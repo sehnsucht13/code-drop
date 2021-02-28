@@ -4,6 +4,7 @@ const commentController = require("../Controllers/comments");
 const express = require("express");
 const router = express.Router();
 
+// GET
 // Perform paginated search
 router.get("/search", dropController.search);
 
@@ -16,6 +17,7 @@ router.get("/:dropId/comments", commentController.getComments);
 // Retrieve the contents of a single drop
 router.get("/:dropId", dropController.getDrop);
 
+// DELETE
 // Delete a comment
 router.delete("/:dropId/comments/:cId", commentController.deleteComment);
 
@@ -25,14 +27,21 @@ router.delete("/:dropId/stars", starController.deleteStar);
 // Delete a single drop
 router.delete("/:dropId", dropController.deleteDrop);
 
+// POST
+// Create a new commetn
 router.post("/:dropId/comments", commentController.createComment);
 
+// Create a new star
 router.post("/:dropId/stars", starController.createStar);
 
+// Create a new drop
 router.post("/", dropController.createDrop);
 
+// PUT
+// Update a drop
 router.put("/:dropId", dropController.updateDrop);
 
+// Update a comment
 router.put("/:dropId/comments/:commentId", commentController.updateComment);
 
 module.exports = router;

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button, Row, Container } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
+import Container from "react-bootstrap/Container";
+import Alert from "react-bootstrap/Alert";
 import axios from "axios";
 
 import NavBar from "../NavBar/Navbar";
@@ -7,46 +10,50 @@ import Footer from "../Footer/Footer";
 import DropsList from "../DropListDisplay/DropsList";
 import LoadingPage from "../Loading/LoadingPage";
 
-const getNextPage = (setDropsCallback, setPageParams, currentPageParams) => {
-  axios
-    .get("/drop/paginate", {
-      params: {
-        start: currentPageParams.start + currentPageParams.count,
-        count: currentPageParams.count,
-      },
-    })
-    .then((result) => {
-      setPageParams({
-        start: currentPageParams.start + currentPageParams.count,
-        count: currentPageParams.count,
-      });
-      setDropsCallback(result.data);
-    })
-    .catch((err) => {
-      console.log("Got an error");
-    });
-};
-
 function HomePageContainer() {
   const [drops, setDrops] = useState([]);
   const [morePagesAvailable, setMorePagesAvailable] = useState(true);
-  const [queryParams, setQueryParams] = useState({ start: 0, count: 15 });
+  const [queryParams, setQueryParams] = useState({ start: 0, count: 7 });
   const [initialLoadDone, setInitialLoadDone] = useState(false);
+  const [hasLoadError, setHasLoadError] = useState(false);
 
   const appendDrops = (newDrops) => {
     if (newDrops.length === 0) {
       setMorePagesAvailable(false);
     } else {
       setDrops(drops.concat(newDrops));
+      if (newDrops.length < queryParams.count) {
+        setMorePagesAvailable(false);
+      }
     }
   };
+
+  const fetchNextPage = () => {
+    axios
+      .get("/drop/paginate", {
+        params: {
+          start: queryParams.start + queryParams.count,
+          count: queryParams.count,
+        },
+      })
+      .then((result) => {
+        setQueryParams({
+          start: queryParams.start + queryParams.count,
+          count: queryParams.count,
+        });
+        appendDrops(result.data);
+      })
+      .catch((err) => {
+        setHasLoadError(true);
+      });
+  };
+
   useEffect(() => {
     axios
       .get("/drop/paginate", {
         params: { start: queryParams.start, count: queryParams.count },
       })
       .then((result) => {
-        console.log("Got the drops", result.data);
         if (result.data.length === 0) {
           setMorePagesAvailable(false);
         }
@@ -54,37 +61,43 @@ function HomePageContainer() {
         setInitialLoadDone(true);
       })
       .catch((err) => {
-        console.log("Error fetching drops from paginate", err);
+        setInitialLoadDone(true);
+        setHasLoadError(true);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <div style={{ height: "100%" }}>
-      <NavBar />
-      {!initialLoadDone ? (
+  if (!initialLoadDone) {
+    return (
+      <div className="vh-100">
+        <NavBar />
         <LoadingPage />
-      ) : (
-        <Container fluid>
-          <DropsList drops={drops} />
-          <Row
-            className="justify-content-center"
-            style={{ marginTop: "1rem", marginBottom: "1rem" }}
-          >
-            {morePagesAvailable ? (
-              <Button
-                onClick={() =>
-                  getNextPage(appendDrops, setQueryParams, queryParams)
-                }
-              >
-                Show More
-              </Button>
-            ) : (
-              <p>No more drops available!</p>
-            )}
-          </Row>
-        </Container>
-      )}
+        <Footer />
+      </div>
+    );
+  } else {
+  }
+  return (
+    <div className="vh-100">
+      <NavBar />
+      <Container fluid>
+        {hasLoadError && (
+          <Alert>
+            There was an error with loading the drops! Please refresh the page.
+          </Alert>
+        )}
+        <DropsList drops={drops} />
+        <Row
+          className="justify-content-center"
+          style={{ marginTop: "1rem", marginBottom: "1rem" }}
+        >
+          {morePagesAvailable ? (
+            <Button onClick={() => fetchNextPage()}>Show More</Button>
+          ) : (
+            <p>No more drops available!</p>
+          )}
+        </Row>
+      </Container>
       <Footer />
     </div>
   );

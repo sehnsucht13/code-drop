@@ -238,6 +238,7 @@ const getDrop = async (req, res) => {
         "visibility",
         "text",
         "description",
+        "numForks",
         "userId",
         "isForked",
         "forkedFromId",
@@ -264,6 +265,20 @@ const getDrop = async (req, res) => {
       },
     });
 
+    let isStarred = false;
+    if (req.user !== undefined) {
+      const hasStar = await req.app.locals.db.Stars.findOne({
+        where: { dropId: dropInstance.dataValues.id, userId: req.user.uid },
+      });
+      if (hasStar !== null) {
+        isStarred = true;
+      }
+    }
+
+    const starCount = await req.app.locals.db.Stars.count({
+      where: { dropId: dropInstance.dataValues.id },
+    });
+
     if (dropInstance.dataValues.isForked === true) {
       const forkedFromDrop = await req.app.locals.db.Drops.findByPk(
         dropInstance.dataValues.forkedFromId,
@@ -282,6 +297,8 @@ const getDrop = async (req, res) => {
         const respObject = {
           codeDrop: {
             ...dropInstance.dataValues,
+            isStarred: isStarred,
+            starCount: starCount,
             forkData: null,
           },
           dropAnnotations: annotations.map(
@@ -294,6 +311,8 @@ const getDrop = async (req, res) => {
           const respObject = {
             codeDrop: {
               ...dropInstance.dataValues,
+              isStarred: isStarred,
+              starCount: starCount,
               forkData: null,
             },
             dropAnnotations: annotations.map(
@@ -305,6 +324,8 @@ const getDrop = async (req, res) => {
           const respObject = {
             codeDrop: {
               ...dropInstance.dataValues,
+              isStarred: isStarred,
+              starCount: starCount,
               forkData: {
                 title: forkedFromDrop.dataValues.title,
                 user: forkedFromDrop.dataValues.user.dataValues,
@@ -320,6 +341,8 @@ const getDrop = async (req, res) => {
         const respObject = {
           codeDrop: {
             ...dropInstance.dataValues,
+            isStarred: isStarred,
+            starCount: starCount,
             forkData: {
               title: forkedFromDrop.dataValues.title,
               user: forkedFromDrop.dataValues.user.dataValues,
@@ -333,7 +356,12 @@ const getDrop = async (req, res) => {
       }
     } else {
       const respObject = {
-        codeDrop: { ...dropInstance.dataValues, forkData: null },
+        codeDrop: {
+          ...dropInstance.dataValues,
+          isStarred: isStarred,
+          starCount: starCount,
+          forkData: null,
+        },
         dropAnnotations: annotations.map((annotation) => annotation.dataValues),
       };
       res.json(respObject).status(200);

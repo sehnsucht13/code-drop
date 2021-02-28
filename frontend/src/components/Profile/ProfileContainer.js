@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { Container, Alert } from "react-bootstrap";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
+
+import Container from "react-bootstrap/Container";
+import Alert from "react-bootstrap/Alert";
+
 import NavBar from "../NavBar/Navbar";
 import FilterList from "./FilterList";
 import Footer from "../Footer/Footer";
@@ -11,7 +15,6 @@ import PieChart from "./PieChart";
 import StatSummary from "./StatSummary";
 import SideBar from "./SideBar";
 import ErrorPage from "../Error/ErrorContainer";
-import axios from "axios";
 
 export const ProfileContainer = () => {
   const [queryParams] = useState(queryString.parse(useLocation().search));

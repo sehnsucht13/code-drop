@@ -1,5 +1,8 @@
 import React from "react";
-import { Spinner, Container, Row } from "react-bootstrap";
+
+import Spinner from "react-bootstrap/Spinner";
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
 
 function LoadingPage() {
   return (

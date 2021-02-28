@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Button, Row } from "react-bootstrap";
+import axios from "axios";
+
+import Button from "react-bootstrap/Button";
+import Row from "react-bootstrap/Row";
 
 import DropsList from "../DropListDisplay/DropsList";
-
-import axios from "axios";
 
 function SearchResults({ searchParams }) {
   const [drops, setDrops] = useState([]);

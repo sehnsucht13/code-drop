@@ -2,7 +2,7 @@ import React from "react";
 import NavBar from "../NavBar/Navbar";
 import SearchResults from "./SearchResults";
 import { useLocation } from "react-router-dom";
-import { Container } from "react-bootstrap";
+import Container from "react-bootstrap/Container";
 import queryString from "query-string";
 
 import SearchBar from "./SearchBar";

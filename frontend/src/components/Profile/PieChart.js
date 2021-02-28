@@ -3,7 +3,6 @@ import { Pie } from "react-chartjs-2";
 import randomColor from "randomcolor";
 
 function createPiechartData(languages) {
-  console.log("Languages", languages);
   let languageLabels = [];
   let languageCounts = [];
   const chartLabel = "Languages";

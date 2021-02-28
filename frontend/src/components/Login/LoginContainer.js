@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import NavBar from "../NavBar/Navbar";
-import { Container, Form, Button, Row, Alert } from "react-bootstrap";
+import axios from "axios";
+import Container from "react-bootstrap/Container";
+import Alert from "react-bootstrap/Alert";
+import Row from "react-bootstrap/Row";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+
 import { useHistory, Link } from "react-router-dom";
 import Footer from "../Footer/Footer";
+import NavBar from "../NavBar/Navbar";
 
 import { set_auth, checked_auth } from "../../actions/auth_actions";
-const axios = require("axios");
 
 export const LoginContainer = ({
   isAuth,

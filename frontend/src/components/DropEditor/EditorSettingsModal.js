@@ -1,5 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
+import Form from "react-bootstrap/Form";
+import Modal from "react-bootstrap/Modal";
+
 import {
   set_editor_font_size,
   set_editor_keymap,
@@ -7,8 +10,6 @@ import {
   set_editor_tab_size,
   set_editor_theme,
 } from "../../actions/editor_actions";
-import { Form, Modal } from "react-bootstrap";
-
 import CodeMirrorThemes from "../../helpers/CodeMirrorThemes";
 
 function EditorSettingsModal({
