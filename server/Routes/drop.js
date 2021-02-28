@@ -172,7 +172,14 @@ router.get("/paginate", async (req, res) => {
       limit: pageLimit,
       where: { visibility: 1 },
       order: [["updatedAt", "DESC"]],
-      attributes: ["id", "title", "description", "lang", "updatedAt", "numForks"],
+      attributes: [
+        "id",
+        "title",
+        "description",
+        "lang",
+        "updatedAt",
+        "numForks",
+      ],
       include: [
         {
           model: req.app.locals.db.Users,
@@ -256,7 +263,14 @@ router.get("/:dropId", async (req, res) => {
       "description",
       "userId",
       "isForked",
+      "numForks",
       "forkedFromId",
+    ],
+    include: [
+      {
+        model: req.app.locals.db.Stars,
+        required: false,
+      },
     ],
   });
   if (dropRecord === null) {
@@ -279,6 +293,20 @@ router.get("/:dropId", async (req, res) => {
     },
   });
 
+  let isStarred = false;
+  if (req.user !== undefined) {
+    const hasStar = await req.app.locals.db.Stars.findOne({
+      where: { dropId: dropRecord.dataValues.id, userId: req.user.uid },
+    });
+    if (hasStar !== null) {
+      isStarred = true;
+    }
+  }
+
+  const starCount = await req.app.locals.db.Stars.count({
+    where: { dropId: dropRecord.dataValues.id },
+  });
+
   if (dropRecord.dataValues.isForked === true) {
     const forkedFromDrop = await req.app.locals.db.Drops.findByPk(
       dropRecord.dataValues.forkedFromId,
@@ -297,6 +325,8 @@ router.get("/:dropId", async (req, res) => {
       const respObject = {
         codeDrop: {
           ...dropRecord.dataValues,
+          isStarred: isStarred,
+          starCount: starCount,
           forkData: null,
         },
         dropAnnotations: annotations.map((annotation) => annotation.dataValues),
@@ -307,6 +337,8 @@ router.get("/:dropId", async (req, res) => {
         const respObject = {
           codeDrop: {
             ...dropRecord.dataValues,
+            isStarred: isStarred,
+            starCount: starCount,
             forkData: null,
           },
           dropAnnotations: annotations.map(
@@ -318,6 +350,8 @@ router.get("/:dropId", async (req, res) => {
         const respObject = {
           codeDrop: {
             ...dropRecord.dataValues,
+            isStarred: isStarred,
+            starCount: starCount,
             forkData: {
               title: forkedFromDrop.dataValues.title,
               user: forkedFromDrop.dataValues.user.dataValues,
@@ -333,6 +367,8 @@ router.get("/:dropId", async (req, res) => {
       const respObject = {
         codeDrop: {
           ...dropRecord.dataValues,
+          isStarred: isStarred,
+          starCount: starCount,
           forkData: {
             title: forkedFromDrop.dataValues.title,
             user: forkedFromDrop.dataValues.user.dataValues,
@@ -344,7 +380,12 @@ router.get("/:dropId", async (req, res) => {
     }
   } else {
     const respObject = {
-      codeDrop: { ...dropRecord.dataValues, forkData: null },
+      codeDrop: {
+        ...dropRecord.dataValues,
+        isStarred: isStarred,
+        starCount: starCount,
+        forkData: null,
+      },
       dropAnnotations: annotations.map((annotation) => annotation.dataValues),
     };
     res.json(respObject).status(200);
@@ -627,15 +668,15 @@ router.post("/", async (req, res) => {
       });
     }
 
-     annotations.forEach(async (annotation) => {
-       await req.app.locals.db.DropAnnotations.create({
-         startLine: annotation.start,
-         endLine: annotation.end,
-         annotation_text: annotation.text,
-         dropId: newDropRecord.dataValues.id,
-         userId: req.user.uid,
-       });
-     });
+    annotations.forEach(async (annotation) => {
+      await req.app.locals.db.DropAnnotations.create({
+        startLine: annotation.start,
+        endLine: annotation.end,
+        annotation_text: annotation.text,
+        dropId: newDropRecord.dataValues.id,
+        userId: req.user.uid,
+      });
+    });
     res.status(200).json({ id: newDropRecord.dataValues.id });
   } catch (error) {
     console.error(error);
