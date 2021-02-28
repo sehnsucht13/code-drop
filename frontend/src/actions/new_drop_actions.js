@@ -11,6 +11,7 @@ import {
   UPLOAD_DROP_END,
   RESET_DROP_INFO,
 } from "../constants/constants";
+import { START, SUCCESS, FAILURE } from "../constants/uploadConstants";
 import { delete_all_annotations } from "./annotation_actions";
 const axios = require("axios");
 
@@ -52,19 +53,21 @@ export const set_drop_text = ({ text, lineCount }) => ({
 export function uploadSuccess() {
   return {
     type: UPLOAD_DROP_SUCCESS,
-    payload: null,
+    payload: SUCCESS,
   };
 }
+
 export function uploadFail() {
   return {
     type: UPLOAD_DROP_FAIL,
-    payload: null,
+    payload: FAILURE,
   };
 }
+
 export function uploadBegin() {
   return {
     type: UPLOAD_DROP_BEGIN,
-    payload: null,
+    payload: START,
   };
 }
 

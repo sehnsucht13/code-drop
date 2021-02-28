@@ -7,10 +7,10 @@ import {
   SET_DROP_TEXT,
   RESET_DROP_INFO,
   UPLOAD_DROP_SUCCESS,
+  UPLOAD_DROP_BEGIN,
   UPLOAD_DROP_FAIL,
   UPLOAD_DROP_END,
 } from "../constants/constants";
-import { SUCCESS, FAILURE } from "../constants/uploadConstants";
 
 const initialState = {
   title: {
@@ -62,17 +62,22 @@ const new_drop_reducer = (state = initialState, { type, payload }) => {
     case UPLOAD_DROP_SUCCESS:
       return {
         ...state,
-        uploadStatus: SUCCESS,
+        uploadStatus: payload,
       };
     case UPLOAD_DROP_FAIL:
       return {
         ...state,
-        uploadStatus: FAILURE,
+        uploadStatus: payload,
       };
     case UPLOAD_DROP_END:
       return {
         ...state,
         uploadStatus: undefined,
+      };
+    case UPLOAD_DROP_BEGIN:
+      return {
+        ...state,
+        uploadStatus: payload,
       };
     default:
       return state;
