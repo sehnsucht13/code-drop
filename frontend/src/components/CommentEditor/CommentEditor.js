@@ -4,7 +4,12 @@ import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import ReactMarkdown from "react-markdown";
 
-export default function CommentEditor({ value, onChange, onBlur }) {
+export default function CommentEditor({
+  value,
+  onChange,
+  onBlur,
+  placeHolder,
+}) {
   const [currentTab, setcurrentTab] = useState("edit");
 
   const handleTextInput = (ev) => {
@@ -22,18 +27,21 @@ export default function CommentEditor({ value, onChange, onBlur }) {
         setcurrentTab(key);
       }}
     >
-      <Tab eventKey="edit" title="Edit">
+      <Tab eventKey="edit" title="Write">
         <FormControl
           as="textarea"
           rows={5}
           value={value}
           onChange={handleTextInput}
           onBlur={handleTextBlur}
-          style={{ width: "100%", marginTop: "10px" }}
+          style={{ width: "100%", marginTop: "0.5rem" }}
+          placeholder={placeHolder}
         ></FormControl>
       </Tab>
       <Tab eventKey="preview" title="Preview">
-        <ReactMarkdown>{value}</ReactMarkdown>
+        <div style={{ minHeight: "9rem", marginTop: "1rem" }}>
+          <ReactMarkdown>{value}</ReactMarkdown>
+        </div>
       </Tab>
     </Tabs>
   );
