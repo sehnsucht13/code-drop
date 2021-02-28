@@ -32,12 +32,10 @@ module.exports = (passportInstance) => {
   });
 
   router.post("/login", passport.authenticate("local"), (req, res) => {
-    console.log("LOGIN", req.user, req.session);
     res.status(200).end();
   });
 
   router.get("/session", function (req, res) {
-    console.log("SESSION ROUTE HIT", req.session.passport, req.session.cookie);
     res.status(200).send(req.user);
   });
 

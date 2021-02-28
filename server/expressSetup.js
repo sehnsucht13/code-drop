@@ -59,7 +59,6 @@ app.use(
     },
   })
 );
-// console.log(sequelizeSessionStore);
 app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(passport.initialize());
 app.use(passport.session());

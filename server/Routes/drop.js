@@ -266,12 +266,6 @@ router.get("/:dropId", async (req, res) => {
       "numForks",
       "forkedFromId",
     ],
-    include: [
-      {
-        model: req.app.locals.db.Stars,
-        required: false,
-      },
-    ],
   });
   if (dropRecord === null) {
     res.status(404).end();
