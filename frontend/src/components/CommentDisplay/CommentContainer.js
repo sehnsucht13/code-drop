@@ -110,17 +110,26 @@ function CommentContainer({ dropId, isAuth }) {
                   There was an issue submitting your comment. Please try again!
                 </Alert>
               )}
-              <div style={{ paddingBottom: "2rem" }}>
+              <div
+                style={{
+                  paddingBottom: "2rem",
+                  marginRight: "1rem",
+                  marginLeft: "1rem",
+                }}
+              >
                 <CommentEditor
                   value={newCommentText}
                   onChange={handleEditorOnChange}
                   onBlur={handleEditorOnBlur}
+                  placeHolder="Write new comment here..."
                 />
                 <Row
                   className="justify-content-end"
-                  style={{ paddingRight: "1rem", paddingTop: "0.5rem" }}
+                  style={{ paddingTop: "0.5rem", marginRight: "0rem" }}
                 >
-                  <Button onClick={handleNewCommentSubmit}>Submit</Button>
+                  <Button onClick={handleNewCommentSubmit}>
+                    Create Comment
+                  </Button>
                 </Row>
               </div>
             </>

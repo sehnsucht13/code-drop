@@ -108,7 +108,9 @@ function CommentDisplay({
           className="justify-content-end"
           style={{ paddingRight: "1rem", paddingTop: "0.5rem" }}
         >
-          <Button onClick={handleSaveClick}>Save</Button>
+          <Button onClick={handleSaveClick} style={{ marginRight: "0.5rem" }}>
+            Save
+          </Button>
           <Button onClick={handleDiscardClick}>Discard</Button>
         </Row>
       </div>
@@ -161,7 +163,7 @@ function CommentDisplay({
                 style={{ paddingRight: "0" }}
               >
                 <Dropdown drop="down">
-                  <Dropdown.Toggle>
+                  <Dropdown.Toggle variant="light">
                     <BsThreeDotsVertical />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
