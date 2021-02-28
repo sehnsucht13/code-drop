@@ -42,7 +42,7 @@ describe("Login tests", () => {
 
   it("Should login successfully", async (done) => {
     const agent = supertest.agent(app);
-    const resp = await agent.post("/auth/login/").send({ ...users[0] });
+    const resp = await agent.post("/api/auth/login/").send({ ...users[0] });
 
     expect(resp.statusCode).toBe(200);
     done();
@@ -51,7 +51,7 @@ describe("Login tests", () => {
   it("Should deny login wrong password", async (done) => {
     const agent = supertest.agent(app);
     const resp = await agent
-      .post("/auth/login/")
+      .post("/api/auth/login/")
       .send({ username: users[0].username, password: "WRONG" });
 
     expect(resp.statusCode).toBe(401);
@@ -61,7 +61,7 @@ describe("Login tests", () => {
   it("Should deny login non-existant user", async (done) => {
     const agent = supertest.agent(app);
     const resp = await agent
-      .post("/auth/login/")
+      .post("/api/auth/login/")
       .send({ username: "MISSING_USER", password: "WRONG" });
 
     expect(resp.statusCode).toBe(401);

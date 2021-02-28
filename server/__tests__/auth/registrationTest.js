@@ -26,7 +26,7 @@ describe("Registration tests", () => {
 
   it("tests valid registration", async (done) => {
     const resp = await agent
-      .post("/auth/register/")
+      .post("/api/auth/register/")
       .send({ username: "test1", password: "test1" });
 
     expect(resp.statusCode).toBe(200);
@@ -35,13 +35,13 @@ describe("Registration tests", () => {
   });
 
   it("tests registering taken name", async (done) => {
-    await agent.post("/auth/register").send({
+    await agent.post("/api/auth/register").send({
       username: "taken",
       password: "taken",
     });
 
     const resp = await agent
-      .post("/auth/register/")
+      .post("/api/auth/register/")
       .send({ username: "taken", password: "taken" });
 
     expect(resp.statusCode).toBe(200);
@@ -51,7 +51,7 @@ describe("Registration tests", () => {
 
   it("tests registering with missing username", async (done) => {
     const resp = await agent
-      .post("/auth/register/")
+      .post("/api/auth/register/")
       .send({ password: "testUser1" });
 
     expect(resp.statusCode).toBe(401);
@@ -61,7 +61,7 @@ describe("Registration tests", () => {
 
   it("tests registering with missing password", async (done) => {
     const resp = await agent
-      .post("/auth/register/")
+      .post("/api/auth/register/")
       .send({ username: "testUser1" });
 
     expect(resp.statusCode).toBe(401);
@@ -77,16 +77,16 @@ describe("Registration tests", () => {
 //     const agent = supertest.agent(app);
 
 //     const login = await agent
-//       .post("/auth/login/")
+//       .post("/api/auth/login/")
 //       .send({ username: "abc", password: "abc" });
 
 //     console.log("Got a login", login.statusCode);
-//     const authCheck = await agent.get("/auth/session/");
+//     const authCheck = await agent.get("/api/auth/session/");
 //     expect(authCheck.statusCode).toBe(200);
 
 //     console.log("From the test", authCheck.statusCode);
 
-//     // await agent.get("/auth/session").expect("Content-Type", /json/).expect(200);
+//     // await agent.get("/api/auth/session").expect("Content-Type", /json/).expect(200);
 //     db.sequelize.close();
 //     done();
 //   });

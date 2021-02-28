@@ -43,20 +43,20 @@ describe("Logout tests", () => {
 
   it("Logout successfully", async (done) => {
     let agent = supertest.agent(app);
-    const login = await agent.post("/auth/login/").send({ ...users[0] });
+    const login = await agent.post("/api/auth/login/").send({ ...users[0] });
     expect(login.statusCode).toBe(200);
 
-    const sessionBeforLogout = await agent.get("/auth/session/");
+    const sessionBeforLogout = await agent.get("/api/auth/session/");
     expect(sessionBeforLogout.statusCode).toBe(200);
     expect(sessionBeforLogout.body).toEqual({
       username: users[0].username,
       uid: user_ids[0],
     });
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
 
-    const sessionLogin = await agent.get("/auth/session/");
+    const sessionLogin = await agent.get("/api/auth/session/");
 
     expect(sessionLogin.statusCode).toBe(200);
     expect(sessionLogin.body).toEqual({});
@@ -66,7 +66,7 @@ describe("Logout tests", () => {
   it("Should not throw error if user not logged in", async (done) => {
     let agent = supertest.agent(app);
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
     done();
   });

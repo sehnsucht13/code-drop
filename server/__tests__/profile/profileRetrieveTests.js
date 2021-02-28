@@ -88,16 +88,18 @@ describe("Profile Retrieve Tests", () => {
   it("Find current user's profile while authenticated", async () => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[0] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[0] });
     expect(loginResp.statusCode).toBe(200);
 
-    const sessionResp = await agent.get("/auth/session/");
+    const sessionResp = await agent.get("/api/auth/session/");
     expect(sessionResp.statusCode).toBe(200);
     expect(sessionResp.body).not.toEqual({});
     const sessionId = sessionResp.body.uid;
     console.log(sessionId);
 
-    const userResp = await agent.get(`/user/${sessionId}/profile`);
+    const userResp = await agent.get(`/api/user/${sessionId}/profile`);
     expect(userResp.statusCode).toBe(200);
 
     expect(userResp.body).toEqual({
@@ -134,7 +136,7 @@ describe("Profile Retrieve Tests", () => {
       ],
     });
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
   });
 
@@ -142,7 +144,7 @@ describe("Profile Retrieve Tests", () => {
 
   it("Find existing user's profile while not authenticated", async () => {
     let agent = supertest.agent(app);
-    let userResp = await agent.get(`/user/${userIds[0]}/profile`);
+    let userResp = await agent.get(`/api/user/${userIds[0]}/profile`);
     expect(userResp.statusCode).toBe(200);
 
     expect(userResp.body).toEqual({
@@ -174,14 +176,16 @@ describe("Profile Retrieve Tests", () => {
   it("Find nonexistant profile while authenticated", async (done) => {
     let agent = supertest.agent(app);
 
-    const loginResp = await agent.post("/auth/login/").send({ ...users[1] });
+    const loginResp = await agent
+      .post("/api/auth/login/")
+      .send({ ...users[1] });
     expect(loginResp.statusCode).toBe(200);
 
-    let userProfileResp = await agent.get(`/user/9999999/profile`);
+    let userProfileResp = await agent.get(`/api/user/9999999/profile`);
     expect(userProfileResp.statusCode).toBe(404);
     expect(userProfileResp.body).toEqual({});
 
-    const logout = await agent.get("/auth/logout/");
+    const logout = await agent.get("/api/auth/logout/");
     expect(logout.statusCode).toBe(200);
 
     done();
@@ -190,7 +194,7 @@ describe("Profile Retrieve Tests", () => {
   it("Find nonexistant profile while not authenticated", async (done) => {
     let agent = supertest.agent(app);
 
-    let userProfileResp = await agent.get(`/user/9999999/profile`);
+    let userProfileResp = await agent.get(`/api/user/9999999/profile`);
     expect(userProfileResp.statusCode).toBe(404);
     expect(userProfileResp.body).toEqual({});
 
