@@ -57,7 +57,6 @@ export const DropEditor = ({
   const [editorLanguage, setEditorLanguage] = useState(language);
 
   useEffect(() => {
-    console.log("language is", language);
     setEditorLanguage(language);
   }, [language]);
 
@@ -74,23 +73,25 @@ export const DropEditor = ({
   };
 
   return (
-    <CodeMirror
-      value={editorContent}
-      onBeforeChange={(editor, data, value) => {
-        setEditorContent(value);
-      }}
-      onChange={handleOnChange}
-      onBlur={handleEditorBlur}
-      options={{
-        mode: editorLanguage,
-        theme: theme,
-        keyMap: keyMap,
-        tabSize: tabSize,
-        lineWrapping: wrap,
-        electricChars: true,
-        lineNumbers: true,
-      }}
-    />
+    <div style={{ fontSize: fontSize }}>
+      <CodeMirror
+        value={editorContent}
+        onBeforeChange={(editor, data, value) => {
+          setEditorContent(value);
+        }}
+        onChange={handleOnChange}
+        onBlur={handleEditorBlur}
+        options={{
+          mode: editorLanguage,
+          theme: theme,
+          keyMap: keyMap,
+          tabSize: tabSize,
+          lineWrapping: wrap,
+          electricChars: true,
+          lineNumbers: true,
+        }}
+      />
+    </div>
   );
 };
 
