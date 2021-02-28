@@ -5,10 +5,10 @@ const getUserStars = async (req, res) => {
     res.status(400).end();
     return;
   }
-  const userId = req.params.userId;
+  const { userId } = req.params;
 
   const starInstance = await req.app.locals.db.Stars.findAll({
-    where: { userId: userId },
+    where: { userId },
   });
 
   if (starInstance === null) {
@@ -30,7 +30,7 @@ const getUserProfile = async (req, res) => {
     res.status(400).end();
     return;
   }
-  const userId = parseInt(req.params.userId);
+  const userId = parseInt(req.params.userId, 10);
 
   try {
     const userInstance = await req.app.locals.db.Users.findByPk(userId, {
@@ -43,18 +43,18 @@ const getUserProfile = async (req, res) => {
       return;
     }
 
-    let userDrops = undefined;
-    let languageCount = undefined;
+    let userDrops;
+    let languageCount;
 
     // If the current user is requesting their profile, return private drops as well
     if (req.user !== undefined && req.user.uid === userId) {
       userDrops = await req.app.locals.db.Drops.findAll({
-        where: { userId: userId },
+        where: { userId },
         attributes: ["id", "title", "lang", "userId"],
       });
 
       languageCount = await req.app.locals.db.Drops.findAll({
-        where: { userId: userId },
+        where: { userId },
         group: ["drops.lang"],
         attributes: [
           "lang",
@@ -69,12 +69,12 @@ const getUserProfile = async (req, res) => {
       });
     } else {
       userDrops = await req.app.locals.db.Drops.findAll({
-        where: { userId: userId, visibility: true },
+        where: { userId, visibility: true },
         attributes: ["id", "title", "lang", "userId"],
       });
 
       languageCount = await req.app.locals.db.Drops.findAll({
-        where: { userId: userId, visibility: true },
+        where: { userId, visibility: true },
         group: ["drops.lang"],
         attributes: [
           "lang",
@@ -94,7 +94,6 @@ const getUserProfile = async (req, res) => {
       counts: languageCount || [],
     });
   } catch (err) {
-    console.log("Error", err);
     res.status(500).end();
   }
 };
@@ -104,7 +103,7 @@ const updateUserProfile = async (req, res) => {
     res.status(400).end();
   } else if (
     req.user === undefined ||
-    req.user.uid !== parseInt(req.params.userId)
+    req.user.uid !== parseInt(req.params.userId, 10)
   ) {
     res.status(401).end();
     return;
@@ -112,8 +111,8 @@ const updateUserProfile = async (req, res) => {
     res.status(400).end();
     return;
   }
-  const userId = req.params.userId;
-  const description = req.body.description;
+  const { userId } = req.params;
+  const { description } = req.body;
 
   const userInstance = await req.app.locals.db.Users.findByPk(userId);
   if (userInstance === null) {
@@ -129,15 +128,16 @@ const deleteUser = async (req, res) => {
   if (!isInt(req.params.userId)) {
     res.status(400).end();
     return;
-  } else if (
+  }
+  if (
     req.user === undefined ||
-    req.user.uid !== parseInt(req.params.userId)
+    req.user.uid !== parseInt(req.params.userId, 10)
   ) {
     res.status(401).end();
     return;
   }
 
-  const userId = parseInt(req.params.userId);
+  const userId = parseInt(req.params.userId, 10);
   try {
     const userInstance = await req.app.locals.db.Users.findByPk(userId);
 

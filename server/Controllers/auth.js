@@ -1,8 +1,8 @@
 const bcrypt = require("bcryptjs");
 
 const registerUser = async (req, res) => {
-  const password = req.body.password;
-  const username = req.body.username;
+  const { password } = req.body;
+  const { username } = req.body;
   if (password === undefined || username === undefined) {
     res.status(401).json({ msg: "Password or Username are not provided" });
     return;
@@ -12,7 +12,7 @@ const registerUser = async (req, res) => {
     // Check if the user exists
     const existingUser = await req.app.locals.db.Users.findOne({
       where: {
-        username: username,
+        username,
       },
     });
 
@@ -23,7 +23,7 @@ const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     await req.app.locals.db.Users.create({
-      username: username,
+      username,
       password: hashedPassword,
     });
     res.status(200).json({ status: "OK" });
@@ -39,7 +39,6 @@ const logoutUser = async (req, res) => {
         req.logout();
         res.status(200).end();
       } else {
-        console.log("Error destroying session", err);
         res.status(500).end();
       }
     });
