@@ -45,11 +45,11 @@ app.use(cors(corsConfig));
 const sequelizeSessionStore = new SessionStore({
   db: db.sequelize,
 });
-// app.set("trust proxy", 1);
+app.set("trust proxy", 1);
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    // proxy: true,
+    proxy: true,
     saveUninitialized: true,
     resave: false,
     store: sequelizeSessionStore,

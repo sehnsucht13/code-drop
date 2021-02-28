@@ -23,7 +23,7 @@ function NavigationBar({
   useEffect(() => {
     if (!hasChecked) {
       axios
-        .get("/auth/session", { withCredentials: true })
+        .get("/auth/session")
         .then((response) => {
           console.log(
             "Got a response for auth",
@@ -39,6 +39,8 @@ function NavigationBar({
         })
         .catch((err) => {
           console.log("AUTH ERROR", err);
+          // set_auth(false, undefined);
+          // checked_auth(true);
         });
     }
   }, [set_auth, checked_auth, hasChecked]);
@@ -47,7 +49,7 @@ function NavigationBar({
   useEffect(() => {
     if (!hasChecked) {
       axios
-        .get("/auth/session", { withCredentials: true })
+        .get("/auth/session")
         .then((response) => {
           console.log(
             "Got a response for auth",
@@ -63,6 +65,8 @@ function NavigationBar({
         })
         .catch((err) => {
           console.log("AUTH ERROR", err);
+          // set_auth(false, undefined);
+          // checked_auth(true);
         });
     }
   }, [isAuth, hasChecked, set_auth, checked_auth]);
