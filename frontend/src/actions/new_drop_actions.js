@@ -9,11 +9,12 @@ import {
   UPLOAD_DROP_FAIL,
   UPLOAD_DROP_SUCCESS,
   UPLOAD_DROP_END,
+  SET_NEW_DROP_ID,
   RESET_DROP_INFO,
 } from "../constants/constants";
 import { START, SUCCESS, FAILURE } from "../constants/uploadConstants";
 import { delete_all_annotations } from "./annotation_actions";
-const axios = require("axios");
+import axios from "axios";
 
 export const reset_drop_info = () => ({
   type: RESET_DROP_INFO,
@@ -43,6 +44,11 @@ export const set_drop_description = (payload) => ({
 export const set_drop_language = (payload) => ({
   type: SET_DROP_LANG,
   payload: { language: payload },
+});
+
+export const set_new_dropId = (payload) => ({
+  type: SET_NEW_DROP_ID,
+  payload: payload,
 });
 
 export const set_drop_text = ({ text, lineCount }) => ({
@@ -86,7 +92,6 @@ export function sendDrop() {
     const dropTitle = getState().newDrop.title.content;
     const dropDesc = getState().newDrop.description;
     const dropVisibility = getState().newDrop.visibility;
-    console.log("About to send state", annotationArray, getState().newDrop);
     if (dropTitle.length === 0) {
       dispatch(
         set_drop_title_error({
@@ -97,7 +102,6 @@ export function sendDrop() {
       return;
     }
 
-    // TODO: Check for any errors and refuse to send here!
     dispatch(uploadBegin());
     axios
       .post("/drop", {
@@ -112,10 +116,10 @@ export function sendDrop() {
         // Erase data from store
         dispatch(reset_drop_info());
         dispatch(delete_all_annotations());
+        dispatch(set_new_dropId(response.data.id));
         dispatch(uploadSuccess());
       })
       .catch((err) => {
-        console.log("Error with post request when uploading", err);
         dispatch(uploadFail());
       });
   };
@@ -138,7 +142,6 @@ export function updateDrop(dropId) {
     const dropTitle = getState().newDrop.title.content;
     const dropDesc = getState().newDrop.description;
     const dropVisibility = getState().newDrop.visibility;
-    console.log("About to send state", annotationArray, getState().newDrop);
     if (dropTitle.length === 0) {
       dispatch(
         set_drop_title_error({
@@ -151,7 +154,6 @@ export function updateDrop(dropId) {
 
     // TODO: Check for any errors and refuse to send here!
     dispatch(uploadBegin());
-    console.log("The drop id from dispatch is", dropId);
     axios
       .put(`/drop/${dropId}`, {
         title: dropTitle,
@@ -168,7 +170,6 @@ export function updateDrop(dropId) {
         dispatch(uploadSuccess());
       })
       .catch((err) => {
-        console.log("Error with post request when uploading", err);
         dispatch(uploadFail());
       });
   };
@@ -182,7 +183,6 @@ export function forkDrop(parentDropId) {
     const dropTitle = getState().newDrop.title.content;
     const dropDesc = getState().newDrop.description;
     const dropVisibility = getState().newDrop.visibility;
-    console.log("About to send state", annotationArray, getState().newDrop);
     if (dropTitle.length === 0) {
       dispatch(
         set_drop_title_error({
@@ -213,7 +213,6 @@ export function forkDrop(parentDropId) {
         dispatch(uploadSuccess());
       })
       .catch((err) => {
-        console.log("Error with post request when uploading", err);
         dispatch(uploadFail());
       });
   };
