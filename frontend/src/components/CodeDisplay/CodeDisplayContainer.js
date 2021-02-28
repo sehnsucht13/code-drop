@@ -14,6 +14,7 @@ import LoadingPage from "../Loading/LoadingPage";
 import CommentContainer from "../CommentDisplay/CommentContainer";
 import Footer from "../Footer/Footer";
 import ErrorPage from "../Error/ErrorContainer";
+import StarAndFork from "../StarAndFork/StarAndFork";
 
 // Add additional languages for display
 // Src: https://github.com/FormidableLabs/prism-react-renderer#faq
@@ -65,6 +66,13 @@ function CodeDisplayContainer() {
         </>
       ) : (
         <Container fluid style={{ minHeight: "50%" }}>
+          <StarAndFork
+            id={codeDrop.id}
+            hasStar={codeDrop.isStarred}
+            starCount={codeDrop.starCount}
+            removeMargin={true}
+            forkCount={codeDrop.numForks}
+          />
           <Tabs activeKey={currentTab} onSelect={handleTabClick}>
             <Tab eventKey="block" title="Block View">
               <BlockCodeDisplay

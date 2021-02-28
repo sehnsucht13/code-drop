@@ -9,7 +9,15 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { BsStar, BsStarFill } from "react-icons/bs";
 import { BiGitRepoForked } from "react-icons/bi";
 
-function StarAndFork({ id, hasStar, starCount, className, forkCount, isAuth }) {
+function StarAndFork({
+  id,
+  hasStar,
+  starCount,
+  className,
+  forkCount,
+  isAuth,
+  removeMargin,
+}) {
   const [isStarred, setIsStarred] = useState(hasStar);
   const [numStars, setNumStars] = useState(starCount);
   const history = useHistory();
@@ -59,7 +67,7 @@ function StarAndFork({ id, hasStar, starCount, className, forkCount, isAuth }) {
             paddingRight: "0.5rem",
             paddingBottom: "0rem",
             marginTop: "0.5rem",
-            marginBottom: "1rem",
+            marginBottom: removeMargin ? "0rem" : "1rem",
             maxHeight: "2rem",
           }}
         >

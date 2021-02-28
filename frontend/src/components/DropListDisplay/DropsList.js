@@ -2,6 +2,7 @@ import React from "react";
 import DropItem from "./DropItem";
 
 function DropsList({ drops }) {
+  console.log(drops);
   return (
     <div id="code-drops-display" className="min-vh-100">
       {drops.map((drop) => (

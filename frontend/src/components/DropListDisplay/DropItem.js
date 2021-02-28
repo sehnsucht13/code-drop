@@ -26,6 +26,7 @@ function DropItem({
           starCount={starCount}
           forkCount={forkCount}
           className="d-md-none"
+          removeMargin={true}
         />
         <Row
           className="justify-content-between"
