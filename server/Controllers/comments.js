@@ -35,7 +35,7 @@ const getComments = async (req, res) => {
 };
 
 const deleteComment = async (req, res) => {
-  if (!isInt(req.params.dropId) || isInt(req.params.cId)) {
+  if (!isInt(req.params.dropId) || !isInt(req.params.cId)) {
     res.status(400).end();
     return;
   }

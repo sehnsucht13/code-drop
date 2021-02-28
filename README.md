@@ -50,5 +50,5 @@ The application is deployed on Heroku [heroku](https://code-drop.herokuapp.com/)
 **NOTE:** The application is deployed using Heroku's free tier. If there is no activity for 30 minutes then Heroku's dyno's go to sleep. This means that the application may take 10-15 seconds to load on the first request while the dyno is being woken up.
 
 ## Disclaimer
-This is somethin that I made for both fun and educational purposes. It is not meant to be used in any serious capacity.
+This is something that I made for both fun and educational purposes. It is not meant to be used in any serious capacity.
 
