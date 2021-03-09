@@ -40,7 +40,7 @@ function InlineChunk({
           {"Chunk ".concat(chunkNum)}
         </Card.Title>
         <ReactMarkdown>
-          {annotation === undefined ? null : annotation.annotation_text}
+          {annotation === undefined ? null : annotation}
         </ReactMarkdown>
         <Highlight
           Prism={Prism}

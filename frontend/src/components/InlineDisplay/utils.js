@@ -8,53 +8,61 @@ export function annotationSortFn(a, b) {
   return 0;
 }
 
-export function createChunks(splitTextArray, sortedAnnotations) {
-  let currLineIndex = 1;
+export function createChunks(text, annotations) {
+  const splitTextArray = text.split(/\n/);
+  const sortedAnnotations = annotations.sort(annotationSortFn);
+
+  let currLineIndex = 0;
   let chunks = [];
   let currChunkLines = [];
   let chunkStart = 0;
 
-  sortedAnnotations.forEach((element, index) => {
+  sortedAnnotations.forEach((annotation, index) => {
     currChunkLines = [];
-    chunkStart = currLineIndex;
-    while (currLineIndex < element.startLine) {
-      currChunkLines.push(splitTextArray[currLineIndex - 1]);
+    chunkStart = currLineIndex + 1;
+
+    while (currLineIndex + 1 < annotation.startLine) {
+      currChunkLines.push(splitTextArray[currLineIndex]);
       currLineIndex += 1;
     }
 
-    if (chunks.length !== 0) {
+    if (currChunkLines.length !== 0) {
       chunks.push({
         lines: currChunkLines,
         annotationIdx: -1,
         startIdx: chunkStart,
+        annotation_text: undefined,
       });
     }
 
-    chunkStart = currLineIndex;
+    chunkStart = currLineIndex + 1;
     currChunkLines = [];
 
-    while (currLineIndex <= element.endLine) {
-      currChunkLines.push(splitTextArray[currLineIndex - 1]);
+    while (currLineIndex + 1 <= annotation.endLine) {
+      currChunkLines.push(splitTextArray[currLineIndex]);
       currLineIndex += 1;
     }
+
     chunks.push({
       lines: currChunkLines,
       annotationIdx: index,
       startIdx: chunkStart,
+      annotation_text: annotation.annotation_text,
     });
-    chunkStart = currLineIndex;
   });
 
-  if (currLineIndex < splitTextArray.length) {
+  if (currLineIndex + 1 <= splitTextArray.length) {
+    chunkStart = currLineIndex + 1;
     currChunkLines = [];
-    while (currLineIndex < splitTextArray.length) {
+    while (currLineIndex + 1 <= splitTextArray.length) {
       currChunkLines.push(splitTextArray[currLineIndex]);
-      currLineIndex++;
+      currLineIndex += 1;
     }
     chunks.push({
       lines: currChunkLines,
       annotationIdx: -1,
       startIdx: chunkStart,
+      annotation_text: undefined,
     });
   }
   return chunks;

@@ -15,6 +15,7 @@ import CommentContainer from "../CommentDisplay/CommentContainer";
 import Footer from "../Footer/Footer";
 import ErrorPage from "../Error/ErrorContainer";
 import StarAndFork from "../StarAndFork/StarAndFork";
+import { createChunks } from "../InlineDisplay/utils";
 
 // Add additional languages for display
 // Src: https://github.com/FormidableLabs/prism-react-renderer#faq
@@ -34,6 +35,7 @@ function CodeDisplayContainer() {
   const [codeDrop, setCodeDrop] = useState({});
   const [codeDropAnnotations, setcodeDropAnnotations] = useState([]);
   const [currentTab, setcurrentTab] = useState("block");
+  const [annotationChunks, setAnnotationChunks] = useState([]);
   const searchParams = queryString.parse(useLocation().search);
 
   const handleTabClick = (tabKey) => {
@@ -46,12 +48,17 @@ function CodeDisplayContainer() {
     axios
       .get(`/drop/${searchParams.id}`)
       .then((response) => {
-        console.log(response.data);
         setCodeDrop(response.data.codeDrop);
         setcodeDropAnnotations(response.data.dropAnnotations);
+        setAnnotationChunks(
+          createChunks(
+            response.data.codeDrop.text,
+            response.data.dropAnnotations
+          )
+        );
         setIsLoading(false);
       })
-      .catch((err) => {
+      .catch((_err) => {
         setHasError(true);
       });
   }, [searchParams.id]);
@@ -65,32 +72,36 @@ function CodeDisplayContainer() {
           {hasError && <ErrorPage />}
         </>
       ) : (
-        <Container fluid style={{ minHeight: "50%" }}>
-          <StarAndFork
-            id={codeDrop.id}
-            hasStar={codeDrop.isStarred}
-            starCount={codeDrop.starCount}
-            removeMargin={true}
-            forkCount={codeDrop.numForks}
-          />
-          <Tabs activeKey={currentTab} onSelect={handleTabClick}>
-            <Tab eventKey="block" title="Block View">
-              <BlockCodeDisplay
-                {...codeDrop}
-                annotations={codeDropAnnotations}
-              />
-            </Tab>
-            <Tab eventKey="inline" title="Inline View">
-              <InlineCodeDisplay
-                {...codeDrop}
-                annotations={codeDropAnnotations}
-              />
-            </Tab>
-          </Tabs>
-        </Container>
+        <>
+          <Container fluid style={{ minHeight: "50%" }}>
+            <StarAndFork
+              id={codeDrop.id}
+              hasStar={codeDrop.isStarred}
+              starCount={codeDrop.starCount}
+              removeMargin={true}
+              forkCount={codeDrop.numForks}
+            />
+            <Tabs activeKey={currentTab} onSelect={handleTabClick}>
+              <Tab eventKey="block" title="Block View">
+                <BlockCodeDisplay
+                  {...codeDrop}
+                  annotations={codeDropAnnotations}
+                  annotationChunks={annotationChunks}
+                />
+              </Tab>
+              <Tab eventKey="inline" title="Inline View">
+                <InlineCodeDisplay
+                  {...codeDrop}
+                  annotations={codeDropAnnotations}
+                  annotationChunks={annotationChunks}
+                />
+              </Tab>
+            </Tabs>
+          </Container>
+          <hr />
+          <CommentContainer dropId={searchParams.id} />
+        </>
       )}
-      <hr />
-      <CommentContainer dropId={searchParams.id} />
       <Footer />
     </>
   );
