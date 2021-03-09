@@ -5,35 +5,23 @@ import { Link } from "react-router-dom";
 import CodeLine from "./CodeLine";
 import PrismLanguages from "../../helpers/prismLanguages";
 
-const generateMap = (annotations) => {
-  let indexMap = {};
-  annotations.forEach((annotation) => {
-    for (let i = annotation.startLine; i <= annotation.endLine; i++) {
-      indexMap[i - 1] = annotation;
-    }
-  });
-  return indexMap;
-};
-
 export default function BlockCodeView({
   text,
   lang,
   title,
   description,
-  id,
-  visibility,
-  annotations,
   isForked,
   forkData,
   forkedFromId,
+  annotationChunks,
 }) {
   const [paddingLength, setPaddingLength] = useState(0);
-  const [indexMap, setIndexMap] = useState({});
+  const [chunks, setChunks] = useState([]);
 
   useEffect(() => {
-    setIndexMap(generateMap(annotations));
     setPaddingLength(text.split("\n").length.toString().length);
-  }, [annotations, text]);
+    setChunks(annotationChunks);
+  }, [annotationChunks, text]);
 
   return (
     <div id="block-code-display">
@@ -64,32 +52,24 @@ export default function BlockCodeView({
       >
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre className={className} style={style}>
-            {tokens.map((line, i) => {
-              if (i in indexMap) {
+            {chunks.map((chunk, idx) => {
+              return chunk.lines.map((line, idx) => {
+                let currTokenIdx = chunk.startIdx + idx - 1;
                 return (
                   <CodeLine
-                    line={line}
-                    lineNum={i}
+                    line={tokens[currTokenIdx]}
+                    lineNum={currTokenIdx + 1}
                     lineProps={getLineProps}
                     tokenProps={getTokenProps}
                     lineNumPadLen={paddingLength}
-                    showIcon={true}
-                    annotationText={indexMap[i].annotation_text}
+                    showIcon={chunk.annotation_text !== undefined}
+                    annotationText={chunk.annotation_text || ""}
+                    snippetLines={chunk.lines}
+                    snippetLang={PrismLanguages[lang] || null}
+                    key={currTokenIdx}
                   />
                 );
-              } else {
-                return (
-                  <CodeLine
-                    line={line}
-                    lineNum={i}
-                    lineProps={getLineProps}
-                    tokenProps={getTokenProps}
-                    lineNumPadLen={paddingLength}
-                    showIcon={false}
-                    annotationText={""}
-                  />
-                );
-              }
+              });
             })}
           </pre>
         )}

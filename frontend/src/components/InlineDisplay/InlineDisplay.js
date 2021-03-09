@@ -6,35 +6,38 @@ import Row from "react-bootstrap/Row";
 import Switch from "react-switch";
 
 import InlineChunk from "./InlineChunk";
-import { createChunks, annotationSortFn } from "./utils";
 
 function InlineCodeDisplay({
   text,
   lang,
   title,
   description,
-  id,
-  visibility,
-  annotations,
   isForked,
   forkData,
   forkedFromId,
+  annotationChunks,
 }) {
-  const [sortedAnnotations, setSortedAnnotations] = useState([]);
-  const [textChunks, setTextChunks] = useState([]);
-  const [isChecked, setIsChecked] = useState(false);
+  const [unfilteredChunks, setUnfilteredChunks] = useState([]);
+  const [filteredChunks, setFilteredChunks] = useState([]);
+  const [hideEmpty, setHideEmpty] = useState(false);
   let chunkNum = 0;
 
   useEffect(() => {
-    const textArray = text.split(/\n/);
-    const asort = annotations.sort(annotationSortFn);
-    setSortedAnnotations(asort);
-    const chunks = createChunks(textArray, asort);
-    setTextChunks(chunks);
-  }, [text, annotations]);
+    setUnfilteredChunks(annotationChunks);
+    const filteredChunks = annotationChunks.filter((annotation) => {
+      if (
+        annotation.annotation_text ||
+        annotation.lines.join("").trim().length !== 0
+      ) {
+        return true;
+      }
+      return false;
+    });
+    setFilteredChunks(filteredChunks);
+  }, [annotationChunks]);
 
   const handleToggle = () => {
-    setIsChecked(!isChecked);
+    setHideEmpty(!hideEmpty);
   };
 
   return (
@@ -62,33 +65,35 @@ function InlineCodeDisplay({
       </p>
       <Row className="justify-content-end" style={{ marginBottom: "0.5rem" }}>
         <span style={{ marginRight: "0.2rem" }}>Remove Empty Chunks: </span>
-        <Switch onChange={handleToggle} checked={isChecked} />
+        <Switch onChange={handleToggle} checked={hideEmpty} />
       </Row>
-      {textChunks.map((chunk) => {
-        chunkNum += 1;
-        if (chunk.annotationIdx === -1) {
-          return (
-            <InlineChunk
-              lines={chunk.lines}
-              annotation={undefined}
-              lang={lang}
-              offsetIdx={chunk.startIdx}
-              chunkNum={chunkNum}
-              removeEmpty={isChecked}
-            />
-          );
-        } else {
-          return (
-            <InlineChunk
-              lines={chunk.lines}
-              annotation={sortedAnnotations[chunk.annotationIdx]}
-              lang={lang}
-              offsetIdx={chunk.startIdx}
-              chunkNum={chunkNum}
-            />
-          );
-        }
-      })}
+      {hideEmpty
+        ? filteredChunks.map((chunk) => {
+            chunkNum += 1;
+            return (
+              <InlineChunk
+                lines={chunk.lines}
+                annotation={chunk.annotation_text}
+                lang={lang}
+                offsetIdx={chunk.startIdx}
+                chunkNum={chunkNum}
+                key={chunkNum}
+              />
+            );
+          })
+        : unfilteredChunks.map((chunk) => {
+            chunkNum += 1;
+            return (
+              <InlineChunk
+                lines={chunk.lines}
+                annotation={chunk.annotation_text}
+                lang={lang}
+                offsetIdx={chunk.startIdx}
+                chunkNum={chunkNum}
+                key={chunkNum}
+              />
+            );
+          })}
     </Container>
   );
 }

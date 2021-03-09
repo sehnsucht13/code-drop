@@ -7,8 +7,10 @@ export default function CodeLine({
   lineProps,
   tokenProps,
   lineNumPadLen,
-  showIcon,
+  snippetLines,
+  snippetLang,
   annotationText,
+  showIcon,
 }) {
   let numLen = lineNum.toString().length;
   let padLen = lineNumPadLen - numLen;
@@ -16,18 +18,21 @@ export default function CodeLine({
   for (let index = 0; index < padLen; index++) {
     pad += " ";
   }
+
   return (
     <div {...lineProps({ line, key: lineNum })}>
       <AnnotationPopup
         index={lineNum}
         showIcon={showIcon}
         annotationText={annotationText}
+        snippetLines={snippetLines}
+        snippetLang={snippetLang}
       />
       <span style={{ paddingRight: "2%", paddingLeft: "1%" }}>
         {lineNum.toString().concat(pad)}
       </span>
       {line.map((token, key) => (
-        <span {...tokenProps({ token, key })} />
+        <span key={lineNum} {...tokenProps({ token, key })} />
       ))}
     </div>
   );
