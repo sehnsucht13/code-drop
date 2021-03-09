@@ -5,6 +5,12 @@ code-drop is a web application made to share code snippets using [literate progr
 Some snippets/Gists can contain too many comments and be overly verbose. While this is good for learning purposes, the code contained in the snippet/Gist can sometimes be hard to read due to the amount of comments surrounding it.
 
 code-drop aims to reduce the verbosity that can sometimes come with snippets and let users focus only on the code. This is done by giving users the ability to "annotate" a snippet. All annotations provided by a snippet author can then be toggled on demand.
+
+## Using code-drop
+The application is deployed on [heroku](https://code-drop.herokuapp.com/).
+
+**NOTE:** The application is deployed using Heroku's free tier. If there is no activity for 30 minutes then Heroku's dyno's go to sleep. This means that the application may take 10-15 seconds to load on the first request while the dyno is being woken up.
+
 ## Example
 The snippet below is borrowed from [this gist](https://gist.github.com/arthurattwell/44713ec1a870c075eb5e8d7c3ef600ee) created by [Arthur Attwell](https://gist.github.com/arthurattwell).
 The original gist for a shell script looks like:
@@ -43,11 +49,6 @@ Using code-drop, the outright verbosity of this snippet will be reduced and anyb
 ![](docs/dropBlock.png "Block View")
 ### Inline View
 ![](docs/dropInline.png "Block View")
-
-## Using code-drop
-The application is deployed on Heroku [heroku](https://code-drop.herokuapp.com/).
-
-**NOTE:** The application is deployed using Heroku's free tier. If there is no activity for 30 minutes then Heroku's dyno's go to sleep. This means that the application may take 10-15 seconds to load on the first request while the dyno is being woken up.
 
 ## Disclaimer
 This is something that I made for both fun and educational purposes. It is not meant to be used in any serious capacity.
