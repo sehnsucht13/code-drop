@@ -18,6 +18,7 @@ function FilterListItem({
   isAuth,
   currentUser,
   refresh,
+  key,
 }) {
   const [isUserAuth, setIsUserAuth] = useState(isAuth);
   const history = useHistory();
@@ -45,7 +46,7 @@ function FilterListItem({
   };
 
   return (
-    <ListGroup.Item>
+    <ListGroup.Item key={key}>
       <Row className="justify-content-between">
         <Col xs={8}>
           <Link to={{ pathname: "/view", search: `?id=${id}` }}>

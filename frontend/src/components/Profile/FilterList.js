@@ -40,7 +40,7 @@ export default function FilterList({ drops, refreshCallback }) {
   return (
     <div style={{ paddingBottom: "2rem" }}>
       <Form inline style={{ paddingBottom: "1rem" }}>
-        <Col xs={12} md={9} style={{ paddingLeft: "0" }}>
+        <Col xs={12} md={8} lg={9} style={{ paddingLeft: "0" }}>
           <Form.Control
             style={{ width: "100%" }}
             as="input"
@@ -49,16 +49,17 @@ export default function FilterList({ drops, refreshCallback }) {
             value={filterInput}
           />
         </Col>
-        <Col xs={12} md={3}>
+        <Col xs={12} md={4} lg={3} style={{ marginRight: "0rem" }}>
           <Row className="justify-content-end">
             <Col
-              xs={4}
+              xs={6}
+              lg={4}
               style={{ paddingRight: "0" }}
               className="d-flex flex-column justify-content-center"
             >
               <Form.Label>Filter By:</Form.Label>
             </Col>
-            <Col xs={8}>
+            <Col xs={6} lg={8} style={{ paddingRight: "0" }}>
               <Form.Control
                 as="select"
                 onChange={handleFilterBy}
@@ -80,13 +81,14 @@ export default function FilterList({ drops, refreshCallback }) {
             This user has no drops to display.
           </p>
         ) : (
-          filteredDrops.map((drop) => (
+          filteredDrops.map((drop, idx) => (
             <FilterListItem
               title={drop.title}
               language={drop.lang}
               id={drop.id}
               creatorId={drop.userId}
               refresh={refreshCallback}
+              key={idx}
             />
           ))
         )}

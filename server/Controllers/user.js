@@ -1,4 +1,9 @@
-const { isInt } = require("./helpers");
+const util = require("util");
+const fs = require("fs");
+const sharp = require("sharp");
+const { isInt, uploadFile, deleteFile } = require("./helpers");
+
+const unlinkFile = util.promisify(fs.unlink);
 
 const getUserStars = async (req, res) => {
   if (!isInt(req.params.userId)) {
@@ -34,7 +39,14 @@ const getUserProfile = async (req, res) => {
 
   try {
     const userInstance = await req.app.locals.db.Users.findByPk(userId, {
-      attributes: ["id", "username", "description", "numStars", "numForks"],
+      attributes: [
+        "id",
+        "username",
+        "description",
+        "avatar",
+        "numStars",
+        "numForks",
+      ],
     });
 
     //   console.log("User model is", userModel);
@@ -107,7 +119,10 @@ const updateUserProfile = async (req, res) => {
   ) {
     res.status(401).end();
     return;
-  } else if (req.body.description === undefined) {
+  } else if (
+    req.body.description === undefined ||
+    req.body.description.length === 0
+  ) {
     res.status(400).end();
     return;
   }
@@ -153,9 +168,80 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const updateAvatar = async (req, res) => {
+  if (!isInt(req.params.userId)) {
+    res.status(400).end();
+    return;
+  }
+  if (
+    req.user === undefined ||
+    req.user.uid !== parseInt(req.params.userId, 10)
+  ) {
+    res.status(401).end();
+    return;
+  }
+
+  const userId = parseInt(req.params.userId, 10);
+  const uploadedFile = req.file;
+  console.log("File", uploadedFile);
+
+  try {
+    if (
+      uploadedFile.mimetype !== "image/png" &&
+      uploadedFile.mimetype !== "image/jpg" &&
+      uploadedFile.mimetype !== "image/jpeg"
+    ) {
+      await unlinkFile(uploadedFile.path);
+      res.status(400).end();
+      return;
+    }
+
+    const userInstance = await req.app.locals.db.Users.findByPk(userId);
+    if (userInstance === null) {
+      res.status(404).end();
+      return;
+    }
+
+    const resizedAvatarFilePath = `${uploadedFile.path}.${
+      uploadedFile.mimetype.split("/")[1]
+    }`;
+    const resizedAvatarFileName = `${uploadedFile.filename}.${
+      uploadedFile.mimetype.split("/")[1]
+    }`;
+
+    await sharp(uploadedFile.path)
+      .resize(400, 500, { fit: "fill" })
+      .png()
+      .toFile(resizedAvatarFilePath);
+    await unlinkFile(uploadedFile.path);
+    const result = await uploadFile(
+      resizedAvatarFilePath,
+      resizedAvatarFileName
+    );
+    if (result !== null) {
+      if (userInstance.dataValues.avatarKey !== null) {
+        await deleteFile(userInstance.dataValues.avatarKey);
+      }
+      await unlinkFile(resizedAvatarFilePath);
+      // Update values for new avatar
+      userInstance.avatar = result.Location;
+      userInstance.avatarKey = result.Key;
+      await userInstance.save();
+
+      res.send({ avatarURL: result.Location });
+      return;
+    }
+    res.status(400).end();
+    // res.status(200).end();
+  } catch {
+    res.status(500).end();
+  }
+};
+
 module.exports = {
   deleteUser,
   updateUserProfile,
   getUserProfile,
   getUserStars,
+  updateAvatar,
 };
