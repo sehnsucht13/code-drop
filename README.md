@@ -50,6 +50,9 @@ Using code-drop, the outright verbosity of this snippet will be reduced and anyb
 ### Inline View
 ![](docs/dropInline.png "Block View")
 
+# Another one
+![](code_drop_view.webm "Showcase")
+
 ## Disclaimer
 This is something that I made for both fun and educational purposes. It is not meant to be used in any serious capacity.
 
