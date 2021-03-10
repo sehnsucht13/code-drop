@@ -19,7 +19,7 @@ function SearchResults({ searchParams }) {
 
   React.useEffect(() => {
     if (searchParams.contains !== undefined) {
-      const newQueryParams = { start: 0, count: 15, contains: searchParams };
+      const newQueryParams = { start: 0, count: 15, ...searchParams };
       setQueryParams(newQueryParams);
       setDrops([]);
       setMorePagesAvailable(true);
@@ -31,6 +31,7 @@ function SearchResults({ searchParams }) {
         })
         .then((response) => {
           setHasError(false);
+          console.log("response", response.data);
           setDrops(response.data);
           if (response.data.length < newQueryParams.count) {
             setMorePagesAvailable(false);
