@@ -5,7 +5,7 @@ const search = async (req, res) => {
   if (
     !helper.isInt(req.query.start) ||
     !helper.isInt(req.query.count) ||
-    req.query.contains.length === 0
+    req.query.contains === undefined
   ) {
     res.status(400).end();
     return;
@@ -69,7 +69,7 @@ const search = async (req, res) => {
         limit: pageLimit,
         where: { visibility: 1, ...searchParams },
         order: [["updatedAt", "DESC"]],
-        attributes: ["id", "title", "description", "lang", "updatedAt"],
+        attributes: ["id", "title", "description", "lang", "updatedAt", "numForks"],
         include: [
           {
             model: req.app.locals.db.Stars,
@@ -93,7 +93,7 @@ const search = async (req, res) => {
         limit: pageLimit,
         where: { visibility: 1, ...searchParams },
         order: [["updatedAt", "DESC"]],
-        attributes: ["id", "title", "description", "lang", "updatedAt"],
+        attributes: ["id", "title", "description", "lang", "updatedAt", "numForks"],
         include: [
           {
             model: req.app.locals.db.Users,
