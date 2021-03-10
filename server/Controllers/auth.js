@@ -28,6 +28,7 @@ const registerUser = async (req, res) => {
     });
     res.status(200).json({ status: "OK" });
   } catch (err) {
+  	console.log("ERROR REGISTER", err);
     res.status(500).end();
   }
 };

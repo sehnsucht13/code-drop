@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
@@ -162,16 +163,21 @@ function CommentDisplay({
                   roundedCircle
                 />
                 <Col>
-                  <p
-                    style={{
-                      fontSize: "1.3rem",
-                      fontWeight: "500",
-                      paddingBottom: "0",
-                      marginBottom: "0",
-                    }}
+                  <Link
+                    to={{ pathname: "/profile", search: `?id=${authorId}` }}
+                    style={{ color: "black" }}
                   >
-                    {authorUsername}
-                  </p>
+                    <p
+                      style={{
+                        fontSize: "1.3rem",
+                        fontWeight: "500",
+                        paddingBottom: "0",
+                        marginBottom: "0",
+                      }}
+                    >
+                      {authorUsername}
+                    </p>
+                  </Link>
 
                   <p className="text-muted" style={{ marginBottom: "0" }}>
                     {formatDate(lastUpdate)}
