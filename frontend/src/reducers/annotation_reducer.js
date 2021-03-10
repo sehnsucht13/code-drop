@@ -65,7 +65,6 @@ export default function annotationReducer(
         hasError: false,
       };
     case SET_ANNOTATION_ERROR_STATUS:
-      console.log("Setting annotation status", payload);
       const modifiedAnnotationState = state.annotations.map((item, index) => {
         if (index === payload.index) {
           return {

@@ -34,7 +34,6 @@ const new_drop_reducer = (state = initialState, { type, payload }) => {
     case SET_DROP_DESC:
       return { ...state, ...payload };
     case SET_DROP_TITLE_CONTENT:
-      console.log("Title content payload", payload);
       return { ...state, title: { ...state.title, content: payload.title } };
     case SET_DROP_TITLE_ERROR:
       return {

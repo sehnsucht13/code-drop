@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
+import queryString from "query-string";
 import axios from "axios";
 
 import Container from "react-bootstrap/Container";
@@ -39,6 +40,7 @@ export const RegisterContainer = (props) => {
   );
 
   const history = useHistory();
+  const queryParams = queryString.parse(useLocation().search);
 
   const handlePassword = (ev) => {
     const passwordValue = ev.target.value;
@@ -122,7 +124,11 @@ export const RegisterContainer = (props) => {
         .post("/auth/register", { username: userName, password: password })
         .then((response) => {
           if (response.status === 200 && response.data.status === "OK") {
-            history.push("/login");
+            if (queryParams && queryParams.redirect) {
+              history.push(`/login?${queryParams.redirect}`);
+            } else {
+              history.push("/login");
+            }
           } else if (
             response.status === 200 &&
             response.data.status === "TAKEN"
@@ -132,7 +138,7 @@ export const RegisterContainer = (props) => {
           }
         })
         .catch((err) => {
-          console.log("Err from server", err);
+          console.error("Err from server", err);
         });
     }
   };
@@ -206,7 +212,16 @@ export const RegisterContainer = (props) => {
           style={{ paddingTop: "1em" }}
         >
           Already have an account?
-          <Link to="/login">Click here to log in</Link>
+          <Link
+            to={{
+              pathname: "/login",
+              search: queryParams.redirect
+                ? `redirect=${queryParams.redirect}`
+                : "",
+            }}
+          >
+            Click here to log in
+          </Link>
         </Row>
       </Container>
       <Footer />
