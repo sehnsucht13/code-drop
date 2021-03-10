@@ -89,15 +89,17 @@ function CommentContainer({ dropId, isAuth }) {
         <>
           {comments.length === 0 ? null : (
             <>
-              {comments.map((comment) => (
+              {comments.map((comment, idx) => (
                 <CommentDisplay
                   dropId={dropId}
                   commentId={comment.id}
                   commentText={comment.text}
                   authorUsername={comment.user.username}
                   authorId={comment.user.id}
+                  avatarURL={comment.user.avatar}
                   lastUpdate={comment.updatedAt}
                   refreshComments={refreshComments}
+                  key={idx}
                 />
               ))}
               <hr />

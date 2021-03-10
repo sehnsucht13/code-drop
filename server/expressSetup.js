@@ -84,7 +84,6 @@ if (process.env.NODE_ENV === "production") {
 function startServer() {
   db.sequelize
     .sync()
-    // { alter: true }
     .then(() => {
       app.listen(PORT, () => {
         console.log(`Listening on port: ${PORT}`);

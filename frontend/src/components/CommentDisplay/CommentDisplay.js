@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 
 import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
+import Image from "react-bootstrap/Image";
 import Dropdown from "react-bootstrap/Dropdown";
 import Alert from "react-bootstrap/Alert";
 import Card from "react-bootstrap/Card";
@@ -25,6 +26,8 @@ function CommentDisplay({
   refreshComments,
   isAuth,
   currentUser,
+  key,
+  avatarURL,
 }) {
   const [shouldEdit, setShouldEdit] = useState(false);
   const [currentValue, setCurrentValue] = useState(commentText);
@@ -140,30 +143,51 @@ function CommentDisplay({
               paddingLeft: "0",
             }}
           >
-            <Col xs={11}>
-              <p
-                style={{
-                  fontSize: "1.3rem",
-                  fontWeight: "500",
-                  paddingBottom: "0",
-                  marginBottom: "0",
-                }}
-              >
-                {authorUsername}
-              </p>
+            <Col
+              xs={8}
+              md={11}
+              style={{
+                marginLeft: "0",
+                paddingLeft: "0",
+              }}
+            >
+              <Row style={{ marginLeft: "0.5rem" }}>
+                <Image
+                  style={{
+                    height: "3rem",
+                    width: "3rem",
+                    marginTop: "0.3rem",
+                  }}
+                  src={avatarURL}
+                  roundedCircle
+                />
+                <Col>
+                  <p
+                    style={{
+                      fontSize: "1.3rem",
+                      fontWeight: "500",
+                      paddingBottom: "0",
+                      marginBottom: "0",
+                    }}
+                  >
+                    {authorUsername}
+                  </p>
 
-              <p className="text-muted" style={{ marginBottom: "0" }}>
-                {formatDate(lastUpdate)}
-              </p>
+                  <p className="text-muted" style={{ marginBottom: "0" }}>
+                    {formatDate(lastUpdate)}
+                  </p>
+                </Col>
+              </Row>
             </Col>
             {isAuth && currentUser.uid === authorId && (
               <Col
                 xs={1}
+                md={1}
                 className="d-flex flex-row justify-content-end align-items-end"
                 style={{ paddingRight: "0" }}
               >
-                <Dropdown drop="down">
-                  <Dropdown.Toggle variant="light">
+                <Dropdown drop="down" style={{ height: "100%" }}>
+                  <Dropdown.Toggle variant="light" style={{ height: "100%" }}>
                     <BsThreeDotsVertical />
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
