@@ -45,14 +45,11 @@ do
 done
 ```
 Using code-drop, the outright verbosity of this snippet will be reduced and anybody reading it will have the ability to view comments only for lines/content that they are uncertain of. code-drop supports viewing snippets and their annotations in two views:
-### Block View
-![](docs/dropBlock.png "Block View")
-### Inline View
-![](docs/dropInline.png "Block View")
+1. Block view
+2. Inline view
 
-# Another one
-![](code_drop_view.webm "Showcase")
-
+A quick showcase of the two different views can be found in the `gif` below.
+![](docs/code_drop_view.gif "Showcase")
 ## Disclaimer
 This is something that I made for both fun and educational purposes. It is not meant to be used in any serious capacity.
 
