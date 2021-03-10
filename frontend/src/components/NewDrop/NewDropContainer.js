@@ -11,6 +11,7 @@ import DropInput from "../DropEditor/DropInput";
 import AnnotationContainer from "../CodeAnnotation/AnnotationContainer";
 import Navbar from "../NavBar/Navbar";
 import UploadAlert from "../Alerts/UploadAlert";
+import Footer from "../Footer/Footer";
 
 import {
   reset_drop_info,
@@ -53,7 +54,9 @@ function CodeDropEditor({
   return (
     <>
       <Navbar />
-      <Container style={{ paddingTop: "1rem", paddingBottom: "1rem" }}>
+      <Container
+        style={{ paddingTop: "1rem", paddingBottom: "1rem", minHeight: "80%" }}
+      >
         {uploadStatusDisplay !== undefined && (
           <UploadAlert type={uploadStatusDisplay} />
         )}
@@ -70,6 +73,7 @@ function CodeDropEditor({
         <hr style={{ height: 2 }} />
         <AnnotationContainer />
       </Container>
+      <Footer />
     </>
   );
 }

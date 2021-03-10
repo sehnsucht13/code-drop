@@ -82,7 +82,7 @@ function CommentContainer({ dropId, isAuth }) {
   }, [dropId]);
 
   return (
-    <div style={{ minHeight: "50%" }}>
+    <div style={{ minHeight: "25%" }}>
       {!areCommentsLoaded ? (
         <FetchingComments />
       ) : (

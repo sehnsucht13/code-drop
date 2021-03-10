@@ -143,7 +143,7 @@ export const RegisterContainer = (props) => {
       <Container
         className="d-flex flex-column justify-content-center align-items-center"
         fluid
-        style={{ height: "100%", paddingBottom: "10%" }}
+        style={{ minHeight: "80%", paddingBottom: "10%", paddingTop: "10%" }}
       >
         <Form
           noValidate

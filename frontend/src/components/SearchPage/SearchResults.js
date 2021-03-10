@@ -3,6 +3,7 @@ import axios from "axios";
 
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
+import Alert from "react-bootstrap/Alert";
 
 import DropsList from "../DropListDisplay/DropsList";
 
@@ -12,29 +13,36 @@ function SearchResults({ searchParams }) {
   const [queryParams, setQueryParams] = useState({
     start: 0,
     count: 15,
-    ...searchParams,
+    contains: searchParams,
   });
+  const [hasError, setHasError] = useState(false);
 
   React.useEffect(() => {
-    const newQueryParams = { start: 0, count: 15, ...searchParams };
-    setQueryParams(newQueryParams);
-    setDrops([]);
-    setMorePagesAvailable(true);
-    axios
-      .get("/drop/search", {
-        params: {
-          ...newQueryParams,
-        },
-      })
-      .then((response) => {
-        setDrops(response.data);
-        if (response.data.length < newQueryParams.count) {
-          setMorePagesAvailable(false);
-        }
-      })
-      .catch((error) => {
-        console.log("Error", error.response);
-      });
+    if (searchParams.contains !== undefined) {
+      const newQueryParams = { start: 0, count: 15, contains: searchParams };
+      setQueryParams(newQueryParams);
+      setDrops([]);
+      setMorePagesAvailable(true);
+      axios
+        .get("/drop/search", {
+          params: {
+            ...newQueryParams,
+          },
+        })
+        .then((response) => {
+          setHasError(false);
+          setDrops(response.data);
+          if (response.data.length < newQueryParams.count) {
+            setMorePagesAvailable(false);
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          setHasError(true);
+        });
+    } else {
+      setMorePagesAvailable(false);
+    }
   }, [searchParams]);
 
   const getNextPage = () => {
@@ -46,6 +54,7 @@ function SearchResults({ searchParams }) {
         },
       })
       .then((response) => {
+        setHasError(false);
         setQueryParams({
           ...queryParams,
           start: queryParams.start + queryParams.count,
@@ -54,11 +63,22 @@ function SearchResults({ searchParams }) {
         if (response.data.length < queryParams.count) {
           setMorePagesAvailable(false);
         }
+      })
+      .catch((err) => {
+        console.error(err);
+        setHasError(true);
       });
   };
 
   return (
-    <div style={{ minHeight: "50%" }}>
+    <div style={{ minHeight: "100%" }}>
+      {hasError && (
+        <Alert variant="danger">
+          {" "}
+          There was an issue with retrieving your drops. Please try searching
+          again!
+        </Alert>
+      )}
       <DropsList drops={drops} />
       <Row className="justify-content-center" style={{ paddingTop: "1rem" }}>
         {morePagesAvailable ? (

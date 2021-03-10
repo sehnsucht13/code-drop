@@ -7,11 +7,11 @@ import DropAnnotation from "./CodeDropAnnotation";
 
 function AnnotationContainer({ annotations, addAnnotation }) {
   return (
-    <div>
+    <div style={{ minHeight: "25%" }}>
       {annotations.map((annotation, index) => (
         <DropAnnotation index={index} />
       ))}
-      <hr style={{ height: 2 }} />
+      {annotations.length !== 0 && <hr style={{ height: 2 }} />}
       <Row className="justify-content-center">
         <Button onClick={addAnnotation}>Add Annotation</Button>
       </Row>
