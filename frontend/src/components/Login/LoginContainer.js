@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import axios from "axios";
+import queryString from "query-string";
+
 import Container from "react-bootstrap/Container";
 import Alert from "react-bootstrap/Alert";
 import Row from "react-bootstrap/Row";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
-import { useHistory, Link } from "react-router-dom";
+import { useHistory, Link, useLocation } from "react-router-dom";
 import Footer from "../Footer/Footer";
 import NavBar from "../NavBar/Navbar";
 
@@ -24,6 +26,8 @@ export const LoginContainer = ({
   const [isValidated, setIsValidated] = useState(false);
   const [loginError, setLoginError] = useState(false);
   const history = useHistory();
+  const queryParams = queryString.parse(useLocation().search);
+  console.log(queryParams);
 
   const handlePassword = (ev) => {
     setPassword(ev.target.value);
@@ -55,7 +59,11 @@ export const LoginContainer = ({
                   if (resp.status === 200) {
                     set_auth(false, undefined);
                     checked_auth(false);
-                    history.push("/");
+                    if (queryParams && queryParams.redirect !== undefined) {
+                      history.push(queryParams.redirect);
+                    } else {
+                      history.push("/");
+                    }
                   }
                 })
                 .catch((err) => {
@@ -63,7 +71,11 @@ export const LoginContainer = ({
                 });
             } else {
               checked_auth(false);
-              history.push("/");
+              if (queryParams && queryParams.redirect !== undefined) {
+                history.push(queryParams.redirect);
+              } else {
+                history.push("/");
+              }
             }
           }
         })
@@ -138,7 +150,16 @@ export const LoginContainer = ({
           style={{ paddingTop: "1em" }}
         >
           Don't have an account?
-          <Link to="/register">Click here to create one</Link>
+          <Link
+            to={{
+              pathname: "/register",
+              search: queryParams.redirect
+                ? `redirect=${queryParams.redirect}`
+                : "",
+            }}
+          >
+            Click here to create one
+          </Link>
         </Row>
       </Container>
       <Footer />

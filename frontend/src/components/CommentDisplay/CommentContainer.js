@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { useHistory, useLocation } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import Row from "react-bootstrap/Row";
@@ -13,6 +14,13 @@ function CommentContainer({ dropId, isAuth }) {
   const [newCommentText, setNewCommentText] = useState("");
   const [hasSubmitIssue, setHasSubmitIssue] = useState(false);
   const [areCommentsLoaded, setAreCommentsLoaded] = useState(false);
+  const currRoute = useLocation();
+  const history = useHistory();
+
+  const redirectToLogin = () => {
+    console.log(currRoute);
+    history.push(`/login?redirect=${currRoute.pathname}${currRoute.search}`);
+  };
 
   const handleEditorOnChange = (newVal) => {
     setNewCommentText(newVal);
@@ -140,7 +148,7 @@ function CommentContainer({ dropId, isAuth }) {
               className="justify-content-center"
               style={{ paddingBottom: "1rem" }}
             >
-              <Button>Sign In to comment</Button>
+              <Button onClick={redirectToLogin}>Sign In to comment</Button>
             </Row>
           )}
         </>
