@@ -107,6 +107,7 @@ describe("Profile Retrieve Tests", () => {
         id: sessionId,
         username: users[0].username,
         description: "",
+        avatar: "https://code-drop-avatars.s3.amazonaws.com/Default_Avatar.png",
         numStars: 0,
         numForks: 0,
       },
@@ -151,6 +152,7 @@ describe("Profile Retrieve Tests", () => {
       profile: {
         id: userIds[0],
         username: users[0].username,
+        avatar: "https://code-drop-avatars.s3.amazonaws.com/Default_Avatar.png",
         description: "",
         numStars: 0,
         numForks: 0,
