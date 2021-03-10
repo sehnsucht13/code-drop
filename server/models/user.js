@@ -13,9 +13,22 @@ module.exports = (sequelize, Sequelize) => {
     },
     description: {
       type: Sequelize.TEXT,
-      defaultValue: "",
+      defaultValue: "User has not written a description.",
       notEmpty: false,
       allowNull: false,
+    },
+    avatar: {
+      type: Sequelize.TEXT,
+      defaultValue:
+        "https://code-drop-avatars.s3.amazonaws.com/Default_Avatar.png",
+      notEmpty: false,
+      allowNull: false,
+    },
+    avatarKey: {
+      type: Sequelize.TEXT,
+      defaultValue: null,
+      notEmpty: false,
+      allowNull: true,
     },
     numStars: {
       type: Sequelize.INTEGER,

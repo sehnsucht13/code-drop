@@ -1,18 +1,17 @@
 require("dotenv").config();
 const Sequelize = require("sequelize");
 
-let sequelize = undefined;
-let database_name = undefined;
+let databaseName;
 
 switch (process.env.NODE_ENV) {
   case "test":
-    database_name = process.env.DB_DATABASE_TEST;
+    databaseName = process.env.DB_DATABASE_TEST;
     break;
   case "production":
-    database_name = process.env.DB_DATABASE_PROD;
+    databaseName = process.env.DB_DATABASE_PROD;
     break;
   case "dev":
-    database_name = process.env.DB_DATABASE_DEV;
+    databaseName = process.env.DB_DATABASE_DEV;
     break;
 
   default:
@@ -20,8 +19,8 @@ switch (process.env.NODE_ENV) {
 }
 
 // Initialize database connection
-sequelize = new Sequelize(
-  database_name,
+const sequelize = new Sequelize(
+  databaseName,
   process.env.DB_USER,
   process.env.DB_PASS,
   {
@@ -53,11 +52,11 @@ Stars.belongsTo(Users);
 Stars.belongsTo(Drops);
 
 module.exports = {
-  sequelize: sequelize,
-  Sequelize: Sequelize,
-  Drops: Drops,
-  DropAnnotations: DropAnnotations,
-  Users: Users,
-  Comments: Comments,
-  Stars: Stars,
+  sequelize,
+  Sequelize,
+  Drops,
+  DropAnnotations,
+  Users,
+  Comments,
+  Stars,
 };
