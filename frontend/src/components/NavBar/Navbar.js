@@ -69,7 +69,7 @@ function NavigationBar({
         <Nav className="mr-auto">
           <Nav.Link
             as={Link}
-            to="/search"
+            to={{ pathname: "/search", search: `?contains=` }}
             className="d-md-none"
             style={{ color: "white" }}
           >

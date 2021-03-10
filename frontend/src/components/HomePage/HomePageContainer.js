@@ -54,7 +54,10 @@ function HomePageContainer() {
         params: { start: queryParams.start, count: queryParams.count },
       })
       .then((result) => {
-        if (result.data.length === 0) {
+        if (
+          result.data.length === 0 ||
+          result.data.length < queryParams.count
+        ) {
           setMorePagesAvailable(false);
         }
         setDrops(result.data);
