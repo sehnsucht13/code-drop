@@ -14,7 +14,7 @@ const getComments = async (req, res) => {
       include: [
         {
           model: req.app.locals.db.Users,
-          attributes: ["id", "username"],
+          attributes: ["id", "username", "avatar"],
           required: false,
         },
       ],
