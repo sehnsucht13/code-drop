@@ -1,10 +1,18 @@
 import React from "react";
 
-function SideBar({ username, description }) {
+import ProfileDescription from "./ProfileDescription";
+import ProfileAvatar from "./ProfileAvatar";
+
+function SideBar({ username, description, avatar, allowEdit, userId }) {
   return (
-    <div>
+    <div style={{ height: "100%" }}>
+      <ProfileAvatar avatar={avatar} allowEdit={allowEdit} userId={userId} />
       <p className="h4 text-center">{username}</p>
-      <p>{description || "User has not written a description."}</p>
+      <ProfileDescription
+        allowEdit={allowEdit}
+        description={description}
+        userId={userId}
+      />
     </div>
   );
 }

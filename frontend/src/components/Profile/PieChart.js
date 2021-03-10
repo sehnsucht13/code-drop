@@ -9,11 +9,9 @@ function createPiechartData(languages) {
   const randomColorSeed = Date.now();
 
   languages.forEach((language) => {
-    console.log("Current lang", language);
     languageLabels.push(language.lang);
     languageCounts.push(language.count);
   });
-  console.log(languageLabels, languageCounts);
 
   if (languageLabels.length === 0) {
     return {
