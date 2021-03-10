@@ -80,7 +80,7 @@ function HomePageContainer() {
   return (
     <div className="vh-100">
       <NavBar />
-      <Container fluid>
+      <Container fluid style={{ minHeight: "80%" }}>
         {hasLoadError && (
           <Alert>
             There was an error with loading the drops! Please refresh the page.

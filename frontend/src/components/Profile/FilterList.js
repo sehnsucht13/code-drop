@@ -74,7 +74,7 @@ export default function FilterList({ drops, refreshCallback }) {
         </Col>
       </Form>
       <ListGroup
-        style={{ minHeight: "25rem", maxHeight: "25rem", overflowY: "scroll" }}
+        style={{ minHeight: "5rem", maxHeight: "25rem", overflowY: "scroll" }}
       >
         {filteredDrops.length === 0 ? (
           <p className="text-center font-weight-bold">

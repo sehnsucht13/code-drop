@@ -73,7 +73,7 @@ function CodeDisplayContainer() {
         </>
       ) : (
         <>
-          <Container fluid style={{ minHeight: "50%" }}>
+          <Container fluid style={{ minHeight: "55%" }}>
             <StarAndFork
               id={codeDrop.id}
               hasStar={codeDrop.isStarred}

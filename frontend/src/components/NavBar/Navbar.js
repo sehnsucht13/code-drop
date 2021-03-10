@@ -67,14 +67,19 @@ function NavigationBar({
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link as={Link} to="/search" className="d-md-none">
+          <Nav.Link
+            as={Link}
+            to="/search"
+            className="d-md-none"
+            style={{ color: "white" }}
+          >
             Search
           </Nav.Link>
-          <Nav.Link as={Link} to="/">
+          <Nav.Link as={Link} to="/" style={{ color: "white" }}>
             Home
           </Nav.Link>
           {isAuth && (
-            <Nav.Link as={Link} to="/create">
+            <Nav.Link as={Link} to="/create" style={{ color: "white" }}>
               Create
             </Nav.Link>
           )}
@@ -82,6 +87,7 @@ function NavigationBar({
             <Nav.Link
               as={Link}
               to={{ pathname: "/profile", search: `?id=${user.uid}` }}
+              style={{ color: "white" }}
             >
               Profile
             </Nav.Link>
@@ -93,17 +99,18 @@ function NavigationBar({
               onClick={() => {
                 logout();
               }}
+              style={{ color: "white" }}
             >
               Logout
             </Nav.Link>
           )}
           {!isAuth && hasChecked && (
-            <Nav.Link as={Link} to="/login">
+            <Nav.Link as={Link} to="/login" style={{ color: "white" }}>
               Login
             </Nav.Link>
           )}
           {!isAuth && hasChecked && (
-            <Nav.Link as={Link} to="/register">
+            <Nav.Link as={Link} to="/register" style={{ color: "white" }}>
               Register
             </Nav.Link>
           )}

@@ -12,29 +12,33 @@ function SearchResults({ searchParams }) {
   const [queryParams, setQueryParams] = useState({
     start: 0,
     count: 15,
-    ...searchParams,
+    contains: searchParams,
   });
 
   React.useEffect(() => {
-    const newQueryParams = { start: 0, count: 15, ...searchParams };
-    setQueryParams(newQueryParams);
-    setDrops([]);
-    setMorePagesAvailable(true);
-    axios
-      .get("/drop/search", {
-        params: {
-          ...newQueryParams,
-        },
-      })
-      .then((response) => {
-        setDrops(response.data);
-        if (response.data.length < newQueryParams.count) {
-          setMorePagesAvailable(false);
-        }
-      })
-      .catch((error) => {
-        console.log("Error", error.response);
-      });
+    if (searchParams.contains !== undefined) {
+      const newQueryParams = { start: 0, count: 15, contains: searchParams };
+      setQueryParams(newQueryParams);
+      setDrops([]);
+      setMorePagesAvailable(true);
+      axios
+        .get("/drop/search", {
+          params: {
+            ...newQueryParams,
+          },
+        })
+        .then((response) => {
+          setDrops(response.data);
+          if (response.data.length < newQueryParams.count) {
+            setMorePagesAvailable(false);
+          }
+        })
+        .catch((error) => {
+          console.log("Error", error.response);
+        });
+    } else {
+      setMorePagesAvailable(false);
+    }
   }, [searchParams]);
 
   const getNextPage = () => {
@@ -58,7 +62,7 @@ function SearchResults({ searchParams }) {
   };
 
   return (
-    <div style={{ minHeight: "50%" }}>
+    <div style={{ minHeight: "100%" }}>
       <DropsList drops={drops} />
       <Row className="justify-content-center" style={{ paddingTop: "1rem" }}>
         {morePagesAvailable ? (

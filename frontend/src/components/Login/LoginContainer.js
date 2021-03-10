@@ -80,7 +80,7 @@ export const LoginContainer = ({
       <Container
         className="d-flex flex-column justify-content-center align-items-center"
         fluid
-        style={{ height: "100%", paddingBottom: "25%" }}
+        style={{ minHeight: "80%", paddingBottom: "10%", paddingTop: "10%" }}
       >
         {loginError && (
           <Alert variant="danger">Error logging in. Please try again.</Alert>

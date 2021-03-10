@@ -3,7 +3,7 @@ import DropItem from "./DropItem";
 
 function DropsList({ drops }) {
   return (
-    <div id="code-drops-display" className="min-vh-100">
+    <div id="code-drops-display" style={{ minHeight: "100%" }}>
       {drops.map((drop) => (
         <DropItem
           key={drop.id}
