@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import axios from "axios";
 
 import Row from "react-bootstrap/Row";
@@ -23,6 +23,7 @@ function StarAndFork({
   const [isUserAuth, setIsUserAuth] = useState(isAuth);
 
   const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     setIsUserAuth(isAuth);
@@ -55,7 +56,11 @@ function StarAndFork({
             console.log("got an error", err.response);
           });
       } else {
-        history.push("/login");
+        location.pathname === "/view"
+          ? history.push(
+              `/login?redirect=${location.pathname}${location.search}`
+            )
+          : history.push("/login");
       }
     }
   };
@@ -64,7 +69,9 @@ function StarAndFork({
     if (isUserAuth) {
       history.push(`/edit?id=${id}&fork=t`);
     } else {
-      history.push("/login");
+      location.pathname === "/view"
+        ? history.push(`/login?redirect=${location.pathname}${location.search}`)
+        : history.push("/login");
     }
   };
 
