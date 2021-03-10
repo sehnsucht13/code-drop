@@ -40,7 +40,7 @@ function StarAndFork({
           }
         })
         .catch((err) => {
-          console.log("got an error", err);
+          console.error("got an error", err);
         });
     } else {
       if (isUserAuth) {
@@ -53,7 +53,7 @@ function StarAndFork({
             }
           })
           .catch((err) => {
-            console.log("got an error", err.response);
+            console.error("got an error", err.response);
           });
       } else {
         location.pathname === "/view"

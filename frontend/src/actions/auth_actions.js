@@ -17,18 +17,16 @@ export const logout_success = (authStatus, hasChecked) => ({
 });
 
 export const logout = () => {
-  console.log("Called logout");
   return (dispatch, getState) => {
     // TODO: Check for any errors and refuse to send here!
     axios
       .get("/auth/logout")
       .then((response) => {
-        console.log("Success when loggin out", response.data);
         dispatch(logout_success(false, false));
         return;
       })
       .catch((err) => {
-        console.log("Error when loggin out", err);
+        console.error("Error when loggin out", err);
       });
   };
 };

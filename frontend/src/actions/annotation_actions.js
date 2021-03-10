@@ -28,7 +28,6 @@ export function save_annotation(start, end, text, index) {
 }
 
 export function add_annotation(start, end, text, index, dbId) {
-  console.log("Creating annotation with dbID", dbId);
   return {
     type: ADD_ANNOTATION,
     payload: { start: start, end: end, text: text, index: index, dbId: dbId },

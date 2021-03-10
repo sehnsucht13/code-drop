@@ -32,12 +32,11 @@ function FilterListItem({
       .delete(`/drop/${id}`)
       .then((response) => {
         if (response.status === 200) {
-          console.log("got a 200 status code!");
           refresh(true);
         }
       })
       .catch((err) => {
-        console.log("Error deleting!", err.response);
+        console.error("Error deleting!", err.response);
       });
   };
 

@@ -12,7 +12,6 @@ const authReducer = (state = initialState, { type, payload }) => {
     case SET_AUTH:
       return { ...state, ...payload };
     case LOGOUT:
-      console.log("Got a logout");
       return { ...state, ...payload };
 
     default:

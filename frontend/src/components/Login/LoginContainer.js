@@ -27,7 +27,6 @@ export const LoginContainer = ({
   const [loginError, setLoginError] = useState(false);
   const history = useHistory();
   const queryParams = queryString.parse(useLocation().search);
-  console.log(queryParams);
 
   const handlePassword = (ev) => {
     setPassword(ev.target.value);
@@ -42,7 +41,6 @@ export const LoginContainer = ({
     setIsValidated(true);
 
     const form = event.currentTarget;
-    console.log("Submitting from login");
     if (form.checkValidity() === true) {
       axios
         .post("/auth/login", {
@@ -50,7 +48,6 @@ export const LoginContainer = ({
           password: password,
         })
         .then((response) => {
-          console.log("LOGIN PAGE response", response);
           if (response.status === 200) {
             if (isAuth) {
               axios
@@ -67,7 +64,7 @@ export const LoginContainer = ({
                   }
                 })
                 .catch((err) => {
-                  console.log("Error logging out");
+                  console.error("Error logging out");
                 });
             } else {
               checked_auth(false);
@@ -80,7 +77,7 @@ export const LoginContainer = ({
           }
         })
         .catch((err) => {
-          console.log("Error from server while loggin in", err);
+          console.error("Error from server while loggin in", err);
           setLoginError(true);
         });
     }
@@ -102,7 +99,6 @@ export const LoginContainer = ({
             noValidate
             validated={isValidated}
             onSubmit={(e) => {
-              console.log("Handled submit", e);
               handleSubmit(e);
             }}
           >

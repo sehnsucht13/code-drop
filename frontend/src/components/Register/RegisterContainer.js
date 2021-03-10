@@ -138,7 +138,7 @@ export const RegisterContainer = (props) => {
           }
         })
         .catch((err) => {
-          console.log("Err from server", err);
+          console.error("Err from server", err);
         });
     }
   };

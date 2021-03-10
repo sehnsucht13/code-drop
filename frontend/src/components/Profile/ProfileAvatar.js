@@ -17,13 +17,12 @@ function ProfileAvatar({ avatar, allowEdit, userId }) {
 
   const handleSubmitAvatar = (e) => {
     e.preventDefault();
-    // console.log(e.target);
     const formData = new FormData();
     formData.append("avatar", avatarFile);
+
     axios
       .post(`/user/${userId}/profile/avatar`, formData)
       .then((resp) => {
-        console.log("Got a respose", resp);
         setHasUploadError(false);
         setAvatarSource(resp.data.avatarURL);
         setToggleAvatarEdit(false);

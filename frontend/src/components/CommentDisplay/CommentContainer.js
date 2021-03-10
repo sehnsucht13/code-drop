@@ -18,7 +18,6 @@ function CommentContainer({ dropId, isAuth }) {
   const history = useHistory();
 
   const redirectToLogin = () => {
-    console.log(currRoute);
     history.push(`/login?redirect=${currRoute.pathname}${currRoute.search}`);
   };
 
@@ -70,7 +69,7 @@ function CommentContainer({ dropId, isAuth }) {
         }
       })
       .catch((err) => {
-        console.log("Have an error");
+        console.error("Have an error", err);
         setHasSubmitIssue(true);
       });
   };
